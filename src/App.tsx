@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {server} from "./services/api";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="bg-green-500">
-          Edit <code>src/App.tsx</code> and save to reload
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [email, setEmail] = useState("");
+
+	const clickedLogin = async () => {
+		await server.login(email);
+	};
+
+	return (
+		<div className="p-5 flex flex-row">
+			<div className="mx-auto">
+				<input type="text" name="email" placeholder="Enter email" value={email} onChange={ (e) => setEmail(e.target.value) } />
+				<button className="primary mx-auto" onClick={clickedLogin}>Login</button>
+			</div>
+		</div>
+	);
 }
 
 export default App;
