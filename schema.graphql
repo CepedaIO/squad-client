@@ -1,0 +1,43 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type AccountModel {
+    created: DateTime!
+    email: String!
+    id: Float!
+    modified: DateTime!
+    secret: String!
+    uuid: String!
+}
+
+type Mutation {
+    createAccount(account: AccountInput!): SimpleResponse!
+}
+
+type Query {
+    accounts: [AccountModel!]!
+    getQRCode(account: AccountInput!): SimpleResponse!
+    login(auth: LoginInput!): SimpleResponse!
+}
+
+type SimpleResponse {
+    result: String!
+    success: Boolean!
+}
+
+input AccountInput {
+    email: String!
+}
+
+input LoginInput {
+    code: String!
+    email: String!
+}
+
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime

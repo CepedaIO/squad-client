@@ -1,21 +1,57 @@
-import React, {useState} from 'react';
+import React, {createContext, useCallback, useEffect, useState} from 'react';
 import './App.css';
-import {server} from "./services/api";
+import LoginPage from "./pages/login";
+import {Routes, Route} from "react-router-dom";
+import RegisterPage from "./pages/register";
+import AppErrorBanner from "./components/AppErrorBanner";
+
+export interface AppNotice {
+	id: string;
+	message: string;
+	level: 'warning' | 'info' | 'error' | 'fatal' | 'success' | 'reject' | 'resolve'
+}
+export interface INotificationContext {
+	notices: AppNotice[],
+	addNotice(notice: AppNotice): void;
+	removeNotice(id: string): void;
+}
+
+export const NotificationContext = createContext<INotificationContext>({
+	notices: [],
+	addNotice: (notice: AppNotice) => {},
+	removeNotice: (id: string) => {}
+});
 
 function App() {
-	const [email, setEmail] = useState("");
+	const [noticesDict, setNoticesDict] = useState<NodeJS.Dict<AppNotice>>({});
+	const addNotice = useCallback((notice: AppNotice) => {
+		setNoticesDict((prev) => ({ ...prev, [notice.id]: notice }))
+	}, [noticesDict]);
 
-	const clickedLogin = async () => {
-		await server.login(email);
-	};
+	const removeNotice = useCallback((id: string) =>
+			setNoticesDict((prev) => {
+			delete prev[id];
+			return { ...prev };
+		})
+	, [noticesDict]);
+
+	const notificationContext = {
+		notices: Object.values(noticesDict),
+		addNotice,
+		removeNotice
+	} as INotificationContext;
 
 	return (
-		<div className="p-5 flex flex-row">
-			<div className="mx-auto">
-				<input type="text" name="email" placeholder="Enter email" value={email} onChange={ (e) => setEmail(e.target.value) } />
-				<button className="primary mx-auto" onClick={clickedLogin}>Login</button>
-			</div>
-		</div>
+		<>
+			<NotificationContext.Provider value={notificationContext}>
+				<AppErrorBanner />
+
+				<Routes>
+					<Route path="/register" element={<RegisterPage />} />
+					<Route path="/login" element={<LoginPage />} />
+				</Routes>
+			</NotificationContext.Provider>
+		</>
 	);
 }
 
