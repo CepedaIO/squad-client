@@ -1,12 +1,24 @@
 import React, {useContext, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
-import {INotificationContext, NotificationContext} from "../App";
+import FieldError from "../components/FieldError";
+import {INotificationContext, NotificationContext} from "../providers/NotificationProvider";
+import {ErrorContext} from "../providers/ErrorProvider";
+import {assert, useValidator} from "../services/validate";
 
 const RegisterPage = () => {
   const emailInput = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { addNotice } = useContext<INotificationContext>(NotificationContext)
+  const { addNotice } = useContext(NotificationContext)
+  const { addErrors, removeError } = useContext(ErrorContext);
+  const { errors, setup } = useValidator();
+  useEffect(() => {
+    addNotice({
+      id: 'test',
+      message: 'hello?',
+      level: 'error'
+    });
+  }, [true]);
 
   const [ createAccount, { data, loading} ] = useMutation(gql`
     mutation CreateAccount($account: AccountInput!) {
@@ -17,60 +29,24 @@ const RegisterPage = () => {
     }
   `);
 
-  useEffect(() => {
-    debugger;
-    addNotice({
-      id: 'mmocow',
-      message: 'The fuck you trying to sign up for? GTFO',
-      level: 'warning'
-    })
-
-    addNotice({
-      id: 'another',
-      message: 'The fuck you trying to sign up for? GTFO',
-      level: 'info'
-    })
-
-    addNotice({
-      id: 'another1',
-      message: 'The fuck you trying to sign up for? GTFO',
-      level: 'error'
-    })
-
-    addNotice({
-      id: 'another3',
-      message: 'The fuck you trying to sign up for? GTFO',
-      level: 'success'
-    })
-  }, [true]);
-
   const clickedLogin = () => navigate('/login');
 
-  const clickedSignUp = () => {
-    const id = emailInput.current?.value as string;
-    addNotice({
-      id,
-      message: 'The fuck you trying to sign up for? GTFO',
-      level: 'warning'
-    })
-    /*
-    addNotice({
-      id: 'Moocow',
-      message: 'Wow really?!?',
-      level: 'info'
-    })*/
-  };
-  /*
-  const clickedSignUp = () => createAccount({
-    variables: {
-      email: emailInput.current?.value
-    }
-  });*/
+  const clickedSignUp = () =>
+    setup({
+      email: emailInput.current?.value as string,
+      age: 7
+    }).validateAndReport(({ assert }) => [
+      assert('age', (val) => val > 12, 'Age must be greater than 12'),
+      assert('email', (val) => !!val && val.length > 2, 'Email must be greater than 2 characters'),
+    ]);
 
   return (
     <div className="p-5 flex flex-row">
       <div className="mx-auto flex flex-col gap-6">
-        <input type="text" name="email" placeholder="Enter email" ref={emailInput} />
+        <div>
+          <input type="text" name="email" placeholder="Enter email" ref={emailInput} />
+          <FieldError name="email" />
+        </div>
 
         <div className="flex flex-row gap-5">
           <button className="primary mx-auto" onClick={clickedSignUp}>Sign-Up</button>
