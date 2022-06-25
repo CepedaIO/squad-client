@@ -4,6 +4,11 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  safelist: [
+    {
+      pattern: /.+(warning|info|error|success|reject).*/
+    }
+  ],
   theme: {
     extend: {
       colors: {

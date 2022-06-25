@@ -1,7 +1,7 @@
 import {useContext} from "react";
 import {INotificationContext, NotificationContext} from "../providers/NotificationProvider";
 
-const AppBanner = () => {
+const NotificationBanner = () => {
   const { notices } = useContext(NotificationContext) as INotificationContext;
 
   return (
@@ -15,4 +15,4 @@ const AppBanner = () => {
   )
 }
 
-export default AppBanner;
+export default NotificationBanner;

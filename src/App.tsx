@@ -3,7 +3,7 @@ import './App.css';
 import LoginPage from "./pages/login";
 import {Routes, Route} from "react-router-dom";
 import RegisterPage from "./pages/register";
-import AppBanner from "./components/AppBanner";
+import NotificationBanner from "./components/NotificationBanner";
 import NotificationProvider from './providers/NotificationProvider';
 import ErrorProvider from "./providers/ErrorProvider";
 
@@ -12,7 +12,7 @@ function App() {
 		<NotificationProvider>
 			<ErrorProvider>
 				<>
-					<AppBanner />
+					<NotificationBanner />
 
 					<Routes>
 						<Route path="/register" element={<RegisterPage />} />

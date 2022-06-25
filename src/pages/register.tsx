@@ -17,7 +17,7 @@ const RegisterPage = () => {
     addNotice({
       id: 'test',
       message: 'hello?',
-      level: 'error'
+      level: 'success'
     });
   }, [true]);
 

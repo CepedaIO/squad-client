@@ -1,7 +1,7 @@
 import {createContext, ReactElement, useContext} from "react";
 import {ErrorContext} from "../providers/ErrorProvider";
 import cc from 'classnames';
-import c from './Zoned.module.css';
+import c from './ErrorZone.module.pcss';
 
 interface IErrorZoneContext {
   field: string;
