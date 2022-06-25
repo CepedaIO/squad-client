@@ -1,26 +1,26 @@
 import React from 'react';
 import './App.css';
-import LoginPage from "./pages/login";
 import {Routes, Route} from "react-router-dom";
-import RegisterPage from "./pages/register";
+import LoginPage from "./pages/login";
 import NotificationBanner from "./components/NotificationBanner";
 import NotificationProvider from './providers/NotificationProvider';
 import ErrorProvider from "./providers/ErrorProvider";
 
 function App() {
 	return (
-		<NotificationProvider>
-			<ErrorProvider>
-				<>
-					<NotificationBanner />
+		<main className="h-screen w-screen p-8">
+			<NotificationProvider>
+				<ErrorProvider>
+					<>
+						<NotificationBanner />
 
-					<Routes>
-						<Route path="/register" element={<RegisterPage />} />
-						<Route path="/login" element={<LoginPage />} />
-					</Routes>
-				</>
-			</ErrorProvider>
-		</NotificationProvider>
+						<Routes>
+							<Route path="/login" element={<LoginPage />} />
+						</Routes>
+					</>
+				</ErrorProvider>
+			</NotificationProvider>
+		</main>
 	);
 }
 

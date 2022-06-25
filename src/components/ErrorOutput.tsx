@@ -6,16 +6,15 @@ interface ErrorOutputProps {
 }
 const ErrorOutput = ({ field }: ErrorOutputProps) => {
   const { hasError, getError } = useContext(ErrorContext);
-
-  const display = hasError(field) ? 'block' : 'none';
   const error = getError(field);
 
-  if(!error) {
+  console.log('error output render');
+  if(!hasError(field) || !error) {
     return <></>;
   }
 
   return (
-    <main className="text-error text-sm" style={{ display }}>
+    <main className="text-error text-sm">
       { error.message }
     </main>
   )

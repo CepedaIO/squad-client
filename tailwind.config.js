@@ -21,11 +21,13 @@ module.exports = {
     },
     extend: {
       colors: {
+        primary: colors.stone["600"],
         warning: colors.amber["300"],
         info: colors.sky["200"],
         error: colors.rose["400"],
         success: colors.green["300"],
-        reject: colors.rose["400"]
+        reject: colors.rose["400"],
+        hint: colors.gray["400"]
       }
     }
   },

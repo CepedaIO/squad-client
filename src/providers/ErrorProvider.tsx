@@ -12,7 +12,7 @@ interface ErrorProviderProps {
 interface IErrorContext {
   errors: FieldError[],
   addErrors: (errors:FieldError[] | FieldError) => void;
-  removeError: (key: string) => void;
+  removeErrors: (key?: string | string[]) => void;
   hasError: (key?: string) => boolean;
   getError: (key?: string) => FieldError | undefined;
 }
@@ -32,11 +32,14 @@ const ErrorProvider = ({
             .concat(error)
         )
       )
-    , [errors]);
+    , [setErrors]);
 
-  const removeError = useCallback((id: string) =>
-      setErrors((prev) => prev.filter((n) => n.key !== id))
-    , [errors]);
+  const removeErrors = useCallback((id?: string | string[]) => {
+    const ids = Array.isArray(id) ? id : [id];
+    setErrors((prev) =>
+      prev.filter((error => !ids.includes(error.key)))
+    );
+  }, [setErrors]);
 
   const hasError = useCallback(
     (key?: string) => !!key && errors.some((error) => error.key === key)
@@ -50,7 +53,7 @@ const ErrorProvider = ({
     <ErrorContext.Provider value={{
       errors,
       addErrors,
-      removeError,
+      removeErrors,
       hasError,
       getError
     }}>

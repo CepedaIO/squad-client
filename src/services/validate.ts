@@ -13,9 +13,11 @@ interface ValidatorContext<T extends Keyed> {
 
 export const useValidator = () => {
   const [errors, setErrors] = useState<any[]>([]);
-  const {addErrors} = useContext(ErrorContext);
+  const {addErrors, removeErrors} = useContext(ErrorContext);
 
   const setup = useCallback(<T extends Keyed>(values: T) => {
+    removeErrors(Object.keys(values));
+
     const validate = (results: ValidatorResult<T>[]) => {
       const errors = results.filter(({ key, valid }) => !valid)
       setErrors(() => errors);
