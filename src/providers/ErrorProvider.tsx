@@ -12,8 +12,9 @@ interface ErrorProviderProps {
 interface IErrorContext {
   errors: FieldError[],
   addErrors: (errors:FieldError[] | FieldError) => void;
-  removeError: (name: string) => void;
-  hasError: (name: string) => boolean;
+  removeError: (key: string) => void;
+  hasError: (key?: string) => boolean;
+  getError: (key: string) => FieldError | undefined;
 }
 
 export const ErrorContext = createContext<IErrorContext>({} as IErrorContext);
@@ -38,15 +39,20 @@ const ErrorProvider = ({
     , [errors]);
 
   const hasError = useCallback(
-    (id: string) => errors.some((error) => error.key === id)
-    , [errors])
+    (key?: string) => !!key && errors.some((error) => error.key === key)
+    , [errors]);
+
+  const getError = useCallback(
+  (key: string) => errors.find((error) => error.key === key)
+    , [errors]);
 
   return (
     <ErrorContext.Provider value={{
       errors,
       addErrors,
       removeError,
-      hasError
+      hasError,
+      getError
     }}>
       { children }
     </ErrorContext.Provider>

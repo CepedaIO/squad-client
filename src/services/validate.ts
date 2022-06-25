@@ -33,9 +33,10 @@ export const useValidator = () => {
         })
       })
 
-      debugger;
+      const errors = validate(results);
+      addErrors(errors);
 
-      addErrors(validate(results));
+      return errors.length === 0 ? Promise.resolve() : Promise.reject(errors);
     };
 
     return { validate, validateAndReport };

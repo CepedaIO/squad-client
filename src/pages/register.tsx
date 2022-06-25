@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
-import FieldError from "../components/FieldError";
+import ErrorOutput from "../components/ErrorOutput";
 import {INotificationContext, NotificationContext} from "../providers/NotificationProvider";
 import {ErrorContext} from "../providers/ErrorProvider";
 import {assert, useValidator} from "../services/validate";
+import {ErrorZone} from "../components/ErrorZone";
 
 const RegisterPage = () => {
   const emailInput = useRef<HTMLInputElement>(null);
@@ -43,16 +44,15 @@ const RegisterPage = () => {
   return (
     <div className="p-5 flex flex-row">
       <div className="mx-auto flex flex-col gap-6">
-        <div>
+        <ErrorZone field="email">
           <input type="text" name="email" placeholder="Enter email" ref={emailInput} />
-          <FieldError name="email" />
-        </div>
+          <ErrorOutput />
+        </ErrorZone>
 
         <div className="flex flex-row gap-5">
           <button className="primary mx-auto" onClick={clickedSignUp}>Sign-Up</button>
           <button className="secondary" onClick={clickedLogin}>Login</button>
         </div>
-
       </div>
     </div>
   )
