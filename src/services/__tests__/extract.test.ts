@@ -1,4 +1,4 @@
-import extractWidths from '../extractWidths';
+import { extractWidths } from '../extract';
 
 describe('extractWidths', function() {
   it('should extract tailwind widths from classnames', function() {
@@ -17,5 +17,11 @@ describe('extractWidths', function() {
     const [remaining, extracted] = extractWidths('w-full min-w-md max-w-screen-l');
     expect(remaining).toEqual('');
     expect(extracted).toEqual('w-full min-w-md max-w-screen-l');
+  });
+
+  it('should extract when a single class', function() {
+    const [remaining, extracted] = extractWidths('w-full');
+    expect(remaining).toEqual('');
+    expect(extracted).toEqual('w-full');
   });
 });
