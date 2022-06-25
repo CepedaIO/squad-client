@@ -10,6 +10,15 @@ module.exports = {
     }
   ],
   theme: {
+    screens: {
+      sm: '320px',
+      md: '375px',
+      lg: '425px',
+      xl: '768px',
+      '2xl': '1024px',
+      '3xl': '1440px',
+      '4k':' 2560px'
+    },
     extend: {
       colors: {
         warning: colors.amber["300"],

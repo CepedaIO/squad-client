@@ -11,8 +11,6 @@ interface ValidatorContext<T extends Keyed> {
   assert: <K extends keyof T & string>(key:K, valid: boolean | ((val:T[K], values: T) => boolean), message: string) => ValidatorResult<T>;
 }
 
-export const assert = <T extends Keyed, K extends keyof T = keyof T & string>(key:K, valid: boolean | ((val:T[K], values: T) => boolean), message: string) => ({ valid, message, key });
-
 export const useValidator = () => {
   const [errors, setErrors] = useState<any[]>([]);
   const {addErrors} = useContext(ErrorContext);
@@ -24,7 +22,7 @@ export const useValidator = () => {
       return errors;
     };
 
-    const validateAndReport = (provide: (ctx:ValidatorContext<T>) => ValidatorResult<T>[]) => {
+    const validateAndReport = (provide: (ctx:ValidatorContext<T>) => ValidatorResult<T>[]): Promise<T> => {
       const results = provide({
         assert: (key, valid, message) => ({
           key,
@@ -36,7 +34,7 @@ export const useValidator = () => {
       const errors = validate(results);
       addErrors(errors);
 
-      return errors.length === 0 ? Promise.resolve() : Promise.reject(errors);
+      return errors.length === 0 ? Promise.resolve(values) : Promise.reject({ errors, values });
     };
 
     return { validate, validateAndReport };

@@ -14,7 +14,7 @@ interface IErrorContext {
   addErrors: (errors:FieldError[] | FieldError) => void;
   removeError: (key: string) => void;
   hasError: (key?: string) => boolean;
-  getError: (key: string) => FieldError | undefined;
+  getError: (key?: string) => FieldError | undefined;
 }
 
 export const ErrorContext = createContext<IErrorContext>({} as IErrorContext);
@@ -43,7 +43,7 @@ const ErrorProvider = ({
     , [errors]);
 
   const getError = useCallback(
-  (key: string) => errors.find((error) => error.key === key)
+  (key?: string) => errors.find((error) => error.key === key)
     , [errors]);
 
   return (

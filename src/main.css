@@ -13,6 +13,16 @@
 	button {
 		@apply border-2 py-2 px-5 rounded;
 	}
+
+	h1 {
+		@apply text-2xl;
+	}
+	h2 {
+		@apply text-xl;
+	}
+	h3 {
+		@apply text-lg;
+	}
 }
 
 @layer components {

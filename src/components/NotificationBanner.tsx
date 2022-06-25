@@ -7,7 +7,7 @@ const NotificationBanner = () => {
   return (
     <main>
       {notices.map((notice) =>
-        <div className={`py-3 px-7 bg-${notice.level}`} key={notice.id}>
+        <div className={`py-3 px-7 bg-${notice.level} text-center`} key={notice.id}>
           {notice!.message}
         </div>
       )}

@@ -1,9 +1,10 @@
 import {useContext} from "react";
 import {ErrorContext} from "../providers/ErrorProvider";
-import {ErrorZoneContext} from "./ErrorZone";
 
-const ErrorOutput = () => {
-  const { field } = useContext(ErrorZoneContext);
+interface ErrorOutputProps {
+  field?: string;
+}
+const ErrorOutput = ({ field }: ErrorOutputProps) => {
   const { hasError, getError } = useContext(ErrorContext);
 
   const display = hasError(field) ? 'block' : 'none';
