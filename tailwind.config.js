@@ -6,7 +6,7 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /.+(warning|info|error|success|reject).*/
+      pattern: /.+(primary|warning|info|error|success|reject|fatal|hint|disabled).*/
     }
   ],
   theme: {
@@ -27,7 +27,10 @@ module.exports = {
         error: colors.rose["400"],
         success: colors.green["300"],
         reject: colors.rose["400"],
-        hint: colors.gray["400"]
+        fatal: colors.red["600"],
+        hint: colors.gray["400"],
+        disabled: colors.gray["400"],
+        submit: colors.blue["500"]
       }
     }
   },

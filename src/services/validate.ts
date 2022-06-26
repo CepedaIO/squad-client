@@ -1,5 +1,5 @@
-import {useCallback, useContext, useState} from "react";
-import {ErrorContext} from "../providers/ErrorProvider";
+import {Dispatch, SetStateAction, useCallback, useContext, useState} from "react";
+import {ErrorContext, FieldError} from "../providers/ErrorProvider";
 
 interface ValidatorResult<T extends Keyed, K extends keyof T = keyof T & string> {
   key: K;
@@ -39,7 +39,12 @@ export const useValidator = () => {
       return errors.length === 0 ? Promise.resolve(values) : Promise.reject({ errors, values });
     };
 
-    return { validate, validateAndReport };
+    const effect = (doEffect: () => void) => {
+      doEffect();
+      return { validate, validateAndReport, effect };
+    }
+
+    return { validate, validateAndReport, effect };
   }, []);
 
   const validate = useCallback(<T>(tests: ValidatorResult<T>[]) =>{

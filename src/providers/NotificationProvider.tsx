@@ -10,6 +10,7 @@ export interface INotificationContext {
   notices: AppNotice[],
   addNotice(notice: AppNotice): void;
   removeNotice(id: string): void;
+  handleUnexpected(err?: any): void;
 }
 
 export const NotificationContext = createContext<INotificationContext>({} as INotificationContext);
@@ -26,17 +27,30 @@ const NotificationProvider = ({
       prev.filter((n) => n.id !== notice.id)
         .concat(notice)
     )
-  , [notices]);
+  , [setNotices]);
 
   const removeNotice = useCallback((id: string) =>
     setNotices((prev) => prev.filter((n) => n.id !== id))
-  , [notices]);
+  , [setNotices]);
+
+  const handleUnexpected = useCallback((err?: any) => {
+    if(err) {
+      addNotice({
+        id: 'UnexpectedError',
+        message: 'Encountered an unexpected error! Please try again or contact me at alfred@cepeda.io',
+        level: 'fatal'
+      })
+    } else {
+      removeNotice('UnexpectedError')
+    }
+  }, [addNotice, removeNotice]);
 
   return (
     <NotificationContext.Provider value={{
       notices,
       addNotice,
-      removeNotice
+      removeNotice,
+      handleUnexpected
     }}>
       { children }
     </NotificationContext.Provider>

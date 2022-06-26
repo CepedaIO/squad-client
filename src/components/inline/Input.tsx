@@ -18,7 +18,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) 
     'name': props.field
   };
 
-  return <input ref={ref} {..._props} className={$c(props.className, {
+  return <input ref={ref} {..._props} className={$c(props.className, 'p-2', {
     'border-error': hasError(props.name)
   })} />
 })

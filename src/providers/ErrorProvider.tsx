@@ -1,6 +1,6 @@
 import {createContext, ReactElement, useCallback, useState} from "react";
 
-interface FieldError {
+export interface FieldError {
   key: string;
   message: string;
 }

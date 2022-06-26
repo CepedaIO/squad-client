@@ -10,18 +10,15 @@ type AccountModel {
     email: String!
     id: Float!
     modified: DateTime!
-    secret: String!
     uuid: String!
 }
 
 type Mutation {
-    createAccount(account: AccountInput!): SimpleResponse!
+    login(auth: LoginInput!): SimpleResponse!
 }
 
 type Query {
     accounts: [AccountModel!]!
-    getQRCode(account: AccountInput!): SimpleResponse!
-    login(auth: LoginInput!): SimpleResponse!
 }
 
 type SimpleResponse {
@@ -29,15 +26,9 @@ type SimpleResponse {
     success: Boolean!
 }
 
-input AccountInput {
-    email: String!
-}
-
-input LoginInput {
-    code: String!
-    email: String!
-}
-
-
 "The javascript `Date` as string. Type represents date and time as the ISO Date string."
 scalar DateTime
+
+input LoginInput {
+    email: String!
+}

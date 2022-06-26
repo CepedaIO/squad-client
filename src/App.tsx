@@ -8,19 +8,19 @@ import ErrorProvider from "./providers/ErrorProvider";
 
 function App() {
 	return (
-		<main className="h-screen w-screen p-8">
-			<NotificationProvider>
-				<ErrorProvider>
-					<>
-						<NotificationBanner />
+		<NotificationProvider>
+			<ErrorProvider>
+				<main className="h-screen w-screen flex flex-col">
+					<NotificationBanner />
 
+					<section className="p-8 h-full overflow-auto">
 						<Routes>
 							<Route path="/login" element={<LoginPage />} />
 						</Routes>
-					</>
-				</ErrorProvider>
-			</NotificationProvider>
-		</main>
+					</section>
+				</main>
+			</ErrorProvider>
+		</NotificationProvider>
 	);
 }
 
