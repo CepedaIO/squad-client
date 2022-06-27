@@ -37,7 +37,7 @@ const NotificationProvider = ({
     if(err) {
       addNotice({
         id: 'UnexpectedError',
-        message: 'Encountered an unexpected error! Please try again or contact me at alfred@cepeda.io',
+        message: 'Encountered an unexpected error! Please try again or contact me at support@cepeda.io',
         level: 'fatal'
       })
     } else {
