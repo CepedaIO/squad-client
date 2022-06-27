@@ -5,6 +5,7 @@ import LoginPage from "./pages/login";
 import NotificationBanner from "./components/NotificationBanner";
 import NotificationProvider from './providers/NotificationProvider';
 import ErrorProvider from "./providers/ErrorProvider";
+import AwaitingAccess from "./pages/awaiting-access";
 
 function App() {
 	return (
@@ -16,6 +17,7 @@ function App() {
 					<section className="p-8 h-full overflow-auto">
 						<Routes>
 							<Route path="/login" element={<LoginPage />} />
+							<Route path="/awaiting-access" element={<AwaitingAccess />} />
 						</Routes>
 					</section>
 				</main>

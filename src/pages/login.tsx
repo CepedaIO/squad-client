@@ -10,6 +10,7 @@ const LoginPage = () => {
   const emailInput = useRef<HTMLInputElement>(null);
   const { addNotice, handleUnexpected, removeNotice } = useContext(NotificationContext)
   const { setup } = useValidator();
+  const navigate = useNavigate();
 
   const [doLogin, { data, error, loading } ] = useMutation(gql`
     mutation Login($login: LoginInput!) {
@@ -23,6 +24,12 @@ const LoginPage = () => {
   useEffect(() => {
     handleUnexpected(error)
   }, [error]);
+
+  useEffect(() => {
+    if(data && data.login) {
+      navigate('/awaiting-access');
+    }
+  }, [data])
 
   const clickedLogin = () =>
     setup({
