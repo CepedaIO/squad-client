@@ -1,4 +1,27 @@
+import {gql, useQuery} from "@apollo/client";
+import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+
 const AwaitingAccess = () => {
+  const navigate = useNavigate();
+  const { data, startPolling } = useQuery(gql`
+    query Authenticated {
+      authenticated {
+        success
+      }
+    }
+  `);
+
+  useEffect(() => {
+    startPolling(5000)
+  }, []);
+
+  useEffect(() => {
+    if(data?.authenticated.success) {
+      navigate('/home');
+    }
+  }, [data])
+
   return (
     <div className="flex flex-col gap-16 items-center h-full">
       <h1 className="text-center">Awaiting Approval ... </h1>

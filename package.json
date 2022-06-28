@@ -14,7 +14,6 @@
     "@types/lodash.omit": "^4.5.7",
     "classnames": "^2.3.1",
     "graphql": "^16.5.0",
-    "graphql.macro": "^1.4.2",
     "lodash.omit": "^4.5.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

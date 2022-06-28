@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
 import {NotificationContext} from "../providers/NotificationProvider";
@@ -27,6 +27,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if(data && data.login) {
+      localStorage.setItem('auth', data.login.result);
       navigate('/awaiting-access');
     }
   }, [data])

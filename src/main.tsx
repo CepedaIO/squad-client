@@ -4,23 +4,37 @@ import './main.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
-import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
+import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
+import NotificationProvider from "./providers/NotificationProvider";
+import ErrorProvider from "./providers/ErrorProvider";
+import {setContext} from "@apollo/client/link/context";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 const client = new ApolloClient({
-  uri: 'http://localhost:8080',
-  cache: new InMemoryCache()
+  link: setContext((_, { headers }) => ({
+    headers: {
+      ...headers,
+      authorization: localStorage.getItem('auth') || ''
+    }
+  })).concat(createHttpLink({
+    uri: 'http://localhost:8080',
+  })),
+  cache: new InMemoryCache(),
 });
 
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <NotificationProvider>
+        <ErrorProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ErrorProvider>
+      </NotificationProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

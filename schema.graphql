@@ -5,20 +5,21 @@ schema {
     mutation: Mutation
 }
 
-type AccountModel {
+type Account {
     created: DateTime!
     email: String!
     id: Float!
-    modified: DateTime!
     uuid: String!
 }
 
 type Mutation {
     login(auth: LoginInput!): SimpleResponse!
+    useLoginToken(token: String!, uuid: String!): SimpleResponse!
 }
 
 type Query {
-    accounts: [AccountModel!]!
+    accounts: [Account!]!
+    authenticated: SimpleResponse!
 }
 
 type SimpleResponse {
