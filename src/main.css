@@ -9,9 +9,6 @@
 	input {
 		@apply border-2 p-2 rounded;
 	}
-	button {
-		@apply border-2 py-2 px-5 rounded;
-	}
 	h1 {
 		@apply text-3xl;
 	}

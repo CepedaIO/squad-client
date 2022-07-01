@@ -1,20 +1,22 @@
 import React, {useContext, useEffect, useRef} from "react";
-import {useNavigate} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
 import {NotificationContext} from "../providers/NotificationProvider";
 import {useValidator} from "../services/validate";
 import Button from "../components/inline/Button";
 import ErrorableInput from "../components/inline-block/ErrorableInput";
+import {AuthContext} from "../providers/AuthProvider";
+import {NavigationContext} from "../providers/NavigationProvider";
 
-const LoginPage = () => {
+const Login = () => {
   const emailInput = useRef<HTMLInputElement>(null);
-  const { addNotice, handleUnexpected, removeNotice } = useContext(NotificationContext)
+  const { addNotice, handleUnexpected, removeNotice } = useContext(NotificationContext);
+  const { setAuthToken } = useContext(AuthContext);
+  const { navigate } = useContext(NavigationContext);
   const { setup } = useValidator();
-  const navigate = useNavigate();
 
-  const [doLogin, { data, error, loading } ] = useMutation(gql`
-    mutation Login($login: LoginInput!) {
-      login(auth: $login) {
+  const [mutLogin, { data, error, loading } ] = useMutation(gql`
+    mutation Login($email: String!) {
+      login(email: $email) {
         success,
         result
       }
@@ -26,8 +28,8 @@ const LoginPage = () => {
   }, [error]);
 
   useEffect(() => {
-    if(data && data.login) {
-      localStorage.setItem('auth', data.login.result);
+    if(data?.login?.success) {
+      setAuthToken(data.login.result);
       navigate('/awaiting-access');
     }
   }, [data])
@@ -40,9 +42,7 @@ const LoginPage = () => {
     .validateAndReport(({ assert }) => [
       assert('email', (val) => !!val && val.length > 2, 'Must be greater than 2 characters'),
     ])
-    .then((login) => doLogin({
-      variables: { login }
-    }))
+    .then((variables) => mutLogin({ variables }))
     .catch(({ errors }) => {
       if(errors) {
         addNotice({
@@ -63,7 +63,7 @@ const LoginPage = () => {
         <ErrorableInput type="text" field="email" placeholder="Enter email" className="w-full" ref={emailInput} />
 
         <div>
-          <Button variant="primary" className="w-full" disabled={loading} onClick={clickedLogin}>Login</Button>
+          <Button variant={"primary"} loading={loading} className="w-full" onClick={clickedLogin}>Login</Button>
           <div className="text-xs text-hint mt-2">
             This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
           </div>
@@ -73,4 +73,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage;
+export default Login;

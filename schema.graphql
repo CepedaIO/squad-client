@@ -5,31 +5,16 @@ schema {
     mutation: Mutation
 }
 
-type Account {
-    created: DateTime!
-    email: String!
-    id: Float!
-    uuid: String!
-}
-
 type Mutation {
-    login(auth: LoginInput!): SimpleResponse!
-    useLoginToken(token: String!, uuid: String!): SimpleResponse!
+    login(email: String!): SimpleResponse!
+    useLoginToken(expires: Float!, token: String!, uuid: String!): SimpleResponse!
 }
 
 type Query {
-    accounts: [Account!]!
     authenticated: SimpleResponse!
 }
 
 type SimpleResponse {
     result: String!
     success: Boolean!
-}
-
-"The javascript `Date` as string. Type represents date and time as the ISO Date string."
-scalar DateTime
-
-input LoginInput {
-    email: String!
 }

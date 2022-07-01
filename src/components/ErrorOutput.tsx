@@ -8,7 +8,6 @@ const ErrorOutput = ({ field }: ErrorOutputProps) => {
   const { hasError, getError } = useContext(ErrorContext);
   const error = getError(field);
 
-  console.log('error output render');
   if(!hasError(field) || !error) {
     return <></>;
   }

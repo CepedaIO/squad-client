@@ -8,6 +8,8 @@ import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apol
 import NotificationProvider from "./providers/NotificationProvider";
 import ErrorProvider from "./providers/ErrorProvider";
 import {setContext} from "@apollo/client/link/context";
+import NavigationProvider from "./providers/NavigationProvider";
+import AuthProvider from "./providers/AuthProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,7 +33,11 @@ root.render(
       <NotificationProvider>
         <ErrorProvider>
           <BrowserRouter>
-            <App />
+            <AuthProvider>
+              <NavigationProvider>
+                <App />
+              </NavigationProvider>
+            </AuthProvider>
           </BrowserRouter>
         </ErrorProvider>
       </NotificationProvider>
