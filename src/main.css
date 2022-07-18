@@ -21,4 +21,18 @@
 	a {
 		text-decoration: underline;
 	}
+	label {
+		@apply text-lg font-semibold;
+	}
+	.center {
+		@apply flex flex-row items-center;
+	}
+
+	.center.stretch > * {
+		@apply grow;
+	}
+
+	.col-to-row {
+		@apply flex flex-col md:flex-row md:justify-between md:items-center md:gap-2;
+	}
 }

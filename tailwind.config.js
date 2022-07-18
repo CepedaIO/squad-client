@@ -23,6 +23,7 @@ module.exports = {
       colors: {
         hint: colors.gray["400"],
         submit: colors.blue["500"],
+        active: colors.blue["500"],
         primary: colors.stone["600"],
         warning: colors.amber["300"],
         info: colors.sky["200"],
@@ -31,6 +32,7 @@ module.exports = {
         reject: colors.rose["400"],
         fatal: colors.red["600"],
         disabled: colors.gray["400"],
+        slight: colors.gray["100"]
       }
     }
   },

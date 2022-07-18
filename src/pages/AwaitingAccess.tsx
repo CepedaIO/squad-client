@@ -1,12 +1,16 @@
 import {useContext, useEffect} from "react";
 import {AuthContext} from "../providers/AuthProvider";
+import {NavigationContext} from "../providers/NavigationProvider";
 
 const AwaitingAccess = () => {
-  const { pollForAuthentication } = useContext(AuthContext);
+  const { authenticated, pollForAuthentication } = useContext(AuthContext);
+  const { navigate } = useContext(NavigationContext);
 
   useEffect(() => {
-    pollForAuthentication();
-  }, []);
+    debugger;
+    if(!authenticated) pollForAuthentication();
+    if(authenticated) navigate('/home');
+  }, [authenticated]);
 
   return (
     <div className="flex flex-col gap-12 items-center h-full">

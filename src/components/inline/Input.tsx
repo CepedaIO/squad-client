@@ -3,9 +3,12 @@ import {ErrorContext} from "../../providers/ErrorProvider";
 import $c from "classnames";
 import omit from "lodash.omit";
 
-export type InputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+
+export type InputProps =  (ReactInputProps & {
   field: string;
-}
+  input?: JSX.Element;
+});
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) => {
   const {hasError} = useContext(ErrorContext);
@@ -15,8 +18,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) 
    */
   const _props = {
     ...omit(props, 'field'),
-    'name': props.field
-  };
+    'name': props.field,
+    'type': props.type || 'text'
+  }
+
+  const typeMap = new Map<string, JSX.Element>([
+    ['textarea', (
+      // @ts-ignore
+      <textarea ref={ref} {..._props} className={$c(props.className, 'p-2 border-2', {
+        'border-error': hasError(props.name)
+      })} />
+    )]
+  ])
+
+  if(typeMap.has(_props.type)) {
+    return typeMap.get(_props.type)!;
+  }
+
+  if(props.input) {
+    return props.input;
+  }
 
   return <input ref={ref} {..._props} className={$c(props.className, 'p-2', {
     'border-error': hasError(props.name)

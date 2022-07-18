@@ -9,11 +9,10 @@ const LoginWith = () => {
   const didAttemptLogin = useRef(false);
   const { token, uuid } = useParams();
   const [searchParams] = useSearchParams();
-  const { authenticated } = useContext(AuthContext);
+  const { authenticated, pollForAuthentication } = useContext(AuthContext);
   const { navigate } = useContext(NavigationContext);
 
   const variables = { token, uuid, expires: parseInt(searchParams.get('expires') || '0') };
-  console.log(variables);
 
   const [login, { error, data }] = useMutation(gql`
     mutation UseLoginToken($token: String!, $uuid: String!, $expires: Int!) {
@@ -30,6 +29,7 @@ const LoginWith = () => {
   useEffect(() => {
     if(!didAttemptLogin.current) {
       login();
+      pollForAuthentication();
       didAttemptLogin.current = true;
     }
   }, []);

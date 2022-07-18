@@ -1,8 +1,8 @@
-import {createContext, useEffect, useState} from "react";
-import {gql, useLazyQuery, useQuery} from "@apollo/client";
+import {createContext, useState} from "react";
+import {gql, useQuery} from "@apollo/client";
 
 interface AuthProviderProps {
-  children: JSX.Element[] | JSX.Element;
+  children?: JSX.Element[] | JSX.Element;
 }
 
 interface IAuthContext {
@@ -25,7 +25,7 @@ const AuthProvider = ({
   const [authenticated, setAuthenticated] = useState(false);
   const [_, setToken] = useState<string | null>(null);
 
-  const { data, loading, startPolling, stopPolling }= useQuery(gql`
+  const { loading, startPolling, stopPolling }= useQuery(gql`
     query Authenticated {
       authenticated {
         success
@@ -33,9 +33,9 @@ const AuthProvider = ({
     }
   `, {
     onCompleted(data) {
-      if(data?.authenticated?.success === true) {
-        setAuthenticated(true);
-        stopPolling();
+      if(data?.authenticated) {
+        setAuthenticated(data?.authenticated?.success);
+        stopPolling()
       }
     }
   });
@@ -45,12 +45,20 @@ const AuthProvider = ({
     setToken(token);
   }
 
+  const pollForAuthentication = () => {
+    if(authenticated) {
+      return;
+    }
+
+    startPolling(3000)
+  }
+
   return (
     <AuthContext.Provider value={{
       loading,
       authenticated,
       setAuthToken,
-      pollForAuthentication: () => startPolling(5000)
+      pollForAuthentication
     }}>
       { children }
     </AuthContext.Provider>

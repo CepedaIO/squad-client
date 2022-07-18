@@ -6,7 +6,7 @@ export interface FieldError {
 }
 
 interface ErrorProviderProps {
-  children: ReactElement
+  children?: ReactElement
 }
 
 interface IErrorContext {

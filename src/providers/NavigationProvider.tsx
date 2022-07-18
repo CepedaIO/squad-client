@@ -1,15 +1,10 @@
 import {createContext, useContext, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "./AuthProvider";
+import {newDebug} from "../services/utils";
 
 interface NavigationProviderProps {
   children: JSX.Element[] | JSX.Element
-}
-
-type NavigationGuard = {
-  id: string;
-  applies(path: string): boolean;
-  action(): void;
 }
 
 interface INavigationContext {
@@ -18,17 +13,45 @@ interface INavigationContext {
   navigateAnywhere(): void;
 }
 
+interface GuardApplies {
+  authenticated: boolean;
+  path: string;
+}
+interface GuardAction {
+  navigate(to:string): void;
+}
+interface NavigationGuard {
+  id: string;
+  applies(params: GuardApplies): boolean;
+  action(params: GuardAction): boolean | void;
+}
+
 export const NavigationContext = createContext<INavigationContext>({
   guards: [],
   navigate() { },
   navigateAnywhere() { }
 });
 
-const isUnprotectedPath = (path:string): boolean => [
-  '/login',
-  '/awaiting-access',
-  '/accepting-access'
-].some((route) => path.startsWith(route));
+const guards: NavigationGuard[] = [{
+    id: 'Noop Paths',
+    applies({ path }) {
+      return [
+        /^\/login$/,
+        /^\/awaiting-access$/,
+        /^\/login-with/,
+      ].some((route) => route.test(path));
+    },
+    action() { return true; }
+  }, {
+    id: 'Fallthrough Protected Paths',
+    applies({ authenticated}) {
+      return !authenticated
+    },
+    action({ navigate }) { navigate('/login'); }
+  }
+]
+
+const debug = newDebug('NavigationProvider');
 
 const NavigationProvider = ({
   children
@@ -38,31 +61,24 @@ const NavigationProvider = ({
 
   useEffect(() => {
     if(!loading) {
-      verifyGuards(location.pathname);
+      navigateWithGuards(location.pathname);
     }
   }, [loading, authenticated])
-  const guards = [
-    {
-      id: 'Already logged in',
-      applies: (path:string) => authenticated && isUnprotectedPath(path),
-      action: () => _navigate('/home')
-    }, {
-      id: 'Must be logged in',
-      applies: (path:string) => !authenticated && !isUnprotectedPath(path),
-      action: () => _navigate('/login')
-    }
-  ];
 
   const navigate = (to:string) => {
-    verifyGuards(to);
+    navigateWithGuards(to);
   }
 
-  const verifyGuards = (to:string) => {
-    const triggered = guards.find((guard) => guard.applies(to));
+  const navigateWithGuards = (path:string) => {
+    let shouldNavigate:boolean | void = true;
+    const triggered = guards.find((guard) => guard.applies({ authenticated, path }));
     if(triggered) {
-      triggered.action();
-    } else {
-      _navigate(to);
+      debug(`${triggered.id} has been triggered`);
+      shouldNavigate = triggered.action({ navigate: _navigate });
+    }
+
+    if(shouldNavigate) {
+      _navigate(path);
     }
   };
 

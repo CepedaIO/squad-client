@@ -29,6 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     if(data?.login?.success) {
+      debugger;
       setAuthToken(data.login.result);
       navigate('/awaiting-access');
     }
@@ -63,7 +64,7 @@ const Login = () => {
         <ErrorableInput type="text" field="email" placeholder="Enter email" className="w-full" ref={emailInput} />
 
         <div>
-          <Button variant={"primary"} loading={loading} className="w-full" onClick={clickedLogin}>Login</Button>
+          <Button variant={"submit"} loading={loading} className="w-full" onClick={clickedLogin}>Login</Button>
           <div className="text-xs text-hint mt-2">
             This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
           </div>
