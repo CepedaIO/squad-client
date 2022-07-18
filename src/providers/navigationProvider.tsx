@@ -1,13 +1,9 @@
-import {createContext, useContext, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-import {AuthContext} from "./AuthProvider";
+import {useEffect} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import {newDebug} from "../services/utils";
+import {IAuthContext} from "./authProvider";
 
-interface NavigationProviderProps {
-  children: JSX.Element[] | JSX.Element
-}
-
-interface INavigationContext {
+export interface INavigationContext {
   guards: NavigationGuard[];
   navigate(to:string): void;
   navigateAnywhere(): void;
@@ -25,12 +21,6 @@ interface NavigationGuard {
   applies(params: GuardApplies): boolean;
   action(params: GuardAction): boolean | void;
 }
-
-export const NavigationContext = createContext<INavigationContext>({
-  guards: [],
-  navigate() { },
-  navigateAnywhere() { }
-});
 
 const guards: NavigationGuard[] = [{
     id: 'Noop Paths',
@@ -53,10 +43,8 @@ const guards: NavigationGuard[] = [{
 
 const debug = newDebug('NavigationProvider');
 
-const NavigationProvider = ({
-  children
-}: NavigationProviderProps) => {
-  const { authenticated, loading } = useContext(AuthContext);
+const navigationProvider = ({ authenticated, loading }: IAuthContext) => {
+  const { pathname: currentPath } = useLocation();
   const _navigate = useNavigate();
 
   useEffect(() => {
@@ -72,12 +60,14 @@ const NavigationProvider = ({
   const navigateWithGuards = (path:string) => {
     let shouldNavigate:boolean | void = true;
     const triggered = guards.find((guard) => guard.applies({ authenticated, path }));
+
+    debugger;
     if(triggered) {
-      debug(`${triggered.id} has been triggered`);
-      shouldNavigate = triggered.action({ navigate: _navigate });
+      debug(`${triggered.id} has been triggered for: ${path}`);
+      shouldNavigate = triggered.action({ navigate });
     }
 
-    if(shouldNavigate) {
+    if(shouldNavigate && currentPath !== path) {
       _navigate(path);
     }
   };
@@ -90,15 +80,11 @@ const NavigationProvider = ({
     }
   }
 
-  return (
-    <NavigationContext.Provider value={{
-      guards,
-      navigate,
-      navigateAnywhere
-    }}>
-      { children }
-    </NavigationContext.Provider>
-  )
+  return {
+    guards,
+    navigate,
+    navigateAnywhere
+  };
 }
 
-export default NavigationProvider;
+export default navigationProvider;

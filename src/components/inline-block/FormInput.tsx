@@ -1,41 +1,46 @@
-import ErrorableInput from "./ErrorableInput";
+import ErrorableInput, {ErrorableInputProps} from "./ErrorableInput";
 import $c from "classnames";
-import {InputProps} from "../inline/Input";
 import {ist} from "../../services/utils";
 
 type FormInputProps = {
   label: string;
   nowrap?: boolean;
-} & InputProps;
+} & ErrorableInputProps;
 
 type FormInputSlotProps = {
   slots: {
     label: JSX.Element;
     input: JSX.Element;
   }
-} & InputProps;
+} & ErrorableInputProps;
 
 
 const FormInput = (props: FormInputProps | FormInputSlotProps) => {
   const {
-    field, type
+    field, type, validate
   } = props;
-
-
 
   if(ist<FormInputSlotProps>((obj) => !!obj.slots)(props)) {
     return (
       <main className={$c('flex flex-col')}>
         { props.slots.label }
-        <ErrorableInput field={field} type={type} input={props.slots.input} />
+        <ErrorableInput field={field} type={type} input={props.slots.input} validate={validate} />
       </main>
     )
   }
 
   return (
-    <main className={$c('col-to-row')}>
-      <label>{ props.label }</label>
-      <ErrorableInput field={field} type={type}  />
+    <main className={$c({
+      'col-to-row grow-children': props.nowrap,
+      'flex flex-col': !props.nowrap
+    })}>
+      <label className={$c({
+        'md:w-1/3': props.nowrap
+      })}>{ props.label }</label>
+
+      <ErrorableInput field={field} type={type} validate={validate} className={$c({
+        'md:w-2/3': props.nowrap
+      })}/>
     </main>
   )
 }

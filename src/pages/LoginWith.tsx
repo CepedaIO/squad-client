@@ -1,16 +1,17 @@
 import {useParams, useSearchParams} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
 import {useContext, useEffect, useRef} from "react";
-import {AuthContext} from "../providers/AuthProvider";
 import Button from "../components/inline/Button";
-import {NavigationContext} from "../providers/NavigationProvider";
+import {AppContext} from "../providers/AppProvider";
 
 const LoginWith = () => {
   const didAttemptLogin = useRef(false);
   const { token, uuid } = useParams();
   const [searchParams] = useSearchParams();
-  const { authenticated, pollForAuthentication } = useContext(AuthContext);
-  const { navigate } = useContext(NavigationContext);
+  const {
+    auth: { authenticated, pollForAuthentication },
+    nav: { navigate }
+  } = useContext(AppContext);
 
   const variables = { token, uuid, expires: parseInt(searchParams.get('expires') || '0') };
 

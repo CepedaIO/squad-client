@@ -1,7 +1,7 @@
 import React, {DetailedHTMLProps, InputHTMLAttributes, useContext, forwardRef} from "react";
-import {ErrorContext} from "../../providers/ErrorProvider";
 import $c from "classnames";
 import omit from "lodash.omit";
+import {AppContext} from "../../providers/AppProvider";
 
 type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
@@ -11,7 +11,12 @@ export type InputProps =  (ReactInputProps & {
 });
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) => {
-  const {hasError} = useContext(ErrorContext);
+  /**
+   * TODO: Move this up to ErrorableInput
+   */
+  const {
+    err: {hasError}
+  } = useContext(AppContext);
 
   /**
    * We use field consistently here to denote the field of some data type (like error)

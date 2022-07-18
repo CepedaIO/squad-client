@@ -1,17 +1,18 @@
 import React, {useContext, useEffect, useRef} from "react";
 import {gql, useMutation} from "@apollo/client";
-import {NotificationContext} from "../providers/NotificationProvider";
 import {useValidator} from "../services/validate";
 import Button from "../components/inline/Button";
 import ErrorableInput from "../components/inline-block/ErrorableInput";
-import {AuthContext} from "../providers/AuthProvider";
-import {NavigationContext} from "../providers/NavigationProvider";
+import {AppContext} from "../providers/AppProvider";
 
 const Login = () => {
   const emailInput = useRef<HTMLInputElement>(null);
-  const { addNotice, handleUnexpected, removeNotice } = useContext(NotificationContext);
-  const { setAuthToken } = useContext(AuthContext);
-  const { navigate } = useContext(NavigationContext);
+  const {
+    auth: { setAuthToken },
+    nav: { navigate },
+    notif: { addNotice, handleUnexpected, removeNotice }
+  } = useContext(AppContext);
+
   const { setup } = useValidator();
 
   const [mutLogin, { data, error, loading } ] = useMutation(gql`
@@ -29,7 +30,6 @@ const Login = () => {
 
   useEffect(() => {
     if(data?.login?.success) {
-      debugger;
       setAuthToken(data.login.result);
       navigate('/awaiting-access');
     }

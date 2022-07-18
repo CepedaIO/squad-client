@@ -1,8 +1,10 @@
 import {useContext, useEffect} from "react";
-import {NavigationContext} from "../providers/NavigationProvider";
+import {AppContext} from "../providers/AppProvider";
 
 const Fallback = () => {
-  const { navigateAnywhere } = useContext(NavigationContext);
+  const {
+    nav: { navigateAnywhere }
+  } = useContext(AppContext);
 
   useEffect(() => {
     navigateAnywhere();

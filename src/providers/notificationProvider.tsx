@@ -1,4 +1,4 @@
-import {createContext, useCallback, useState} from "react";
+import {useCallback, useState} from "react";
 import $c from "classnames";
 
 export interface AppNotice {
@@ -14,17 +14,9 @@ export interface INotificationContext {
   handleUnexpected(err?: any): void;
 }
 
-export const NotificationContext = createContext<INotificationContext>({} as INotificationContext);
-
-interface NotificationContextProviderProps {
-  children?: JSX.Element
-}
-
 const whiteText = ['error', 'fatal'];
 
-const NotificationProvider = ({
-  children
-}: NotificationContextProviderProps) => {
+const notificationProvider = () => {
   const [notices, setNotices] = useState<AppNotice[]>([]);
   const addNotice = useCallback((notice: AppNotice) =>
     setNotices((prev) =>
@@ -49,13 +41,14 @@ const NotificationProvider = ({
     }
   }, [addNotice, removeNotice]);
 
-  return (
-    <NotificationContext.Provider value={{
+  return {
+    context: {
       notices,
       addNotice,
       removeNotice,
       handleUnexpected
-    }}>
+    },
+    view: (
       <main>
         {notices.map((notice) =>
         <div className={$c(`py-3 px-7 bg-${notice.level} text-center`, {
@@ -65,10 +58,8 @@ const NotificationProvider = ({
         </div>
         )}
       </main>
-
-      { children }
-    </NotificationContext.Provider>
-  )
+    )
+  };
 }
 
-export default NotificationProvider;
+export default notificationProvider;

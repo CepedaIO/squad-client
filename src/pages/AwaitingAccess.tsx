@@ -1,13 +1,13 @@
 import {useContext, useEffect} from "react";
-import {AuthContext} from "../providers/AuthProvider";
-import {NavigationContext} from "../providers/NavigationProvider";
+import {AppContext} from "../providers/AppProvider";
 
 const AwaitingAccess = () => {
-  const { authenticated, pollForAuthentication } = useContext(AuthContext);
-  const { navigate } = useContext(NavigationContext);
+  const {
+    auth: { authenticated, pollForAuthentication },
+    nav: { navigate }
+  } = useContext(AppContext);
 
   useEffect(() => {
-    debugger;
     if(!authenticated) pollForAuthentication();
     if(authenticated) navigate('/home');
   }, [authenticated]);
@@ -22,7 +22,7 @@ const AwaitingAccess = () => {
       </p>
 
       <div className="mt-12">
-        <img src="/cat.gif" />
+        <img src="/cat.gif"  alt={"cat"}/>
       </div>
     </div>
   )

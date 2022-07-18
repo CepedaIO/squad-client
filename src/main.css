@@ -28,7 +28,7 @@
 		@apply flex flex-row items-center;
 	}
 
-	.center.stretch > * {
+	.grow-children > * {
 		@apply grow;
 	}
 

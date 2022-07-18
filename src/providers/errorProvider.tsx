@@ -1,15 +1,11 @@
-import {createContext, ReactElement, useCallback, useState} from "react";
+import {useCallback, useState} from "react";
 
 export interface FieldError {
   key: string;
   message: string;
 }
 
-interface ErrorProviderProps {
-  children?: ReactElement
-}
-
-interface IErrorContext {
+export interface IErrorContext {
   errors: FieldError[],
   addErrors: (errors:FieldError[] | FieldError) => void;
   removeErrors: (key?: string | string[]) => void;
@@ -17,11 +13,7 @@ interface IErrorContext {
   getError: (key?: string) => FieldError | undefined;
 }
 
-export const ErrorContext = createContext<IErrorContext>({} as IErrorContext);
-
-const ErrorProvider = ({
-  children
-}: ErrorProviderProps) => {
+const errorProvider = () => {
   const [errors, setErrors] = useState<FieldError[]>([]);
   const addErrors = useCallback((errors: FieldError | FieldError[]) =>
     ([] as FieldError[])
@@ -49,17 +41,13 @@ const ErrorProvider = ({
   (key?: string) => errors.find((error) => error.key === key)
     , [errors]);
 
-  return (
-    <ErrorContext.Provider value={{
-      errors,
-      addErrors,
-      removeErrors,
-      hasError,
-      getError
-    }}>
-      { children }
-    </ErrorContext.Provider>
-  )
+  return {
+    errors,
+    addErrors,
+    removeErrors,
+    hasError,
+    getError
+  };
 };
 
-export default ErrorProvider;
+export default errorProvider;

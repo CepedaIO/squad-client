@@ -1,5 +1,5 @@
-import {Dispatch, SetStateAction, useCallback, useContext, useState} from "react";
-import {ErrorContext, FieldError} from "../providers/ErrorProvider";
+import {useCallback, useContext, useState} from "react";
+import {AppContext} from "../providers/AppProvider";
 
 interface ValidatorResult<T extends Keyed, K extends keyof T = keyof T & string> {
   key: K;
@@ -13,13 +13,16 @@ interface ValidatorContext<T extends Keyed> {
 
 export const useValidator = () => {
   const [errors, setErrors] = useState<any[]>([]);
-  const {addErrors, removeErrors} = useContext(ErrorContext);
+  const {
+    err: {addErrors, removeErrors}
+  } = useContext(AppContext);
 
   const setup = useCallback(<T extends Keyed>(values: T) => {
     removeErrors(Object.keys(values));
 
     const validate = (results: ValidatorResult<T>[]) => {
       const errors = results.filter(({ key, valid }) => !valid)
+      debugger;
       setErrors(() => errors);
       return errors;
     };

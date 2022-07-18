@@ -4,7 +4,16 @@ import ErrorOutput from "../ErrorOutput";
 import {extractWidths} from "../../services/extract";
 import $c from "classnames";
 
-const ErrorableInput = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) => {
+interface ValidateResult {
+  valid: boolean;
+  message: string;
+}
+
+export interface ErrorableInputProps extends InputProps {
+  validate(value:never): ValidateResult;
+}
+
+const ErrorableInput = forwardRef<HTMLInputElement, ErrorableInputProps>((props: ErrorableInputProps, ref) => {
   const [inputClasses, widthClasses] = extractWidths(props.className);
 
   return <section className={$c('inline-block', widthClasses)}>

@@ -5,12 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
-import NotificationProvider from "./providers/NotificationProvider";
-import ErrorProvider from "./providers/ErrorProvider";
 import {setContext} from "@apollo/client/link/context";
-import AuthProvider from "./providers/AuthProvider";
-import ModalProvider from "./providers/ModalProvider";
-import NavigationProvider from "./providers/NavigationProvider";
+import AppProvider from "./providers/AppProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,18 +27,11 @@ const client = new ApolloClient({
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <NotificationProvider>
-        <ErrorProvider>
-          <BrowserRouter>
-            <AuthProvider>
-
-                <ModalProvider>
-                  <App />
-                </ModalProvider>
-            </AuthProvider>
-          </BrowserRouter>
-        </ErrorProvider>
-      </NotificationProvider>
+      <BrowserRouter>
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>
 );

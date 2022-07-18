@@ -1,11 +1,13 @@
-import {useContext} from "react";
-import {ErrorContext} from "../providers/ErrorProvider";
+import {useContext} from "react"
+import {AppContext} from "../providers/AppProvider";
 
 interface ErrorOutputProps {
   field?: string;
 }
 const ErrorOutput = ({ field }: ErrorOutputProps) => {
-  const { hasError, getError } = useContext(ErrorContext);
+  const {
+    err: { hasError, getError }
+  } = useContext(AppContext);
   const error = getError(field);
 
   if(!hasError(field) || !error) {

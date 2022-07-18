@@ -11,31 +11,31 @@ type ButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HT
 }
 
 const border = 'border-0 rounded';
+const padding = 'py-2 px-5';
 
 const classesForVariant = new Map<Variants, string | ((props: ButtonProps) => string)>([
-  ['submit', $c('bg-submit text-white', border)],
-  ['reject', $c('bg-gray-200')],
-  ['optional', $c('bg-violet-100')],
-  ['toggle', $c('text-left')],
-  ['link', ({active}) => $c('border-0 underline', {
+  ['submit', $c('bg-submit text-white', padding, border)],
+  ['reject', $c('bg-gray-200', padding)],
+  ['optional', $c('bg-violet-100', padding)],
+  ['toggle', $c('text-left p-0')],
+  ['link', ({active}) => $c('border-0 underline', padding, {
     'bg-red-100': active
   })],
-  ['tab', ({active}) => $c('border-2', {
+  ['tab', ({active}) => $c('border-2', padding, {
     'text-submit': active
   })],
-  ['disabled', $c('bg-disabled text-white', border)]
+  ['disabled', $c('bg-disabled text-white', padding, border)]
 ]);
 
 const getClasses = (props: ButtonProps) => {
-  const { variant, loading, active, className } = props;
+  const { variant, loading, className } = props;
   const buttonClasses = loading ? classesForVariant.get('disabled') : classesForVariant.get(variant);
-  const defaultClasses = 'py-2 px-5';
 
-  if(typeof buttonClasses === 'function') {;
-    return $c(defaultClasses, className, buttonClasses(props));
+  if(typeof buttonClasses === 'function') {
+    return $c(className, buttonClasses(props));
   }
 
-  return $c(buttonClasses, className, defaultClasses);
+  return $c(className, buttonClasses);
 }
 
 const ToggleDecorator = ({ active, variant }: ButtonProps) => {
@@ -44,11 +44,11 @@ const ToggleDecorator = ({ active, variant }: ButtonProps) => {
   }
 
   if(active) {
-    return <i className="fa-solid fa-thumbs-up text-success ml-4"></i>;
+    return <i className="fa-solid fa-thumbs-up text-success ml-6"></i>;
   }
 
   if(!active) {
-    return <i className="fa-solid fa-thumbs-down text-reject ml-4"></i>;
+    return <i className="fa-solid fa-thumbs-down text-reject ml-6"></i>;
   }
 }
 
