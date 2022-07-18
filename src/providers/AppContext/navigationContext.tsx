@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {newDebug} from "../services/utils";
-import {IAuthContext} from "./authProvider";
+import {newDebug} from "../../services/utils";
+import {IAuthContext} from "./authContext";
 
 export interface INavigationContext {
   guards: NavigationGuard[];
@@ -43,7 +43,7 @@ const guards: NavigationGuard[] = [{
 
 const debug = newDebug('NavigationProvider');
 
-const navigationProvider = ({ authenticated, loading }: IAuthContext) => {
+const navigationContext = ({ authenticated, loading }: IAuthContext) => {
   const { pathname: currentPath } = useLocation();
   const _navigate = useNavigate();
 
@@ -61,7 +61,6 @@ const navigationProvider = ({ authenticated, loading }: IAuthContext) => {
     let shouldNavigate:boolean | void = true;
     const triggered = guards.find((guard) => guard.applies({ authenticated, path }));
 
-    debugger;
     if(triggered) {
       debug(`${triggered.id} has been triggered for: ${path}`);
       shouldNavigate = triggered.action({ navigate });
@@ -87,4 +86,4 @@ const navigationProvider = ({ authenticated, loading }: IAuthContext) => {
   };
 }
 
-export default navigationProvider;
+export default navigationContext;

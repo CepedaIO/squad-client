@@ -16,7 +16,7 @@ export interface INotificationContext {
 
 const whiteText = ['error', 'fatal'];
 
-const notificationProvider = () => {
+const notificationContext = () => {
   const [notices, setNotices] = useState<AppNotice[]>([]);
   const addNotice = useCallback((notice: AppNotice) =>
     setNotices((prev) =>
@@ -62,4 +62,4 @@ const notificationProvider = () => {
   };
 }
 
-export default notificationProvider;
+export default notificationContext;

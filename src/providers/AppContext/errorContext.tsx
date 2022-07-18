@@ -13,7 +13,7 @@ export interface IErrorContext {
   getError: (key?: string) => FieldError | undefined;
 }
 
-const errorProvider = () => {
+const errorContext = () => {
   const [errors, setErrors] = useState<FieldError[]>([]);
   const addErrors = useCallback((errors: FieldError | FieldError[]) =>
     ([] as FieldError[])
@@ -50,4 +50,4 @@ const errorProvider = () => {
   };
 };
 
-export default errorProvider;
+export default errorContext;

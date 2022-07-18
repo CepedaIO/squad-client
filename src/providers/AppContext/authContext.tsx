@@ -8,7 +8,7 @@ export interface IAuthContext {
   pollForAuthentication(): void;
 }
 
-const authProvider = () => {
+const authContext = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [_, setToken] = useState<string | null>(null);
 
@@ -48,4 +48,4 @@ const authProvider = () => {
   };
 };
 
-export default authProvider;
+export default authContext;

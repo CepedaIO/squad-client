@@ -1,5 +1,5 @@
 import {useContext} from "react"
-import {AppContext} from "../providers/AppProvider";
+import AppContext from "../providers/AppContext";
 
 interface ErrorOutputProps {
   field?: string;

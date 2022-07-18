@@ -1,7 +1,7 @@
 import React, {DetailedHTMLProps, InputHTMLAttributes, useContext, forwardRef} from "react";
 import $c from "classnames";
 import omit from "lodash.omit";
-import {AppContext} from "../../providers/AppProvider";
+import AppContext from "../../providers/AppContext";
 
 type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 

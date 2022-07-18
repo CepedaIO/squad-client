@@ -3,7 +3,7 @@ import {gql, useMutation} from "@apollo/client";
 import {useValidator} from "../services/validate";
 import Button from "../components/inline/Button";
 import ErrorableInput from "../components/inline-block/ErrorableInput";
-import {AppContext} from "../providers/AppProvider";
+import AppContext from "../providers/AppContext";
 
 const Login = () => {
   const emailInput = useRef<HTMLInputElement>(null);

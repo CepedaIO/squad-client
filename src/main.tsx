@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
-import AppProvider from "./providers/AppProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -28,9 +27,7 @@ root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <BrowserRouter>
-        <AppProvider>
-          <App />
-        </AppProvider>
+        <App />
       </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>

@@ -2,7 +2,7 @@ import {useParams, useSearchParams} from "react-router-dom";
 import {gql, useMutation} from "@apollo/client";
 import {useContext, useEffect, useRef} from "react";
 import Button from "../components/inline/Button";
-import {AppContext} from "../providers/AppProvider";
+import AppContext from "../providers/AppContext";
 
 const LoginWith = () => {
   const didAttemptLogin = useRef(false);

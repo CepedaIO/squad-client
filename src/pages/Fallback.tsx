@@ -1,5 +1,5 @@
 import {useContext, useEffect} from "react";
-import {AppContext} from "../providers/AppProvider";
+import AppContext from "../providers/AppContext";
 
 const Fallback = () => {
   const {

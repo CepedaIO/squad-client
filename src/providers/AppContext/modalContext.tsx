@@ -8,10 +8,9 @@ export interface IModalContext<Result> {
   resolve: (result:Result) => void;
 }
 
-const modalProvider = <Result,>() => {
+const modalContext = <Result,>() => {
   const [showing, setShowing] = useState<JSX.Element | null>(null);
   const [result, setResult] = useState<Result | null>(null)
-
   const show = (modal?: JSX.Element | null) => setShowing(modal || null);
   const resolve = (result:Result | null) => setResult(resolve);
 
@@ -32,4 +31,4 @@ const modalProvider = <Result,>() => {
   };
 }
 
-export default modalProvider;
+export default modalContext;

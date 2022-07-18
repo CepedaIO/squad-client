@@ -1,5 +1,5 @@
 import {useCallback, useContext, useState} from "react";
-import {AppContext} from "../providers/AppProvider";
+import AppContext from "../providers/AppContext";
 
 interface ValidatorResult<T extends Keyed, K extends keyof T = keyof T & string> {
   key: K;
