@@ -1,20 +1,27 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useMemo, useRef} from "react";
 import {gql, useMutation} from "@apollo/client";
-import {useValidator} from "../services/validate";
 import Button from "../components/inline/Button";
 import ErrorableInput from "../components/inline-block/ErrorableInput";
 import AppContext from "../providers/AppContext";
+import useValidate from "../hooks/useValidate";
 
 const Login = () => {
   const emailInput = useRef<HTMLInputElement>(null);
   const {
     auth: { setAuthToken },
     nav: { navigate },
-    notif: { addNotice, handleUnexpected, removeNotice }
+    notif: { addNotice, handleUnexpected }
   } = useContext(AppContext);
 
-  const { setup } = useValidator();
+  const email = useMemo(() => emailInput.current?.value || '', [emailInput]);
 
+  const [valid, reportErrors] = useValidate({
+    email: [
+      [ email.length > 2, 'Must be greater than 2 characters' ]
+    ]
+  })
+
+  console.log(email.length > 2, valid);
   const [mutLogin, { data, error, loading } ] = useMutation(gql`
     mutation Login($email: String!) {
       login(email: $email) {
@@ -35,24 +42,22 @@ const Login = () => {
     }
   }, [data])
 
-  const clickedLogin = () =>
-    setup({
-      email: emailInput.current?.value as string,
-    })
-    .effect(() => removeNotice('RegisterPageError'))
-    .validateAndReport(({ assert }) => [
-      assert('email', (val) => !!val && val.length > 2, 'Must be greater than 2 characters'),
-    ])
-    .then((variables) => mutLogin({ variables }))
-    .catch(({ errors }) => {
-      if(errors) {
-        addNotice({
-          id: 'RegisterPageError',
-          message: 'Unable to login, please fix errors',
-          level: 'error'
-        });
-      }
+  const clickedLogin = () => {
+    if(valid) {
+      return mutLogin({
+        variables: {
+          email
+        }
+      });
+    }
+
+    reportErrors();
+    addNotice({
+      id: 'RegisterPageError',
+      message: 'Unable to login, please fix errors',
+      level: 'error'
     });
+  }
 
   return (
     <div className="flex flex-col h-full justify-center">

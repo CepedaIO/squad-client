@@ -37,7 +37,7 @@ const AvailabilitySelector = () => {
             )}
           </section>
 
-          <Once label={"When?"} field={"dayStart"}/>
+          <Once />
 
           <footer className={$c('center grow-children')}>
             <Button variant={"link"}>

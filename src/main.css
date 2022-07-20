@@ -8,6 +8,7 @@
 	}
 	input {
 		@apply border-2 p-2 rounded;
+		outline: 0;
 	}
 	h1 {
 		@apply text-3xl;

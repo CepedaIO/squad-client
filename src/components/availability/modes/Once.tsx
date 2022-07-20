@@ -2,19 +2,23 @@ import FormInput from "../../inline-block/FormInput";
 import Button from "../../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import {DateTime} from "luxon";
+import datetime from "../../../services/validate/validators/datetime";
 
-interface OnceProps {
-  label: string;
-  field: string;
-}
 
-const Once = ({ label, field }:OnceProps) => {
-  const [allDay, setAllDay] = useState(true);
+const Once = () => {
+  const [allDay, setAllDay] = useState(false);
 
   return (
     <main className={$c('flex flex-col gap-5')}>
-      <FormInput label={label} field={field} type={"date"} nowrap={true} />
+      <FormInput
+        label={"When?"}
+        field={"date"}
+        type={"date"}
+        nowrap={true}
+        validators={[
+          datetime.afterNow
+        ]}
+      />
 
       <Button variant={"toggle"} active={allDay} onClick={() => setAllDay(!allDay)}>
         All day?
@@ -26,15 +30,9 @@ const Once = ({ label, field }:OnceProps) => {
           field={"start"}
           type={"time"}
           nowrap={true}
-          validate={
-            (val: DateTime) => {
-
-              return {
-                valid: false,
-                message: 'Must enter a valid'
-              };
-            }
-          }
+          validators={[
+            datetime.afterNow
+          ]}
         />
 
         <FormInput
@@ -42,15 +40,6 @@ const Once = ({ label, field }:OnceProps) => {
           field={"end"}
           type={"time"}
           nowrap={true}
-          validate={
-            (val: DateTime) => {
-
-              return {
-                valid: false,
-                message: 'Must enter a valid'
-              };
-            }
-          }
         />
       </>}
     </main>

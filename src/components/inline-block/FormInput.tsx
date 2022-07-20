@@ -1,33 +1,15 @@
 import ErrorableInput, {ErrorableInputProps} from "./ErrorableInput";
 import $c from "classnames";
 import {ist} from "../../services/utils";
+import omit from "lodash.omit";
 
 type FormInputProps = {
   label: string;
   nowrap?: boolean;
 } & ErrorableInputProps;
 
-type FormInputSlotProps = {
-  slots: {
-    label: JSX.Element;
-    input: JSX.Element;
-  }
-} & ErrorableInputProps;
-
-
-const FormInput = (props: FormInputProps | FormInputSlotProps) => {
-  const {
-    field, type, validate
-  } = props;
-
-  if(ist<FormInputSlotProps>((obj) => !!obj.slots)(props)) {
-    return (
-      <main className={$c('flex flex-col')}>
-        { props.slots.label }
-        <ErrorableInput field={field} type={type} input={props.slots.input} validate={validate} />
-      </main>
-    )
-  }
+const FormInput = (props: FormInputProps) => {
+  const errorInputProps = omit(props, ['ref', 'label', 'nowrap']);
 
   return (
     <main className={$c({
@@ -38,9 +20,12 @@ const FormInput = (props: FormInputProps | FormInputSlotProps) => {
         'md:w-1/3': props.nowrap
       })}>{ props.label }</label>
 
-      <ErrorableInput field={field} type={type} validate={validate} className={$c({
-        'md:w-2/3': props.nowrap
-      })}/>
+      <ErrorableInput
+        { ...errorInputProps }
+        className={$c({
+          'md:w-2/3': props.nowrap
+        })}
+      />
     </main>
   )
 }

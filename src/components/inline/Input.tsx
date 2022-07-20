@@ -7,22 +7,18 @@ type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, 
 
 export type InputProps =  (ReactInputProps & {
   field: string;
-  input?: JSX.Element;
 });
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) => {
-  /**
-   * TODO: Move this up to ErrorableInput
-   */
   const {
-    err: {hasError}
+    page: {onChange}
   } = useContext(AppContext);
 
   /**
    * We use field consistently here to denote the field of some data type (like error)
    */
   const _props = {
-    ...omit(props, 'field'),
+    ...omit(props, 'field', 'validate', 'onChange'),
     'name': props.field,
     'type': props.type || 'text'
   }
@@ -30,9 +26,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) 
   const typeMap = new Map<string, JSX.Element>([
     ['textarea', (
       // @ts-ignore
-      <textarea ref={ref} {..._props} className={$c(props.className, 'p-2 border-2', {
-        'border-error': hasError(props.name)
-      })} />
+      <textarea ref={ref} {..._props} className={$c(props.className, 'p-2 border-2')} />
     )]
   ])
 
@@ -40,13 +34,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) 
     return typeMap.get(_props.type)!;
   }
 
-  if(props.input) {
-    return props.input;
-  }
-
-  return <input ref={ref} {..._props} className={$c(props.className, 'p-2', {
-    'border-error': hasError(props.name)
-  })} />
+  return <input
+    {..._props}
+    ref={ref}
+    className={
+      $c(props.className, 'p-2')
+    }
+    onChange={ (event) => {
+      onChange(props.field, event.target.value);
+      if(props.onChange) {
+        props.onChange(event);
+      }
+    }}
+  />
 })
 
 export default Input;

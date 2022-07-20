@@ -4,6 +4,7 @@ import navigationContext, {INavigationContext} from "./navigationContext";
 import errorContext, {IErrorContext} from "./errorContext";
 import modalContext, {IModalContext} from "./modalContext";
 import notificationContext, {INotificationContext} from "./notificationContext";
+import pageContext, {IPageContext} from "./pageContext";
 
 interface IAppContext {
   auth: IAuthContext;
@@ -11,6 +12,7 @@ interface IAppContext {
   err: IErrorContext;
   modal: IModalContext<any>;
   notif: INotificationContext;
+  page: IPageContext;
 }
 
 const AppContext = createContext<IAppContext>({
@@ -43,9 +45,16 @@ const AppContext = createContext<IAppContext>({
     handleUnexpected: () => {},
     notices: [],
     removeNotice: () => {}
+  },
+  page: {
+    values: {},
+    results: {},
+    onChange: () => {},
+    addValidators: () => {},
+    validate: () => {}
   }
 });
-AppContext.displayName = 'AppContext';
+AppContext.displayName = 'App';
 
 export const createAppContext = (): {
   context: IAppContext,
@@ -57,6 +66,7 @@ export const createAppContext = (): {
   const auth = authContext();
   const nav = navigationContext(auth);
   const err = errorContext();
+  const page = pageContext(err);
   const {
     context: modal,
     view: modalView
@@ -68,7 +78,7 @@ export const createAppContext = (): {
 
   return {
     context: {
-      auth, err, nav, modal, notif
+      auth, err, nav, modal, notif, page
     },
     views: {
       notif: notifView,
