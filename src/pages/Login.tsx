@@ -1,27 +1,20 @@
 import React, {useContext, useEffect, useMemo, useRef} from "react";
 import {gql, useMutation} from "@apollo/client";
 import Button from "../components/inline/Button";
-import ErrorableInput from "../components/inline-block/ErrorableInput";
 import AppContext from "../providers/AppContext";
-import useValidate from "../hooks/useValidate";
+import FormInput from "../components/inline-block/FormInput";
 
 const Login = () => {
   const emailInput = useRef<HTMLInputElement>(null);
   const {
     auth: { setAuthToken },
     nav: { navigate },
-    notif: { addNotice, handleUnexpected }
+    notif: { addNotice, handleUnexpected },
+    page: { validate }
   } = useContext(AppContext);
 
   const email = useMemo(() => emailInput.current?.value || '', [emailInput]);
 
-  const [valid, reportErrors] = useValidate({
-    email: [
-      [ email.length > 2, 'Must be greater than 2 characters' ]
-    ]
-  })
-
-  console.log(email.length > 2, valid);
   const [mutLogin, { data, error, loading } ] = useMutation(gql`
     mutation Login($email: String!) {
       login(email: $email) {
@@ -43,7 +36,7 @@ const Login = () => {
   }, [data])
 
   const clickedLogin = () => {
-    if(valid) {
+    if(validate()) {
       return mutLogin({
         variables: {
           email
@@ -51,7 +44,6 @@ const Login = () => {
       });
     }
 
-    reportErrors();
     addNotice({
       id: 'RegisterPageError',
       message: 'Unable to login, please fix errors',
@@ -66,7 +58,8 @@ const Login = () => {
           Welcome!
           { loading && (<i className="fa-solid fa-yin-yang fa-spin ml-3" />)}
         </h1>
-        <ErrorableInput type="text" field="email" placeholder="Enter email" className="w-full" ref={emailInput} />
+
+        <FormInput label={"Email:"} field={"email"} placeholder={"Enter email"} className={"w-full"} />
 
         <div>
           <Button variant={"submit"} loading={loading} className="w-full" onClick={clickedLogin}>Login</Button>

@@ -1,52 +1,60 @@
-import React, {DetailedHTMLProps, InputHTMLAttributes, useContext, forwardRef} from "react";
+import React, {DetailedHTMLProps, InputHTMLAttributes} from "react";
 import $c from "classnames";
 import omit from "lodash.omit";
-import AppContext from "../../providers/AppContext";
 
-type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLConvergentInputElement>, HTMLConvergentInputElement>;
 
-export type InputProps =  (ReactInputProps & {
-  field: string;
-});
+export interface OverrideProps<T> {
+  type: TypeDescriptor<T>
+  value?: T;
+  onChange?: (val: T) => void;
+}
 
-const Input = forwardRef<HTMLInputElement, InputProps>((props: InputProps, ref) => {
-  const {
-    page: {onChange}
-  } = useContext(AppContext);
+export type InputProps<T> = Omit<ReactInputProps, keyof OverrideProps<T>> & OverrideProps<T>;
 
+export type HTMLConvergentInputElement = HTMLInputElement & HTMLTextAreaElement;
+
+const Input = <T,>(props: InputProps<T>) => {
   /**
    * We use field consistently here to denote the field of some data type (like error)
    */
   const _props = {
-    ...omit(props, 'field', 'validate', 'onChange'),
-    'name': props.field,
-    'type': props.type || 'text'
-  }
+    ...omit(props, 'onChange', 'type', 'value'),
+    'type': props.type.type
+  };
 
-  const typeMap = new Map<string, JSX.Element>([
-    ['textarea', (
-      // @ts-ignore
-      <textarea ref={ref} {..._props} className={$c(props.className, 'p-2 border-2')} />
-    )]
-  ])
+  const value = props.value ? props.type.out(props.value) : undefined;
 
-  if(typeMap.has(_props.type)) {
-    return typeMap.get(_props.type)!;
+  if(_props.type === 'textarea') {
+    return (
+      <textarea
+        {..._props}
+        className={$c(props.className, 'p-2 border-2')}
+        value={value}
+        onChange={(event) => {
+          if (props.onChange) {
+            const value = props.type.in(event.target.value);
+            props.onChange(value);
+          }
+        }}
+      />
+    );
   }
 
   return <input
     {..._props}
-    ref={ref}
     className={
       $c(props.className, 'p-2')
     }
+    value={value}
     onChange={ (event) => {
-      onChange(props.field, event.target.value);
       if(props.onChange) {
-        props.onChange(event);
+        console.log(event.target.value);
+        const value = props.type.in(event.target.value);
+        props.onChange(value);
       }
     }}
   />
-})
+};
 
 export default Input;

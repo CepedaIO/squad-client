@@ -23,6 +23,16 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+Array.prototype.forEach = (function() {
+  const original = Array.prototype.forEach;
+  return function() {
+    // @ts-ignore
+    original.apply(this, arguments);
+    // @ts-ignore
+    return this;
+  };
+})();
+
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>

@@ -48,10 +48,10 @@ const AppContext = createContext<IAppContext>({
   },
   page: {
     values: {},
-    results: {},
+    errors: {},
     onChange: () => {},
-    addValidators: () => {},
-    validate: () => {}
+    addValidation: () => {},
+    validate: () => false
   }
 });
 AppContext.displayName = 'App';

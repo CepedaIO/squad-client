@@ -1,12 +1,20 @@
 import Button from "../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import Once from "./modes/Once";
+import Once, {IOnceForm} from "./modes/Once";
 
 const tabs = [
   { label: 'Once', key: 'once' },
   { label: 'Cron', key: 'cron' }
 ];
+
+interface IAvailabilityForm {
+  mode: string;
+}
+
+interface AvailabilityOnceForm extends IOnceForm, IAvailabilityForm {
+  mode: 'once';
+}
 
 const AvailabilitySelector = () => {
   const [active, setActive] = useState(false);
