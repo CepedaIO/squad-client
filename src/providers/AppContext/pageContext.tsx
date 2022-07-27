@@ -11,7 +11,7 @@ export interface ValidationDescriptor<T> {
   _undefined: string;
 }
 
-export type FieldValidation<T> = [ValidationDescriptor<T>, ...Validator<T>[]]
+export type FieldValidation<T> = [ValidationDescriptor<T>, ...FieldValidator<T>[]]
 
 export interface IPageContext {
   values: Keyed<Values>;
@@ -23,11 +23,11 @@ export interface IPageContext {
 
 const pageContext = ({ addErrors, removeErrors }: IErrorContext): IPageContext => {
   const [valuesMap, setValuesMap] = useState<Keyed<Values>>({});
-  const [validatorsMap, setValidatorsMap] = useState<Keyed<Validator<any>[]>>({});
+  const [validatorsMap, setValidatorsMap] = useState<Keyed<FieldValidator<any>[]>>({});
   const [descriptorMap, setDescriptorMap] = useState<Keyed<ValidationDescriptor<any>>>({});
   const [errorsMap, setErrors] = useState<Keyed<string[]>>({});
 
-  const defined:(field: string) => Validator<any> = (field: string) => ({
+  const defined:(field: string) => FieldValidator<any> = (field: string) => ({
     id: 'Undefined Value',
     valid: (val?: any) => !!val,
     message: descriptorMap[field]._undefined
@@ -42,8 +42,8 @@ const pageContext = ({ addErrors, removeErrors }: IErrorContext): IPageContext =
           .reduce((res, validator) => [
             ...res,
             [validator.valid(value), validator]
-          ], [] as [boolean, Validator<any>][])
-      ] as [string, [boolean, Validator<any>][]])
+          ], [] as [boolean, FieldValidator<any>][])
+      ] as [string, [boolean, FieldValidator<any>][]])
     .forEach((record) => {
       debugger;
     })
@@ -112,8 +112,8 @@ const pageContext = ({ addErrors, removeErrors }: IErrorContext): IPageContext =
         [defined(field)].concat(validatorsMap[field]!)
         .reduce((res, validator) =>
         res.concat([validator.valid(value), validator]),
-        [] as [boolean, Validator<any>][])
-      ] as [string, [boolean, Validator<any>][]])
+        [] as [boolean, FieldValidator<any>][])
+      ] as [string, [boolean, FieldValidator<any>][]])
       .forEach(([field, results]) => setErrors(prev => ({
         ...prev,
         [field]: results.filter(([valid]) => !valid).map(([_, validator]) => validator.message)

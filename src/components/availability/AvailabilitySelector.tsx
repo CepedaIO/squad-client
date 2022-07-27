@@ -12,7 +12,7 @@ interface IAvailabilityForm {
   mode: string;
 }
 
-interface AvailabilityOnceForm extends IOnceForm, IAvailabilityForm {
+interface AvailabilityOnceForm extends OnceForm, IAvailabilityForm {
   mode: 'once';
 }
 

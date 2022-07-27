@@ -8,8 +8,8 @@ export interface IFormContext<Values extends Keyed> {
     [Field in keyof Values]?: string
   };
   onChange: <Field extends keyof Values>(field: Field, val: Values[Field]) => void;
-  setValidator: <Field extends keyof Values>(field: Field, validators: Validator<Values, Field>) => void;
-  validate: (fields?:string[]) => [true, Values] | [false, Partial<Values>];
+  setValidator: <Field extends keyof Values>(field: Field, validators: FieldValidator<Values, Field>) => void;
+  validate: (fields?:string[]) => ValidateResult<Values>;
 }
 
 const FormContext = createContext<IFormContext<any>>({
@@ -22,6 +22,12 @@ const FormContext = createContext<IFormContext<any>>({
 
 FormContext.displayName='Form';
 
+type ValidationError = string;
+
+type ValidateResult<Values extends Keyed> = [true, Values] | [false, {
+  [Field in keyof Values]: Values[Field] | ValidationError
+}];
+
 export const createFormContext = <Values extends Keyed>(initialValues:Partial<Values>): IFormContext<Values> => {
   const {
     err: { addErrors, removeErrors }
@@ -29,7 +35,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
   const [values, setValuesMap] = useState<Partial<Values>>(initialValues);
   const [pendingValidation, setPendingValidation] = useState<(keyof Values)[]>([]);
   const [validators, setValidationMap] = useState<{
-    [Field in keyof Values]?: Validator<Values, Field>
+    [Field in keyof Values]?: FieldValidator<Values, Field>
   }>({});
   const [errors, setErrors] = useState<{
     [Field in keyof Values]?: string
@@ -47,7 +53,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     });
   }, [errors]);
 
-  const setValidator = useCallback(<Field extends keyof Values>(field: Field, validator: Validator<Values, Field>) => {
+  const setValidator = useCallback(<Field extends keyof Values>(field: Field, validator: FieldValidator<Values, Field>) => {
     setValidationMap(prev => {
       if(prev[field]) {
         return prev;
@@ -60,36 +66,37 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     });
   }, []);
 
-  const validate = useCallback((fields:(keyof Values)[] = []): [true, Values] | [false, Partial<Values>] =>
+  const validate = useCallback((fields:(keyof Values)[] = []): ValidateResult<Values> =>
     Object.entries(validators)
       .filter(([field]) => fields.length === 0 || fields.includes(field))
       .map(([field, validator]) => {
         const value = values[field];
-        const error = validator(value, {
+        const valid = validator(value, {
           field,
           values
         });
 
+        const error = valid !== true ? valid[1] : null;
         setErrors(prev => ({
           ...prev,
-          [field]: error ? [error] : null
+          [field]: error
         }))
 
         return [
           field,
-          error
-        ] as Tuple<string, string | null | undefined>
+          valid
+        ] as Tuple<string, true | [false, string]>
       })
-    .reduce((res, [field, error]) => {
-      if(error) {
+    .reduce((res, [field, valid]) => {
+      if(valid !== true) {
         res = [false, {
           ...res[1],
-          [field]: undefined
+          [field]: valid[1]
         }];
       }
       
       return res;
-    }, [true, values] as [true, Values] | [false, Partial<Values>])
+    }, [true, values] as ValidateResult<Values>)
     , [validators, values]);
 
   const onChange = useCallback(debounce(

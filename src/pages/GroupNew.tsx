@@ -6,8 +6,8 @@ import AvailabilitySelector from "../components/availability/AvailabilitySelecto
 import AppContext from "../providers/AppContext";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import {DateTime} from "luxon";
-import line from "../services/validators/line";
-import multiline from "../services/validators/multiline";
+import line from "../services/input-types/line";
+import multiline from "../services/input-types/multiline";
 
 export interface IGroupNewPageForm {
   start: DateTime;
@@ -57,10 +57,7 @@ const GroupNewContent = () => {
 }
 
 const GroupNew = () => {
-  const context = createFormContext({
-    start: DateTime.now(),
-    end: DateTime.now()
-  });
+  const context = createFormContext({});
 
   return (
     <FormContext.Provider value={ context }>

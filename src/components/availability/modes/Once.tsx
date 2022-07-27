@@ -3,10 +3,11 @@ import React, {useEffect, useState} from "react";
 import $c from "classnames";
 import {DateTime} from "luxon";
 import {useForm} from "../../../hooks/useForm";
-import Date from "../../../services/validators/date";
-import Time from "../../../services/validators/time";
-import datetime from "../../../services/validators/datetime";
-import Datetime from "../../../services/validators/datetime";
+import Date from "../../../services/input-types/date";
+import Time from "../../../services/input-types/time";
+import datetime from "../../../services/input-types/datetime";
+import Datetime from "../../../services/input-types/datetime";
+import {validateWith} from "../../../services/input-types";
 
 interface OnceProps {
   submit(form: OnceForm): void;
@@ -45,15 +46,12 @@ const Once = ({
         field={"date"}
         type={Date}
         nowrap={true}
-        validator={(val, { values }) => {
-          if(!DateTime.isDateTime(val)) {
-            return 'Must pick a date';
-          }
-
-          if(!datetime.afterToday(val)) {
-            return 'Date must come after today'
-          }
-        }}
+        validator={
+          validateWith([
+            [Date.defined, 'Must pick a date'],
+            [Date.afterToday, 'Date must come after today']
+          ])
+        }
       />
 
       <Button variant={"toggle"} active={allDay} onClick={() => setAllDay(!allDay)}>

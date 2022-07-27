@@ -8,7 +8,7 @@ import AppContext from "../providers/AppContext";
 
 export interface FormInputProps<Values extends Keyed, Field extends keyof Values & string> extends Omit<InputProps<Values[Field]>, 'value'> {
   field: Field;
-  validator?: Validator<Values, Field>;
+  validator?: FieldValidator<Values, Field>;
   label: string;
   nowrap?: boolean;
 }
@@ -17,7 +17,7 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
   const {
     err: {hasError},
   } = useContext(AppContext);
-  const { field, validator, type } = props;
+  const { field, validator } = props;
   const { onChange, setValidator, values } = useContext<IFormContext<Values>>(FormContext);
 
   const inputProps: InputProps<Values[Field]> = {

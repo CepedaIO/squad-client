@@ -5,7 +5,7 @@ import omit from "lodash.omit";
 type ReactInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLConvergentInputElement>, HTMLConvergentInputElement>;
 
 export interface OverrideProps<T> {
-  type: TypeDescriptor<T>
+  type: { _type: TypeDescriptor<T> }
   value?: T;
   onChange?: (val: T) => void;
 }
@@ -15,15 +15,17 @@ export type InputProps<T> = Omit<ReactInputProps, keyof OverrideProps<T>> & Over
 export type HTMLConvergentInputElement = HTMLInputElement & HTMLTextAreaElement;
 
 const Input = <T,>(props: InputProps<T>) => {
+  const descriptor = props.type._type || props.type;
+
   /**
    * We use field consistently here to denote the field of some data type (like error)
    */
   const _props = {
     ...omit(props, 'onChange', 'type', 'value'),
-    'type': props.type.type
+    'type': descriptor.type
   };
 
-  const value = props.value ? props.type.out(props.value) : undefined;
+  const value = props.value ? descriptor.out(props.value) : undefined;
 
   if(_props.type === 'textarea') {
     return (
@@ -33,7 +35,7 @@ const Input = <T,>(props: InputProps<T>) => {
         value={value}
         onChange={(event) => {
           if (props.onChange) {
-            const value = props.type.in(event.target.value);
+            const value = descriptor.in(event.target.value);
             props.onChange(value);
           }
         }}
@@ -49,7 +51,7 @@ const Input = <T,>(props: InputProps<T>) => {
     value={value}
     onChange={ (event) => {
       if(props.onChange) {
-        const value = props.type.in(event.target.value);
+        const value = descriptor.in(event.target.value);
         props.onChange(value);
       }
     }}
