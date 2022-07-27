@@ -1,7 +1,7 @@
 import Button from "../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import Once, {IOnceForm} from "./modes/Once";
+import Once, {OnceForm} from "./modes/Once";
 
 const tabs = [
   { label: 'Once', key: 'once' },
@@ -20,6 +20,10 @@ const AvailabilitySelector = () => {
   const [active, setActive] = useState(false);
   const [repeatMode, setRepeatMode] = useState(tabs[0].key);
   const clickedAvailability = () => setActive(true);
+
+  const onSubmit = (form) => {
+    console.log('did submit:', form);
+  };
 
   return (
     <main>
@@ -45,16 +49,7 @@ const AvailabilitySelector = () => {
             )}
           </section>
 
-          <Once />
-
-          <footer className={$c('center grow-children')}>
-            <Button variant={"link"}>
-              Cancel
-            </Button>
-            <Button variant={"link"}>
-              Add
-            </Button>
-          </footer>
+          <Once submit={ onSubmit } />
         </section>
       }
     </main>

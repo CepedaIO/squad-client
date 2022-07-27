@@ -8,7 +8,7 @@ export interface IFormContext<Values extends Keyed> {
     [Field in keyof Values]?: string
   };
   onChange: <Field extends keyof Values>(field: Field, val: Values[Field]) => void;
-  setValidator: <Field extends keyof Values>(field: Field, validator: Validator<Values, Field>) => void;
+  setValidator: <Field extends keyof Values>(field: Field, validators: Validator<Values, Field>) => void;
   validate: (fields?:string[]) => boolean;
 }
 
@@ -27,7 +27,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     err: { addErrors, removeErrors }
   } = useApp();
   const [values, setValuesMap] = useState<Partial<Values>>(initialValues);
-  const [validators, setValidatorsMap] = useState<{
+  const [validators, setValidationMap] = useState<{
     [Field in keyof Values]?: Validator<Values, Field>
   }>({});
   const [errors, setErrors] = useState<{
@@ -47,7 +47,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
   }, [errors]);
 
   const setValidator = useCallback(<Field extends keyof Values>(field: Field, validator: Validator<Values, Field>) => {
-    setValidatorsMap(prev => {
+    setValidationMap(prev => {
       if(prev[field]) {
         return prev;
       }
@@ -62,29 +62,35 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
   const validate = useCallback((fields:(keyof Values)[] = []): boolean =>
     Object.entries(validators)
       .filter(([field]) => fields.length === 0 || fields.includes(field))
-      .map(([field, value]) => [
-        field,
-        validators[field]!(value, {
+      .map(([field, validator]) => {
+        const value = values[field];
+        const error = validator(value, {
           field,
           values
-        })
-      ] as Tuple<string, string | null | undefined>)
-      .forEach(([field, error]) => setErrors(prev => ({
-        ...prev,
-        [field]: error ? [error] : null
-      })))
+        });
+
+        setErrors(prev => ({
+          ...prev,
+          [field]: error ? [error] : null
+        }))
+
+        return [
+          field,
+          error
+        ] as Tuple<string, string | null | undefined>
+      })
       .some(([_, error]) => !!error)
     , [validators]);
 
   const onChange = useCallback(debounce(
-  <Field extends keyof Values>(field: Field, value: Values[Field]) => {
-    setValuesMap(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    <Field extends keyof Values>(field: Field, value: Values[Field]) => {
+      setValuesMap(prev => ({
+        ...prev,
+        [field]: value,
+      }));
 
-    validate([field]);
-  }, 250)
+      validate([field]);
+    }, 250)
   , []);
 
   return {

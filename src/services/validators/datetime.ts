@@ -1,11 +1,7 @@
 import {DateTime} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
 
-const greaterThan = (unit: DateTimeUnit) => (time: DateTime,  message?: string) => ({
-  id: 'Greater Than',
-  valid: (val: DateTime) => val.diff(time, unit).get(unit) > 1,
-  message: message || `Must be after ${time.toLocaleString()}`
-});
+const greaterThan = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > 1;
 
 const greaterThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) => (val: DateTime) => [
   {
@@ -31,15 +27,13 @@ const lessThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) =
   }
 ]
 
-const afterToday = greaterThan('day')(DateTime.now(), 'Must be after today');
-const afterOneHour = greaterThan('hour')(DateTime.now(), 'Must be at least 1 hour from now')
+const afterToday = greaterThan(DateTime.now(), 'day');
 
 export const DateAndTime = {
   _id: 'datetime',
   _type: 'datetime',
   _transform: (val: string) => DateTime.fromISO(val),
   afterToday,
-  afterOneHour,
   greaterThan,
   greaterThanEQ,
   lessThan,

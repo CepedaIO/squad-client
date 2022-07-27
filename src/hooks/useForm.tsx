@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef} from "react";
+import {useContext, useEffect} from "react";
 import FormContext, {IFormContext} from "../providers/FormContext";
 import omit from "lodash.omit";
 import $c from "classnames";
@@ -6,7 +6,7 @@ import Input, {InputProps} from "../components/inline/Input";
 import ErrorOutput from "../components/ErrorOutput";
 import AppContext from "../providers/AppContext";
 
-export interface FormInputProps<Values extends Keyed, Field extends keyof Values & string> extends InputProps<Values[Field]>{
+export interface FormInputProps<Values extends Keyed, Field extends keyof Values & string> extends Omit<InputProps<Values[Field]>, 'value'> {
   field: Field;
   validator?: Validator<Values, Field>;
   label: string;
@@ -17,8 +17,8 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
   const {
     err: {hasError},
   } = useContext(AppContext);
-  const { field, validator } = props;
-  const { onChange, setValidator } = useContext<IFormContext<Values>>(FormContext);
+  const { field, validator, type } = props;
+  const { onChange, setValidator, values } = useContext<IFormContext<Values>>(FormContext);
 
   const inputProps: InputProps<Values[Field]> = {
     ...omit(props, ['label', 'field', 'nowrap', 'validator']),
@@ -42,6 +42,7 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
         <Input
           { ...inputProps }
           onChange={(value) => onChange(field, value)}
+          value={values[field]!}
           className={
             $c('w-full', {
               'border-error': hasError(props.field as string)
@@ -55,7 +56,7 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
 }
 
 export const useForm = <Values,>() => {
-  const { values } = useContext(FormContext);
+  const { values, validate } = useContext(FormContext);
 
   const FormInput = <Field extends keyof Values & string>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
     <_FormInput
@@ -63,8 +64,17 @@ export const useForm = <Values,>() => {
     />
   );
 
-  return {
-    values: values as Partial<Values>,
-    FormInput
+  type Options = {
+    FormInput: typeof FormInput,
+    validate: typeof validate
   };
+
+  return [
+    values,
+    true, {
+      FormInput,
+      validate
+    }
+  ] as [ Partial<Values>, false, Options]
+    | [ Values, true, Options ];
 }
