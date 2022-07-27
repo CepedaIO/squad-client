@@ -49,9 +49,7 @@ const Input = <T,>(props: InputProps<T>) => {
     value={value}
     onChange={ (event) => {
       if(props.onChange) {
-        console.log(event.target.value);
         const value = props.type.in(event.target.value);
-        console.log('transformed:', value);
         props.onChange(value);
       }
     }}

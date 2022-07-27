@@ -44,11 +44,11 @@ const Once = ({
         type={Date}
         nowrap={true}
         validator={(val, { values }) => {
-          if(!val) {
+          if(!DateTime.isDateTime(val)) {
             return 'Must pick a date';
           }
 
-          if(datetime.afterToday(val)) {
+          if(!datetime.afterToday(val)) {
             return 'Date must come after today'
           }
         }}

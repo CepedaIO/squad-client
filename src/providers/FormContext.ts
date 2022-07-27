@@ -27,6 +27,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     err: { addErrors, removeErrors }
   } = useApp();
   const [values, setValuesMap] = useState<Partial<Values>>(initialValues);
+  const [pendingValidation, setPendingValidation] = useState<(keyof Values)[]>([]);
   const [validators, setValidationMap] = useState<{
     [Field in keyof Values]?: Validator<Values, Field>
   }>({});
@@ -80,7 +81,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
         ] as Tuple<string, string | null | undefined>
       })
       .some(([_, error]) => !!error)
-    , [validators]);
+    , [validators, values]);
 
   const onChange = useCallback(debounce(
     <Field extends keyof Values>(field: Field, value: Values[Field]) => {
@@ -89,9 +90,16 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
         [field]: value,
       }));
 
-      validate([field]);
+      setPendingValidation(prev => prev.concat(field));
     }, 250)
   , []);
+
+  useEffect(() => {
+    if(pendingValidation.length > 0) {
+      validate(pendingValidation);
+      setPendingValidation([]);
+    }
+  }, [pendingValidation]);
 
   return {
     values,
