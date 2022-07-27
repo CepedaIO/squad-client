@@ -1,10 +1,12 @@
 import {useContext} from "react"
 import AppContext from "../providers/AppContext";
+import $c from "classnames";
 
 interface ErrorOutputProps {
   field?: string;
+  className?: string;
 }
-const ErrorOutput = ({ field }: ErrorOutputProps) => {
+const ErrorOutput = ({ field, className }: ErrorOutputProps) => {
   const {
     err: { hasError, getError }
   } = useContext(AppContext);
@@ -15,7 +17,7 @@ const ErrorOutput = ({ field }: ErrorOutputProps) => {
   }
 
   return (
-    <main className="text-error text-sm">
+    <main className={$c(className, "text-error text-sm")}>
       { error.message }
     </main>
   )

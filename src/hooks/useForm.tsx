@@ -25,30 +25,39 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
     name: field
   };
 
-  useEffect(() => validator && setValidator(field, validator), [])
+  useEffect(() => {
+    if(validator) { setValidator(field, validator); }
+  }, [])
 
   return (
-    <main className={$c({
-      'col-to-row grow-children': props.nowrap,
-      'flex flex-col': !props.nowrap
-    })}>
-      <label className={$c({
-        'md:w-1/3': props.nowrap
-      })}>{ props.label }</label>
-
-      <section className={$c('inline-block', {
-        'md:w-2/3': props.nowrap
+    <main>
+      <section className={$c({
+        'col-to-row grow-children': props.nowrap,
+        'flex flex-col': !props.nowrap
       })}>
-        <Input
-          { ...inputProps }
-          onChange={(value) => onChange(field, value)}
-          value={values[field]!}
-          className={
-            $c('w-full', {
-              'border-error': hasError(props.field as string)
-            })
-          }
-        />
+        <label className={$c({
+          'md:w-1/3': props.nowrap
+        })}>{ props.label }</label>
+
+        <div className={$c('inline-block', {
+          'md:w-2/3': props.nowrap
+        })}>
+          <Input
+            { ...inputProps }
+            onChange={(value) => onChange(field, value)}
+            value={values[field]!}
+            className={
+              $c('w-full', {
+                'border-error': hasError(props.field as string)
+              })
+            }
+          />
+        </div>
+      </section>
+
+      <section className={
+        $c('min-h-[20px] text-right')
+      }>
         <ErrorOutput field={props.field as string} />
       </section>
     </main>
@@ -71,10 +80,9 @@ export const useForm = <Values,>() => {
 
   return [
     values,
-    true, {
-      FormInput,
-      validate
+    validate, {
+      FormInput
     }
-  ] as [ Partial<Values>, false, Options]
-    | [ Values, true, Options ];
+  ] as [ Partial<Values>, (fields?:string[]) => [false, Partial<Values>], Options]
+    | [ Values, (fields?:string[]) => [true, Values], Options ];
 }

@@ -24,11 +24,13 @@ const Once = ({
   submit
 }: OnceProps) => {
   const [allDay, setAllDay] = useState(false);
-  const [values, valid, {FormInput, validate}] = useForm<OnceForm>();
+  const [values, validate, {FormInput}] = useForm<OnceForm>();
 
   const onClickAdd = () => {
-    if(validate()) {
-
+    const [valid, values] = validate();
+    if(valid) { submit(values); }
+    else {
+      console.log('invalid', values);
     }
   };
 
@@ -37,7 +39,7 @@ const Once = ({
   };
 
   return (
-    <main className={$c('flex flex-col gap-5')}>
+    <main className={$c('flex flex-col gap-3')}>
       <FormInput
         label={"When?"}
         field={"date"}

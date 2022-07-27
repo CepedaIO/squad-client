@@ -9,7 +9,7 @@ export interface IFormContext<Values extends Keyed> {
   };
   onChange: <Field extends keyof Values>(field: Field, val: Values[Field]) => void;
   setValidator: <Field extends keyof Values>(field: Field, validators: Validator<Values, Field>) => void;
-  validate: (fields?:string[]) => boolean;
+  validate: (fields?:string[]) => [true, Values] | [false, Partial<Values>];
 }
 
 const FormContext = createContext<IFormContext<any>>({
@@ -17,7 +17,7 @@ const FormContext = createContext<IFormContext<any>>({
   errors: {},
   onChange: () => {},
   setValidator: () => {},
-  validate: () => false
+  validate: () => [false, {}]
 });
 
 FormContext.displayName='Form';
@@ -60,7 +60,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     });
   }, []);
 
-  const validate = useCallback((fields:(keyof Values)[] = []): boolean =>
+  const validate = useCallback((fields:(keyof Values)[] = []): [true, Values] | [false, Partial<Values>] =>
     Object.entries(validators)
       .filter(([field]) => fields.length === 0 || fields.includes(field))
       .map(([field, validator]) => {
@@ -80,7 +80,16 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
           error
         ] as Tuple<string, string | null | undefined>
       })
-      .some(([_, error]) => !!error)
+    .reduce((res, [field, error]) => {
+      if(error) {
+        res = [false, {
+          ...res[1],
+          [field]: undefined
+        }];
+      }
+      
+      return res;
+    }, [true, values] as [true, Values] | [false, Partial<Values>])
     , [validators, values]);
 
   const onChange = useCallback(debounce(
