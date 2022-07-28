@@ -47,7 +47,9 @@ const Calendar = ({ month }: CalendarProps) => {
     i++;
   }
 
-  const weekdays = ['S','M','T','W','T','F','S'].map((weekday, i) => <CalendarBox key={`weekday-${i+1}`}>{ weekday }</CalendarBox>)
+  const weekdays = ['S','M','T','W','T','F','S'].map((weekday, i) =>
+    <CalendarBox key={`weekday-${i+1}`}>{ weekday }</CalendarBox>
+  )
 
   return (
     <main>

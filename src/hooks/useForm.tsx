@@ -48,7 +48,7 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
             value={values[field]!}
             className={
               $c('w-full', {
-                'border-error': hasError(props.field as string)
+                'border-error': hasError(props.field)
               })
             }
           />
@@ -58,7 +58,7 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
       <section className={
         $c('min-h-[20px] text-right')
       }>
-        <ErrorOutput field={props.field as string} />
+        <ErrorOutput field={props.field} />
       </section>
     </main>
   )

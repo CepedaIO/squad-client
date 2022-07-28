@@ -46,12 +46,10 @@ const Once = ({
         field={"date"}
         type={Date}
         nowrap={true}
-        validator={
-          validateWith([
-            [Date.defined, 'Must pick a date'],
-            [Date.afterToday, 'Date must come after today']
-          ])
-        }
+        validator={[
+          [Date.defined, 'Must pick a date'],
+          [Date.afterToday, 'Date must come after today']
+        ]}
       />
 
       <Button variant={"toggle"} active={allDay} onClick={() => setAllDay(!allDay)}>

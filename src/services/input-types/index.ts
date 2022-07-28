@@ -1,7 +1,7 @@
-type AssertionWithMessage<Value> = Tuple<Assertion<Value>, string>;
 
-export const validateWith = <Value>(assertions: (Assertion<Value> | AssertionWithMessage<Value>)[]): (val:Value) => true | Tuple<false, string> => {
-   return (val:Value) => {
+
+export const validateWith = <Values extends Keyed, Field extends keyof Values>(assertions: (Assertion<Values[Field]> | AssertionWithMessage<Values[Field]>)[]): (val:Values[Field]) => true | Tuple<false, string> => {
+   return (val:Values[Field]) => {
       for(const assertion of assertions) {
          if(Array.isArray(assertion)) {
             const message: string = assertion[1] || assertion[0].message || 'N/A';

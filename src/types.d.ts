@@ -5,12 +5,15 @@ interface Array<T> {
 type Keyed<T = any> = { [key:string | number]: T };
 type Tuple<T, K = T> = [T, K];
 
-type FieldValidator<Values, Field extends keyof Values> = ((val: Values[Field], ctx: {
+type CustomValidator<Values extends Keyed, Field extends keyof Values & string> = ((val: Values[Field], ctx: {
   field: Field;
   values: Partial<Values>;
-}) => true | [false, string]);
+}) => Tuple<boolean, string>);
+type FieldValidator<Values extends Keyed, Field extends keyof Values & string> =
+  Array<CustomValidator<Values, Field> | AssertionWithMessage<Values[Field]>>;
 
 type Assertion<Value> = ((val: Value) => boolean) & { message?: string };
+type AssertionWithMessage<Value> = Tuple<Assertion<Value>, string>;
 
 interface TypeDescriptor<T> {
   id: string;
@@ -18,3 +21,4 @@ interface TypeDescriptor<T> {
   in: (val: any) => T;
   out: (val: T) => any;
 }
+
