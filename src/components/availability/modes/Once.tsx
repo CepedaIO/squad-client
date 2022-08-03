@@ -26,7 +26,12 @@ const Once = ({
 
   const onClickAdd = () => {
     const [valid, values] = validate();
-    if(valid) { submit(values); }
+    if(valid) {
+      console.log('should submit:', values);
+      //submit(values);
+    } else {
+      console.log('nope', values);
+    }
   };
 
   const onClickCancel = () => {

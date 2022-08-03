@@ -29,6 +29,10 @@ type ValidateResult<Values extends Keyed> = [true, Values] | [false, {
   [Field in StringKeys<Values>]: Values[Field] | ValidationError
 }];
 
+interface ValidateOptions {
+  stopOnFirstFail?: boolean
+}
+
 export const createFormContext = <Values extends Keyed>(initialValues:Partial<Values>): IFormContext<Values> => {
   const {
     err: { addErrors, removeErrors }
@@ -56,6 +60,13 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
       }
     });
   }, [errors]);
+
+  useEffect(() => {
+    if(pendingValidation.length > 0) {
+      validate(pendingValidation, { stopOnFirstFail: true });
+      setPendingValidation([]);
+    }
+  }, [pendingValidation]);
 
   const setValidator = useCallback(<Field extends StringKeys<Values>>(field: Field, validator: Validator<Values, Field>) => {
     setValidationMap(prev => {
@@ -85,6 +96,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
 
     return values[otherField] ? additionalAssertions : [];
   };
+
   const runValidator = <Field extends StringKeys<Values>>(field: Field, validator:Validator<Values, Field>): AssertionResult<Values[Field]> =>  {
     const value = values[field];
     const required = requiredFactory(field);
@@ -114,8 +126,8 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     return runSuite(field, assertions);
   }
 
-  const _validate = (fields:StringKeys<Values>[] = Object.keys(validators), result: ValidateResult<Values> = [true, {} as Values]): ValidateResult<Values> => {
-    if(fields.length === 0 || !result[0]) return result;
+  const _validate = (fields:StringKeys<Values>[] = Object.keys(validators), options: ValidateOptions = {}, result: ValidateResult<Values> = [true, {} as Values]): ValidateResult<Values> => {
+    if(fields.length === 0 || (options.stopOnFirstFail && !result[0])) return result;
     const [field, ...nextFields] = fields as [StringKeys<Values>, ...StringKeys<Values>[]];
     const validator = validators[field];
 
@@ -133,17 +145,17 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
         nextFields.push.apply(nextFields, _fields);
       }
 
-      return _validate(nextFields, [isValid && result[0], {
+      return _validate(nextFields, options,[isValid && result[0], {
         ...result[1],
         [field]: res
       }] as ValidateResult<Values>);
     }
 
-    return _validate(nextFields, result);
+    return _validate(nextFields, options, result);
   };
 
-  const validate = useCallback((fields:StringKeys<Values>[] = Object.keys(validators)): ValidateResult<Values> => {
-    return _validate(fields.reverse());
+  const validate = useCallback((fields:StringKeys<Values>[] = Object.keys(validators), options: ValidateOptions = {}): ValidateResult<Values> => {
+    return _validate(fields, options);
   }, [values, validators]);
 
   const onChange = useCallback(debounce(
@@ -156,13 +168,6 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
       setPendingValidation(prev => prev.concat(field));
     }, 500)
   , []);
-
-  useEffect(() => {
-    if(pendingValidation.length > 0) {
-      validate(pendingValidation);
-      setPendingValidation([]);
-    }
-  }, [pendingValidation]);
 
   return {
     values,
