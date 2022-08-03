@@ -3,18 +3,20 @@ interface Array<T> {
 }
 
 type Keyed<T = any> = { [key:string | number]: T };
+type StringKeys<T> = keyof T & string;
 type Tuple<T, K = T> = [T, K];
 
-type CustomValidator<Values extends Keyed, Field extends keyof Values & string> = ((val: Values[Field], ctx: {
-  field: Field;
-  values: Partial<Values>;
-}) => Tuple<boolean, string>);
-type FieldValidator<Values extends Keyed, Field extends keyof Values & string> =
-  Array<CustomValidator<Values, Field> | AssertionWithMessage<Values[Field]>>;
+type Validator<Values extends Keyed, Field extends keyof Values & string> =
+  (values: Values, ctx: {
+    field: Field,
+    value?: Values[Field],
+    required: (field: StringKeys<Values>, assertions:ValidatorSuite<Values[Field]>) => ValidatorSuite<Values[Field]>
+  }) => ValidatorSuite<Values[Field]>;
 
-type Assertion<Value> = ((val: Value) => boolean) & { message?: string };
+type Assertion<Value> = ((val: Value) => boolean);
 type AssertionWithMessage<Value> = Tuple<Assertion<Value>, string>;
-
+type AssertionResult<Value> = Tuple<true, Value> | Tuple<false, string>
+type ValidatorSuite<Value> = Array<AssertionWithMessage<Value> | ValidatorSuite<Value>>
 interface TypeDescriptor<T> {
   id: string;
   type: string;

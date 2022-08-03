@@ -1,14 +1,15 @@
 import {createContext, useCallback, useEffect, useState} from "react";
 import debounce from "lodash.debounce";
 import {useApp} from "../hooks/useApp";
+import {ist} from "../services/utils";
 
 export interface IFormContext<Values extends Keyed> {
   values: Partial<Values>;
   errors: {
-    [Field in keyof Values & string]?: string
+    [Field in StringKeys<Values>]?: string
   };
-  onChange: <Field extends keyof Values & string>(field: Field, val: Values[Field]) => void;
-  setValidator: <Field extends keyof Values & string>(field: Field, validators: FieldValidator<Values, Field>) => void;
+  onChange: <Field extends StringKeys<Values>>(field: Field, val: Values[Field]) => void;
+  setValidator: <Field extends StringKeys<Values>>(field: Field, validators: Validator<Values, Field>) => void;
   validate: (fields?:string[]) => ValidateResult<Values>;
 }
 
@@ -25,7 +26,7 @@ FormContext.displayName='Form';
 type ValidationError = string;
 
 type ValidateResult<Values extends Keyed> = [true, Values] | [false, {
-  [Field in keyof Values]: Values[Field] | ValidationError
+  [Field in StringKeys<Values>]: Values[Field] | ValidationError
 }];
 
 export const createFormContext = <Values extends Keyed>(initialValues:Partial<Values>): IFormContext<Values> => {
@@ -33,12 +34,15 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     err: { addErrors, removeErrors }
   } = useApp();
   const [values, setValuesMap] = useState<Partial<Values>>(initialValues);
-  const [pendingValidation, setPendingValidation] = useState<(keyof Values)[]>([]);
+  const [pendingValidation, setPendingValidation] = useState<StringKeys<Values>[]>([]);
   const [validators, setValidationMap] = useState<{
-    [Field in keyof Values & string]?: FieldValidator<Values, Field>
+    [Field in StringKeys<Values>]?: Validator<Values, Field>
   }>({});
   const [errors, setErrors] = useState<{
-    [Field in keyof Values & string]?: string
+    [Field in StringKeys<Values>]?: string
+  }>({});
+  const [requiredFields, setRequiredFields] = useState<{
+    [Field in StringKeys<Values>]?: StringKeys<Values>[]
   }>({});
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     });
   }, [errors]);
 
-  const setValidator = useCallback(<Field extends keyof Values & string>(field: Field, validator: FieldValidator<Values, Field>) => {
+  const setValidator = useCallback(<Field extends StringKeys<Values>>(field: Field, validator: Validator<Values, Field>) => {
     setValidationMap(prev => {
       if(prev[field]) {
         return prev;
@@ -66,60 +70,91 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     });
   }, []);
 
-  const validate = useCallback((fields:(keyof Values)[] = []): ValidateResult<Values> =>
-    Object.entries(validators)
-      .filter(([field]) => fields.length === 0 || fields.includes(field))
-      .map(([field, validators]) => {
-        const value = values[field];
-        const ctx = { field, values };
-
-        let valid: boolean = true;
-        let error: string = '';
-        validators.find((validator: any) => {
-          if(Array.isArray(validator)) {
-            valid = validator[0](value, ctx);
-            error = validator[1];
-          } else {
-            const tuple = validator(value, ctx);
-            valid = tuple[0];
-            error = tuple[1];
-          }
-
-          return !valid;
-        });
-
-
-        setErrors(prev => ({
+  const requiredFactory = <Field extends StringKeys<Values>>(field:Field) => (otherField: StringKeys<Values>, additionalAssertions: ValidatorSuite<Values[Field]>): ValidatorSuite<Values[Field]> => {
+    setRequiredFields((prev) => {
+      if(!prev[otherField]) prev[otherField] = [];
+      if(!prev[otherField]!.includes(field)) {
+        return {
           ...prev,
-          [field]: !valid ? error : undefined
-        }))
-
-        return [
-          field,
-          valid ? valid : [false, error]
-        ] as Tuple<string, true | [false, string]>
-      })
-    .reduce((res, [field, valid]) => {
-      if(valid !== true) {
-        res = [false, {
-          ...res[1],
-          [field]: valid[1]
-        }];
+          [otherField]: prev[otherField]!.concat(field)
+        };
       }
-      
-      return res;
-    }, [true, values] as ValidateResult<Values>)
-    , [validators, values]);
+
+      return prev;
+    });
+
+    return values[otherField] ? additionalAssertions : [];
+  };
+  const runValidator = <Field extends StringKeys<Values>>(field: Field, validator:Validator<Values, Field>): AssertionResult<Values[Field]> =>  {
+    const value = values[field];
+    const required = requiredFactory(field);
+    const isAssertionWithMessage = ist<AssertionWithMessage<Values[Field]>>((obj:any) =>
+      Array.isArray(obj)
+      && typeof obj[0] === 'function'
+      && typeof obj[1] === 'string'
+    );
+
+    const runSuite = (field: Field, assertions: ValidatorSuite<Values[Field]>): AssertionResult<Values[Field]> => {
+      if(assertions.length === 0) return [true, value!];
+
+      const [assertion, ...nextAssertions] = assertions;
+
+      if(isAssertionWithMessage(assertion)) {
+        const [assert, message] = assertion;
+        const isValid = assert(value!);
+        if(!isValid) return [false, message];
+      } else {
+        nextAssertions.unshift.apply(nextAssertions, assertion);
+      }
+
+      return nextAssertions.length > 0 ? runSuite(field, nextAssertions) : [true, value!];
+    }
+
+    const assertions = validator(values as Values, { field, value, required });
+    return runSuite(field, assertions);
+  }
+
+  const _validate = (fields:StringKeys<Values>[] = Object.keys(validators), result: ValidateResult<Values> = [true, {} as Values]): ValidateResult<Values> => {
+    if(fields.length === 0 || !result[0]) return result;
+    const [field, ...nextFields] = fields as [StringKeys<Values>, ...StringKeys<Values>[]];
+    const validator = validators[field];
+
+    if(validator) {
+      const [isValid, res] = runValidator(field, validator);
+
+      setErrors(prev => ({
+        ...prev,
+        [field]: !isValid ? res : undefined
+      }));
+
+      if(requiredFields[field]) {
+        const definedFields = Object.keys(result[1]).concat(fields);
+        const _fields = requiredFields[field]!.filter((field) => !definedFields.includes(field));
+        nextFields.push.apply(nextFields, _fields);
+      }
+
+      return _validate(nextFields, [isValid && result[0], {
+        ...result[1],
+        [field]: res
+      }] as ValidateResult<Values>);
+    }
+
+    return _validate(nextFields, result);
+  };
+
+  const validate = useCallback((fields:StringKeys<Values>[] = Object.keys(validators)): ValidateResult<Values> => {
+    return _validate(fields.reverse());
+  }, [values, validators]);
 
   const onChange = useCallback(debounce(
-    <Field extends keyof Values>(field: Field, value: Values[Field]) => {
+    <Field extends StringKeys<Values>>(field: Field, value: Values[Field]) => {
       setValuesMap(prev => ({
         ...prev,
         [field]: value,
       }));
 
       setPendingValidation(prev => prev.concat(field));
-    }, 250)
+    }, 500)
   , []);
 
   useEffect(() => {

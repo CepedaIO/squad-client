@@ -1,4 +1,4 @@
-import React, {DetailedHTMLProps, InputHTMLAttributes} from "react";
+import React, {DetailedHTMLProps, InputHTMLAttributes, useMemo, useState} from "react";
 import $c from "classnames";
 import omit from "lodash.omit";
 
@@ -16,6 +16,8 @@ export type HTMLConvergentInputElement = HTMLInputElement & HTMLTextAreaElement;
 
 const Input = <T,>(props: InputProps<T>) => {
   const descriptor = props.type._type || props.type;
+  const initialValue = useMemo(() => props.value ? descriptor.out(props.value) : '', []);
+  const [value, setValue] = useState(initialValue)
 
   /**
    * We use field consistently here to denote the field of some data type (like error)
@@ -24,8 +26,6 @@ const Input = <T,>(props: InputProps<T>) => {
     ...omit(props, 'onChange', 'type', 'value'),
     'type': descriptor.type
   };
-
-  const value = props.value ? descriptor.out(props.value) : undefined;
 
   if(_props.type === 'textarea') {
     return (
@@ -51,6 +51,7 @@ const Input = <T,>(props: InputProps<T>) => {
     value={value}
     onChange={ (event) => {
       if(props.onChange) {
+        setValue(event.target.value);
         const value = descriptor.in(event.target.value);
         props.onChange(value);
       }

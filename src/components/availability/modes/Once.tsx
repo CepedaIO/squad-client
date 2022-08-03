@@ -1,13 +1,10 @@
 import Button from "../../inline/Button";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import $c from "classnames";
 import {DateTime} from "luxon";
 import {useForm} from "../../../hooks/useForm";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
-import datetime from "../../../services/input-types/datetime";
-import Datetime from "../../../services/input-types/datetime";
-import {validateWith} from "../../../services/input-types";
 
 interface OnceProps {
   submit(form: OnceForm): void;
@@ -25,14 +22,11 @@ const Once = ({
   submit
 }: OnceProps) => {
   const [allDay, setAllDay] = useState(false);
-  const [values, validate, {FormInput}] = useForm<OnceForm>();
+  const {validate, FormInput} = useForm<OnceForm>();
 
   const onClickAdd = () => {
     const [valid, values] = validate();
     if(valid) { submit(values); }
-    else {
-      console.log('invalid', values);
-    }
   };
 
   const onClickCancel = () => {
@@ -46,7 +40,7 @@ const Once = ({
         field={"date"}
         type={Date}
         nowrap={true}
-        validator={[
+        validator={() => [
           [Date.defined, 'Must pick a date'],
           [Date.afterToday, 'Date must come after today']
         ]}
@@ -62,6 +56,12 @@ const Once = ({
           field={"start"}
           type={Time}
           nowrap={true}
+          validator={({ end }, { required }) => [
+            [Date.defined, 'Must pick a time'],
+            required('end', [
+              [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
+            ])
+          ]}
         />
 
         <FormInput
@@ -69,6 +69,12 @@ const Once = ({
           field={"end"}
           type={Time}
           nowrap={true}
+          validator={({ start }, { required }) => [
+            [Date.defined, 'Must pick a time'],
+            required('start', [
+              [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
+            ])
+          ]}
         />
       </>}
 

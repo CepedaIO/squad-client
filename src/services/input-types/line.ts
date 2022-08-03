@@ -4,7 +4,9 @@ const Line = {
     type: 'text',
     in: (val: string) => val,
     out: (val: string) => val
-  } as TypeDescriptor<string>
+  } as TypeDescriptor<string>,
+  defined: (value?: string) => !!value,
+  greaterThan: (offset: number) => (value: string) => value.length > offset,
 };
 
 export default Line;

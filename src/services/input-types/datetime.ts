@@ -2,7 +2,7 @@ import {DateTime} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
 
 const greaterThan = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > 1;
-const greaterThanDate = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);
+const greaterThanUnit = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);
 const greaterThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) => (val: DateTime) => [
   {
     valid: time.startOf(unit) <= val.startOf(unit),
@@ -25,7 +25,7 @@ const lessThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) =
   }
 ]
 
-const afterToday:Assertion<DateTime> = greaterThanDate(DateTime.now(), 'day');
+const afterToday:Assertion<DateTime> = greaterThanUnit(DateTime.now(), 'day');
 afterToday.message = 'Date must come after today';
 
 const defined:Assertion<DateTime> = (val: DateTime | undefined) => DateTime.isDateTime(val);

@@ -1,24 +1,23 @@
-import FormInput from "../components/inline-block/FormInput";
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React, {useContext} from "react";
+import React from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
-import AppContext from "../providers/AppContext";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import {DateTime} from "luxon";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
+import {useForm} from "../hooks/useForm";
 
 export interface IGroupNewPageForm {
+  name: string;
+  description: string;
+  displayName: string;
   start: DateTime;
   end: DateTime;
 }
 
 const GroupNewContent = () => {
-  const {
-    page: { validate }
-  } = useContext(AppContext);
-
+  const { validate, FormInput } = useForm<IGroupNewPageForm>();
   const onClickSubmit = () => {
     validate();
   };

@@ -9,7 +9,8 @@ const Date = {
     out: (val: DateTime) => val.toFormat('yyyy-MM-dd')
   } as TypeDescriptor<DateTime>,
   defined: datetime.defined,
-  afterToday: datetime.afterToday
+  afterToday: datetime.afterToday,
+  greaterThan: datetime.greaterThan
 };
 
 export default Date;

@@ -1,4 +1,4 @@
-import {useContext, useEffect} from "react";
+import {useCallback, useContext, useEffect} from "react";
 import FormContext, {IFormContext} from "../providers/FormContext";
 import omit from "lodash.omit";
 import $c from "classnames";
@@ -6,14 +6,14 @@ import Input, {InputProps} from "../components/inline/Input";
 import ErrorOutput from "../components/ErrorOutput";
 import AppContext from "../providers/AppContext";
 
-export interface FormInputProps<Values extends Keyed, Field extends keyof Values & string> extends Omit<InputProps<Values[Field]>, 'value'> {
+export interface FormInputProps<Values extends Keyed, Field extends StringKeys<Values>> extends Omit<InputProps<Values[Field]>, 'value'> {
   field: Field;
-  validator?: FieldValidator<Values, Field>;
+  validator?: Validator<Values, Field>;
   label: string;
   nowrap?: boolean;
 }
 
-const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(props: FormInputProps<Values, Field>) => {
+const _FormInput = <Values extends Keyed, Field extends StringKeys<Values>>(props: FormInputProps<Values, Field>) => {
   const {
     err: {hasError},
   } = useContext(AppContext);
@@ -67,22 +67,23 @@ const _FormInput = <Values extends Keyed, Field extends keyof Values & string>(p
 export const useForm = <Values,>() => {
   const { values, validate } = useContext(FormContext);
 
-  const FormInput = <Field extends keyof Values & string>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
+  const FormInput = useCallback(<Field extends StringKeys<Values>>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
     <_FormInput
       { ...props }
     />
-  );
+  ), []);
 
-  type Options = {
-    FormInput: typeof FormInput,
-    validate: typeof validate
-  };
-
-  return [
+  return {
+    validate,
     values,
-    validate, {
-      FormInput
-    }
-  ] as [ Partial<Values>, (fields?:string[]) => [false, Partial<Values>], Options]
-    | [ Values, (fields?:string[]) => [true, Values], Options ];
+    FormInput
+  } as {
+    validate: (fields?:string[]) => [false, Partial<Values>],
+    FormInput: typeof FormInput
+    values: Partial<Values>
+  } | {
+    validate: (fields?: string[]) => [true, Values],
+    FormInput: typeof FormInput
+    values: Values
+  };
 }
