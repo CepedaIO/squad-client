@@ -1,28 +1,46 @@
 import {useCallback, useContext} from "react";
 import FormContext from "../../providers/FormContext";
 import FormInput, {FormInputProps} from "./FormInput";
+import Button, {ToggleButtonProps} from "../../components/inline/Button";
 
-const useForm = <Values,>() => {
-  const { values, validate } = useContext(FormContext);
+interface FormToggleProps<Values extends Keyed> extends Omit<ToggleButtonProps, 'variant'> {
+  field: StringKey<Values, boolean>;
+}
 
-  const _FormInput = useCallback(<Field extends StringKeys<Values>>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
+const useForm = <Values extends Keyed>() => {
+  const { values, validate, onChange } = useContext(FormContext);
+
+  const _FormInput = useCallback(<Field extends StringKey<Values>>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
     <FormInput
       { ...props }
     />
   ), []);
 
+  const FormToggle = useCallback((props: FormToggleProps<Values>) => (
+    <Button
+      { ...props }
+      variant={"toggle"}
+      active={values[props.field]}
+      onChange={ (value: boolean) => onChange(props.field, value)}
+    />
+  ), [values]);
+
+
   return {
     validate,
     values,
-    FormInput: _FormInput
+    FormInput: _FormInput,
+    FormToggle
   } as {
-    validate: (fields?:string[]) => [false, Partial<Values>],
-    FormInput: typeof _FormInput
-    values: Partial<Values>
+    validate: (fields?:string[]) => [false, Partial<Values>];
+    FormInput: typeof _FormInput;
+    FormToggle: typeof FormToggle;
+    values: Partial<Values>;
   } | {
-    validate: (fields?: string[]) => [true, Values],
-    FormInput: typeof _FormInput
-    values: Values
+    validate: (fields?: string[]) => [true, Values];
+    FormInput: typeof _FormInput;
+    FormToggle: typeof FormToggle;
+    values: Values;
   };
 }
 

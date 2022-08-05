@@ -1,7 +1,6 @@
-import React, {ButtonHTMLAttributes, DetailedHTMLProps, useContext, useState, MouseEvent} from "react";
+import React, {ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent} from "react";
 import $c from "classnames";
 import {omit} from "lodash";
-import FormContext, {IFormContext} from "../../providers/FormContext";
 import {ist} from "../../services/utils";
 
 type Variants = 'submit' | 'reject' | 'optional' | 'link' | 'tab' | 'toggle' | 'disabled';
@@ -12,14 +11,13 @@ type BaseProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTML
   loading?: boolean;
 }
 
-type ToggleButtonProps = BaseProps & {
+export type ToggleButtonProps = Omit<BaseProps, 'onChange'> & {
   variant: 'toggle';
   initialValue?: boolean;
-  field?: string;
   onChange?: (val: boolean) => void;
 }
 
-type ButtonProps = BaseProps | ToggleButtonProps;
+export type ButtonProps = BaseProps | ToggleButtonProps;
 
 const border = 'border-0 rounded';
 const padding = 'py-2 px-5';
@@ -51,7 +49,7 @@ const getClasses = (props: ButtonProps) => {
   return $c(className, buttonClasses);
 }
 
-const ToggleDecorator = (active: boolean, { variant }: ButtonProps) => {
+const ToggleDecorator = ({ variant, active }: ButtonProps) => {
   if(variant !== 'toggle') {
     return null;
   }
@@ -65,17 +63,11 @@ const ToggleDecorator = (active: boolean, { variant }: ButtonProps) => {
   }
 }
 
-const Button = <Values extends Keyed>(props: ButtonProps) => {
-  const [active, setActive] = useState<boolean>(isToggleButtonProps(props) ? !!props.initialValue : false);
-  const { loading } = props;
-  const buttonProps = omit(props, 'variant', 'loading', 'disabled', 'className', 'active', 'children');
-  const { onChange } = useContext<IFormContext<Values>>(FormContext);
+const Button = (props: ButtonProps) => {
+  const { loading, active } = props;
+  const buttonProps = omit(props, 'variant', 'loading', 'disabled', 'className', 'active', 'children', 'onChange');
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
-    setActive(!active);
-
     if(isToggleButtonProps(props)) {
-      //@ts-ignore
-      if(props.field) onChange(props.field, !active);
       if(props.onChange) props.onChange(!active);
     }
 
@@ -92,7 +84,7 @@ const Button = <Values extends Keyed>(props: ButtonProps) => {
       onClick={onClick}
     >
       { props.children }
-      { ToggleDecorator(active, props) }
+      { ToggleDecorator(props) }
     </button>
   )
 }

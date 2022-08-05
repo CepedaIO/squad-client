@@ -1,31 +1,30 @@
 import Input, {InputProps} from "../../components/inline/Input";
 import {useContext, useEffect} from "react";
-import AppContext from "../../providers/AppContext";
 import FormContext, {IFormContext} from "../../providers/FormContext";
 import {omit} from "lodash";
 import $c from "classnames";
-import ErrorOutput from "../../components/ErrorOutput";
 
-export interface FormInputProps<Values extends Keyed, Field extends StringKeys<Values>> extends Omit<InputProps<Values[Field]>, 'value'> {
+export interface FormInputProps<Values extends Keyed, Field extends StringKey<Values>> extends Omit<InputProps<Values[Field]>, 'value'> {
   field: Field;
   validator?: Validator<Values, Field>;
   label: string;
   nowrap?: boolean;
+  omit?: (values: Partial<Values>) => boolean;
 }
 
-const FormInput = <Values extends Keyed, Field extends StringKeys<Values>>(props: FormInputProps<Values, Field>) => {
-  const {
-    err: {hasError},
-  } = useContext(AppContext);
+const FormInput = <Values extends Keyed, Field extends StringKey<Values>>(props: FormInputProps<Values, Field>) => {
   const { field, validator } = props;
-  const { onChange, setValidator, values } = useContext<IFormContext<Values>>(FormContext);
+  const { onChange, setValidator, values, hasError, getError, setOmitValidation } = useContext<IFormContext<Values>>(FormContext);
 
   const inputProps: InputProps<Values[Field]> = {
     ...omit(props, ['label', 'field', 'nowrap', 'validator']),
   };
 
+  const error = getError(field)?.message;
+
   useEffect(() => {
     if(validator) { setValidator(field, validator); }
+    if(props.omit) { setOmitValidation(field, props.omit); }
   }, [])
 
   return (
@@ -54,10 +53,8 @@ const FormInput = <Values extends Keyed, Field extends StringKeys<Values>>(props
       </div>
     </section>
 
-    <section className={
-      $c('min-h-[20px] text-right')
-    }>
-      <ErrorOutput field={props.field} />
+    <section className={"min-h-[20px] text-right text-error text-sm"}>
+      { error }
     </section>
   </main>
   )

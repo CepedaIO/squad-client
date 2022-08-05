@@ -20,11 +20,10 @@ export interface OnceForm {
 const Once = ({
   submit
 }: OnceProps) => {
-  const {validate, FormInput, values} = useForm<OnceForm>();
+  const {validate, values, FormInput, FormToggle} = useForm<OnceForm>();
 
   const onClickAdd = () => {
     const [valid, values] = validate();
-    console.log(values);
     if(valid) { submit(values); }
   };
 
@@ -45,12 +44,9 @@ const Once = ({
         ]}
       />
 
-      <Button
-        variant={"toggle"}
-        field={'allDay'}
-      >
+      <FormToggle field={"allDay"} className={'mb-5'}>
         All day?
-      </Button>
+      </FormToggle>
 
       {!values.allDay && <>
         <FormInput
@@ -58,14 +54,13 @@ const Once = ({
           field={"start"}
           type={Time}
           nowrap={true}
-          validator={({ end }, { required, when }) =>
-            when('allDay', (val) => !val, [
-              [Date.defined, 'Must pick a time'],
-              required('end', [
-                [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
-              ])
+          omit={({allDay}) => !!allDay}
+          validator={({ end }, { required,  }) => [
+            [Date.defined, 'Must pick a time'],
+            required('end', [
+              [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
             ])
-          }
+          ]}
         />
 
         <FormInput
@@ -73,14 +68,13 @@ const Once = ({
           field={"end"}
           type={Time}
           nowrap={true}
-          validator={({ start }, { required, when }) =>
-            when('allDay', (val) => !val, [
-              [Date.defined, 'Must pick a time'],
-              required('start', [
-                [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
-              ])
+          omit={({allDay}) => !!allDay}
+          validator={({ start }, { required }) => [
+            [Date.defined, 'Must pick a time'],
+            required('start', [
+              [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
             ])
-          }
+          ]}
         />
       </>}
 

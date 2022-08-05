@@ -1,27 +1,19 @@
 import Button from "../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import Once, {OnceForm} from "./modes/Once";
+import Once from "./modes/Once";
 
 const tabs = [
   { label: 'Once', key: 'once' },
   { label: 'Cron', key: 'cron' }
 ];
 
-interface IAvailabilityForm {
-  mode: string;
-}
-
-interface AvailabilityOnceForm extends OnceForm, IAvailabilityForm {
-  mode: 'once';
-}
-
 const AvailabilitySelector = () => {
   const [active, setActive] = useState(false);
   const [repeatMode, setRepeatMode] = useState(tabs[0].key);
   const clickedAvailability = () => setActive(true);
 
-  const onSubmit = (form) => {
+  const onSubmit = (form: any) => {
     console.log('did submit:', form);
   };
 
