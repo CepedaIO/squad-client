@@ -1,6 +1,6 @@
 import {useCallback, useContext, useEffect} from "react";
 import FormContext, {IFormContext} from "../providers/FormContext";
-import omit from "lodash.omit";
+import {omit} from "lodash";
 import $c from "classnames";
 import Input, {InputProps} from "../components/inline/Input";
 import ErrorOutput from "../components/ErrorOutput";

@@ -1,6 +1,6 @@
 import React, {ButtonHTMLAttributes, DetailedHTMLProps, useContext, useState, MouseEvent} from "react";
 import $c from "classnames";
-import omit from "lodash.omit";
+import {omit} from "lodash";
 import FormContext, {IFormContext} from "../../providers/FormContext";
 import {ist} from "../../services/utils";
 

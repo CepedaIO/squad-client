@@ -1,8 +1,7 @@
 import React, {ChangeEvent, ChangeEventHandler, useMemo, useState} from "react";
 import $c from "classnames";
-import omit from "lodash.omit";
+import {omit} from "lodash";
 import {InputTypes, TypeDescriptor} from "../../services/input-types";
-
 
 export type InputProps<Type extends InputTypes> = {
   className?: string;

@@ -1,7 +1,7 @@
 import {createContext, useCallback, useEffect, useState} from "react";
-import debounce from "lodash.debounce";
 import {useApp} from "../hooks/useApp";
 import {ist} from "../services/utils";
+import {omitBy, isUndefined} from "lodash";
 
 export interface IFormContext<Values extends Keyed> {
   values: Partial<Values>;
@@ -172,7 +172,8 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
   };
 
   const validate = useCallback((fields:StringKeys<Values>[] = Object.keys(validators), options: ValidateOptions = {}): ValidateResult<Values> => {
-    return _validate(fields, options);
+    const [isValid, values] = _validate(fields, options);
+    return [isValid, omitBy(values, isUndefined)] as ValidateResult<Values>;
   }, [values, validators]);
 
   const onChange = useCallback(
