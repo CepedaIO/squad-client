@@ -97,9 +97,26 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     return values[otherField] ? additionalAssertions : [];
   };
 
+  const whenFactory = <Field extends StringKeys<Values>>(field:Field) => <OtherField extends StringKeys<Values>>(otherField: OtherField, condition: (field: Values[OtherField]) => boolean, additionalAssertions: ValidatorSuite<Values[Field]>): ValidatorSuite<Values[Field]> => {
+    setRequiredFields((prev) => {
+      if(!prev[otherField]) prev[otherField] = [];
+      if(!prev[otherField]!.includes(field)) {
+        return {
+          ...prev,
+          [otherField]: prev[otherField]!.concat(field)
+        };
+      }
+
+      return prev;
+    });
+
+    return condition(values[otherField]!) ? additionalAssertions : [];
+  };
+
   const runValidator = <Field extends StringKeys<Values>>(field: Field, validator:Validator<Values, Field>): AssertionResult<Values[Field]> =>  {
     const value = values[field];
     const required = requiredFactory(field);
+    const when = whenFactory(field);
     const isAssertionWithMessage = ist<AssertionWithMessage<Values[Field]>>((obj:any) =>
       Array.isArray(obj)
       && typeof obj[0] === 'function'
@@ -122,7 +139,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
       return nextAssertions.length > 0 ? runSuite(field, nextAssertions) : [true, value!];
     }
 
-    const assertions = validator(values as Values, { field, value, required });
+    const assertions = validator(values as Values, { field, value, required, when });
     return runSuite(field, assertions);
   }
 
@@ -158,7 +175,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     return _validate(fields, options);
   }, [values, validators]);
 
-  const onChange = useCallback(debounce(
+  const onChange = useCallback(
     <Field extends StringKeys<Values>>(field: Field, value: Values[Field]) => {
       setValuesMap(prev => ({
         ...prev,
@@ -166,7 +183,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
       }));
 
       setPendingValidation(prev => prev.concat(field));
-    }, 500)
+    }
   , []);
 
   return {

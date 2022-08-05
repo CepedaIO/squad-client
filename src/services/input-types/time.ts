@@ -1,4 +1,5 @@
 import {DateTime, DateTimeUnit} from "luxon";
+import {TypeDescriptor} from "./index";
 
 const greaterThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > factor;
 const lessThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) < factor;

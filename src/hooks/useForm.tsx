@@ -22,7 +22,6 @@ const _FormInput = <Values extends Keyed, Field extends StringKeys<Values>>(prop
 
   const inputProps: InputProps<Values[Field]> = {
     ...omit(props, ['label', 'field', 'nowrap', 'validator']),
-    name: field
   };
 
   useEffect(() => {

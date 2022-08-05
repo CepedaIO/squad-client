@@ -1,3 +1,5 @@
+import {TypeDescriptor} from "./index";
+
 const Multiline = {
   _type: {
     id: 'multiline',

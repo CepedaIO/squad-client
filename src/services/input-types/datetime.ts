@@ -26,15 +26,11 @@ const lessThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) =
 ]
 
 const afterToday:Assertion<DateTime> = greaterThanUnit(DateTime.now(), 'day');
-afterToday.message = 'Date must come after today';
-
 const defined:Assertion<DateTime> = (val: DateTime | undefined) => DateTime.isDateTime(val);
-defined.message = 'Must pick a date';
 
 export const DateAndTime = {
   _id: 'datetime',
   _type: 'datetime',
-  _transform: (val: string) => DateTime.fromISO(val),
   defined,
   afterToday,
   greaterThan,

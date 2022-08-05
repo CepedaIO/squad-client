@@ -1,5 +1,5 @@
 import Button from "../../inline/Button";
-import React, {useState} from "react";
+import React from "react";
 import $c from "classnames";
 import {DateTime} from "luxon";
 import {useForm} from "../../../hooks/useForm";
@@ -15,23 +15,17 @@ export interface OnceForm {
   allDay: boolean;
   start: DateTime;
   end: DateTime;
-  test: Date;
 }
 
 const Once = ({
   submit
 }: OnceProps) => {
-  const [allDay, setAllDay] = useState(false);
-  const {validate, FormInput} = useForm<OnceForm>();
+  const {validate, FormInput, values} = useForm<OnceForm>();
 
   const onClickAdd = () => {
     const [valid, values] = validate();
-    if(valid) {
-      console.log('should submit:', values);
-      //submit(values);
-    } else {
-      console.log('nope', values);
-    }
+    console.log(values);
+    if(valid) { submit(values); }
   };
 
   const onClickCancel = () => {
@@ -51,22 +45,27 @@ const Once = ({
         ]}
       />
 
-      <Button variant={"toggle"} active={allDay} onClick={() => setAllDay(!allDay)}>
+      <Button
+        variant={"toggle"}
+        field={'allDay'}
+      >
         All day?
       </Button>
 
-      {!allDay && <>
+      {!values.allDay && <>
         <FormInput
           label={"Start"}
           field={"start"}
           type={Time}
           nowrap={true}
-          validator={({ end }, { required }) => [
-            [Date.defined, 'Must pick a time'],
-            required('end', [
-              [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
+          validator={({ end }, { required, when }) =>
+            when('allDay', (val) => !val, [
+              [Date.defined, 'Must pick a time'],
+              required('end', [
+                [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
+              ])
             ])
-          ]}
+          }
         />
 
         <FormInput
@@ -74,12 +73,14 @@ const Once = ({
           field={"end"}
           type={Time}
           nowrap={true}
-          validator={({ start }, { required }) => [
-            [Date.defined, 'Must pick a time'],
-            required('start', [
-              [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
+          validator={({ start }, { required, when }) =>
+            when('allDay', (val) => !val, [
+              [Date.defined, 'Must pick a time'],
+              required('start', [
+                [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
+              ])
             ])
-          ]}
+          }
         />
       </>}
 

@@ -1,3 +1,5 @@
+import {TypeDescriptor} from "./index";
+
 const Line = {
   _type: {
     id: 'line',
