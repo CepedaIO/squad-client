@@ -6,7 +6,7 @@ import FormContext, {createFormContext} from "../providers/FormContext";
 import {DateTime} from "luxon";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
-import {useForm} from "../hooks/useForm";
+import useForm from "../hooks/useForm/index";
 
 export interface IGroupNewPageForm {
   name: string;

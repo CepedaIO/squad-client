@@ -2,9 +2,9 @@ import Button from "../../inline/Button";
 import React from "react";
 import $c from "classnames";
 import {DateTime} from "luxon";
-import {useForm} from "../../../hooks/useForm";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
+import useForm from "../../../hooks/useForm/index";
 
 interface OnceProps {
   submit(form: OnceForm): void;

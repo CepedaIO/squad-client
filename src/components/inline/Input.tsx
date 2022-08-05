@@ -4,6 +4,7 @@ import {omit} from "lodash";
 import {InputTypes, TypeDescriptor} from "../../services/input-types";
 
 export type InputProps<Type extends InputTypes> = {
+  placeholder?: string;
   className?: string;
   type: { _type: TypeDescriptor<Type> };
   value?: Type;
@@ -34,6 +35,7 @@ const Input = <T extends InputTypes>(props: InputProps<T>) => {
   if(_props.type === 'textarea') {
     return (
       <textarea
+        placeholder={props.placeholder}
         className={$c(props.className, 'p-2 border-2')}
         value={value}
         onChange={ onChange }
@@ -43,6 +45,7 @@ const Input = <T extends InputTypes>(props: InputProps<T>) => {
 
   return <input
     type={descriptor.type}
+    placeholder={props.placeholder}
     className={$c(props.className, 'p-2')}
     value={value}
     onChange={ onChange }
