@@ -24,6 +24,7 @@ module.exports = {
         hint: colors.gray["400"],
         submit: colors.blue["500"],
         active: colors.blue["500"],
+        edit: colors.blue["500"],
         primary: colors.stone["600"],
         warning: colors.amber["300"],
         info: colors.sky["200"],

@@ -1,4 +1,4 @@
-import {useCallback, useContext} from "react";
+import {useCallback, useContext, useEffect} from "react";
 import FormContext from "../../providers/FormContext";
 import FormInput, {FormInputProps} from "./FormInput";
 import Button, {ToggleButtonProps} from "../../components/inline/Button";
@@ -7,8 +7,12 @@ interface FormToggleProps<Values extends Keyed> extends Omit<ToggleButtonProps, 
   field: StringKey<Values, boolean>;
 }
 
-const useForm = <Values extends Keyed>() => {
-  const { values, validate, onChange } = useContext(FormContext);
+const useForm = <Values extends Keyed>(initialValues?: Partial<Values>) => {
+  const { values, validate, onChange, setValues } = useContext(FormContext);
+
+  useEffect(() => {
+    if(initialValues) setValues(initialValues);
+  },[]);
 
   const _FormInput = useCallback(<Field extends StringKey<Values>>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
     <FormInput

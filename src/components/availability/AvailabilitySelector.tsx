@@ -1,49 +1,58 @@
 import Button from "../inline/Button";
 import React, {useState} from "react";
-import $c from "classnames";
-import Once from "./modes/Once";
+import {DateTime} from "luxon";
+import {Availability, AvailabilityEdit, AvailabilityForm, AvailaibilityView} from "./Availability";
 
-const tabs = [
-  { label: 'Once', key: 'once' },
-  { label: 'Cron', key: 'cron' }
-];
+const NULL_FORM: Partial<AvailabilityForm> = {};
 
 const AvailabilitySelector = () => {
-  const [active, setActive] = useState(false);
-  const [repeatMode, setRepeatMode] = useState(tabs[0].key);
-  const clickedAvailability = () => setActive(true);
-
-  const onSubmit = (form: any) => {
-    console.log('did submit:', form);
-  };
+  const [editing, setEditing] = useState<Partial<AvailabilityForm> | null>(null);
+  const [availability, setAvailability] = useState<Availability>([
+    { date: DateTime.now().plus({ day: 1 }), allDay: false, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) },
+    { date: DateTime.now().plus({ day: 1 }), allDay: true, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) }
+  ]);
+  const clickedAvailability = () => setEditing(NULL_FORM);
+  const onSubmit = (form: AvailabilityForm) => setAvailability((prev) => prev.concat(form));
+  const onCancel = () => setEditing(null);
+  const onEdit = (availability: AvailabilityForm) => setEditing(availability);
+  const onDelete = (availability: AvailabilityForm) => setAvailability((prev) => prev.filter((entry) => entry !== availability));
 
   return (
     <main>
-      { !active &&
-        <Button variant={"optional"} onClick={clickedAvailability} className={'w-full'}>
+      { editing !== NULL_FORM &&
+        <Button variant={"optional"} onClick={clickedAvailability} className={'w-full mb-3'}>
           <i className="fa-solid fa-circle-plus mr-3" />
           Availability
         </Button>
       }
 
-      { active &&
-        <section className={$c('flex flex-col gap-5')}>
-          <section className={$c('grid grid-cols-3')}>
-            { tabs.map((tab) =>
-              <Button
-                variant={"tab"}
-                active={repeatMode === tab.key}
-                key={tab.key}
-                onClick={() => setRepeatMode(tab.key)}
-              >
-                { tab.label }
-              </Button>
-            )}
-          </section>
-
-          <Once submit={ onSubmit } />
-        </section>
+      { editing && editing === NULL_FORM &&
+        <AvailabilityEdit
+          form={editing}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+        />
       }
+
+      { availability.map((entry, index) => <>
+        { entry === editing &&
+          <AvailabilityEdit
+            form={entry}
+            key={index}
+            onSubmit={onSubmit}
+            onCancel={onCancel}
+          />
+        }
+
+        { entry !== editing &&
+          <AvailaibilityView
+            form={entry}
+            key={index}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
+        }
+      </>)}
     </main>
   )
 }

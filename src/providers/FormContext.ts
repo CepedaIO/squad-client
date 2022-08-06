@@ -7,6 +7,7 @@ type OmitValidation<Values extends Keyed> = (values:Partial<Values>) => boolean;
 
 export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 'hasError' | 'getError' | 'errors'> {
   values: Partial<Values>;
+  setValues: (values:Partial<Values>) => void;
   onChange: <Field extends StringKey<Values>>(field: Field, val: Values[Field]) => void;
   setValidator: <Field extends StringKey<Values>>(field: Field, validators: Validator<Values, Field>) => void;
   validate: (fields?:StringKey<Values>[]) => ValidateResult<Values>;
@@ -15,6 +16,7 @@ export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 
 
 const FormContext = createContext<IFormContext<any>>({
   values: {},
+  setValues: () => {},
   onChange: () => {},
   setValidator: () => {},
   validate: () => [false, {}],
@@ -163,8 +165,14 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     }
   , []);
 
+  const setValues = useCallback((values: Partial<Values>) => setValuesMap((prev) => ({
+    ...prev,
+    ...values
+  })), []);
+
   return {
     values,
+    setValues,
     onChange,
     setValidator,
     validate,
