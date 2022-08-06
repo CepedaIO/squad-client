@@ -1,10 +1,10 @@
-import {OnceEdit, OnceForm, OnceView} from "./modes/Once";
+import {RangeEdit, RangeForm, RangeView} from "./modes/Range";
 import React, {useState} from "react";
 import $c from "classnames";
 import Button from "../inline/Button";
 
-export type AvailabilityForm = OnceForm;
-export type Availability = Array<AvailabilityForm>;
+export type AvailabilityForm = RangeForm;
+export type IAvailability = Array<AvailabilityForm>;
 
 export interface AvailabilityViewProps {
   form: AvailabilityForm;
@@ -12,12 +12,12 @@ export interface AvailabilityViewProps {
   onEdit: (form:AvailabilityForm) => void;
 }
 
-export const AvailaibilityView = ({
+export const AvailabilityView = ({
   form, onDelete, onEdit
 }: AvailabilityViewProps) => {
 
   return (
-    <OnceView
+    <RangeView
       form={form}
       onDelete={onDelete}
       onEdit={onEdit}
@@ -31,9 +31,9 @@ export interface AvailabilityEditProps {
   onCancel: (form?: Partial<AvailabilityForm>) => void;
 }
 
-const OnceTab = { label: 'Once', key: 'once' };
+const RangeTab = { label: 'Range', key: 'range' };
 const CronTab = { label: 'Cron', key: 'cron' };
-const tabs = [OnceTab, CronTab];
+const tabs = [RangeTab, CronTab];
 
 export const AvailabilityEdit = ({
   form, onSubmit, onCancel
@@ -55,7 +55,7 @@ export const AvailabilityEdit = ({
         )}
       </section>
 
-      <OnceEdit
+      <RangeEdit
         form={form}
         onSubmit={onSubmit}
         onCancel={onCancel}

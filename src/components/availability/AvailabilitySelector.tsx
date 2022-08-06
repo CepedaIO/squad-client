@@ -1,21 +1,24 @@
 import Button from "../inline/Button";
 import React, {useState} from "react";
-import {DateTime} from "luxon";
-import {Availability, AvailabilityEdit, AvailabilityForm, AvailaibilityView} from "./Availability";
+import {IAvailability, AvailabilityEdit, AvailabilityForm, AvailabilityView} from "./Availability";
+
+export interface AvailabilitySelectorProps {
+  availability: IAvailability;
+  onSubmit: (form: AvailabilityForm) => void;
+  onDelete: (form: AvailabilityForm) => void;
+}
 
 const NULL_FORM: Partial<AvailabilityForm> = {};
 
-const AvailabilitySelector = () => {
+const AvailabilitySelector = ({
+  availability, onSubmit, onDelete
+}: AvailabilitySelectorProps) => {
   const [editing, setEditing] = useState<Partial<AvailabilityForm> | null>(null);
-  const [availability, setAvailability] = useState<Availability>([
-    { date: DateTime.now().plus({ day: 1 }), allDay: false, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) },
-    { date: DateTime.now().plus({ day: 1 }), allDay: true, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) }
-  ]);
   const clickedAvailability = () => setEditing(NULL_FORM);
-  const onSubmit = (form: AvailabilityForm) => setAvailability((prev) => prev.concat(form));
+  const onSubmitForm = (form: AvailabilityForm) => onSubmit(form);
   const onCancel = () => setEditing(null);
   const onEdit = (availability: AvailabilityForm) => setEditing(availability);
-  const onDelete = (availability: AvailabilityForm) => setAvailability((prev) => prev.filter((entry) => entry !== availability));
+  const onDeleteForm = (form: AvailabilityForm) => onDelete(form);
 
   return (
     <main>
@@ -29,7 +32,7 @@ const AvailabilitySelector = () => {
       { editing && editing === NULL_FORM &&
         <AvailabilityEdit
           form={editing}
-          onSubmit={onSubmit}
+          onSubmit={onSubmitForm}
           onCancel={onCancel}
         />
       }
@@ -39,16 +42,16 @@ const AvailabilitySelector = () => {
           <AvailabilityEdit
             form={entry}
             key={index}
-            onSubmit={onSubmit}
+            onSubmit={onSubmitForm}
             onCancel={onCancel}
           />
         }
 
         { entry !== editing &&
-          <AvailaibilityView
+          <AvailabilityView
             form={entry}
             key={index}
-            onDelete={onDelete}
+            onDelete={onDeleteForm}
             onEdit={onEdit}
           />
         }

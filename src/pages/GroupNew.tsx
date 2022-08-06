@@ -1,12 +1,13 @@
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React from "react";
+import React, {useState} from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import {DateTime} from "luxon";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm/index";
+import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
 
 export interface IGroupNewPageForm {
   name: string;
@@ -18,9 +19,20 @@ export interface IGroupNewPageForm {
 
 const GroupNewContent = () => {
   const { validate, FormInput } = useForm<IGroupNewPageForm>();
+  const [availability, setAvailability] = useState<IAvailability>([
+    { date: DateTime.now().plus({ day: 1 }), allDay: false, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) },
+    { date: DateTime.now().plus({ day: 1 }), allDay: true, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) }
+  ]);
   const onClickSubmit = () => {
     validate();
   };
+
+  const onSubmitAvailability = (form: AvailabilityForm) => setAvailability((prev) => ({
+    ...prev,
+    form
+  }));
+
+  const onDeleteAvailability = (form: AvailabilityForm) => setAvailability((prev) => prev.filter((entry) => entry !== form));
 
   return (
   <main className="flex flex-col h-full">
@@ -45,9 +57,16 @@ const GroupNewContent = () => {
         type={line}
       />
 
-      <AvailabilitySelector />
+      <AvailabilitySelector
+        availability={availability}
+        onSubmit={onSubmitAvailability}
+        onDelete={onDeleteAvailability}
+      />
 
-      <Calendar month={1} />
+      <Calendar
+        month={1}
+        availability={availability}
+      />
 
       <Button variant={"submit"} onClick={onClickSubmit}>Submit</Button>
     </div>

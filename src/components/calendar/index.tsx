@@ -2,8 +2,10 @@ import $c from "classnames";
 import {DateTime, Interval} from "luxon";
 import CalendarDay from "./CalendarDay";
 import CalendarBox from "./CalendarBox";
+import {IAvailability} from "../availability/Availability";
 
 export interface CalendarProps {
+  availability: IAvailability;
   month: DateTime['month']
 }
 

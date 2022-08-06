@@ -1,5 +1,6 @@
 import {DateTime} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
+import {TypeDescriptor} from "./index";
 
 const greaterThan = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > 1;
 const greaterThanUnit = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);
@@ -29,8 +30,18 @@ const afterToday:Assertion<DateTime> = greaterThanUnit(DateTime.now(), 'day');
 const defined:Assertion<DateTime> = (val: DateTime | undefined) => DateTime.isDateTime(val);
 
 export const DateAndTime = {
-  _id: 'datetime',
-  _type: 'datetime',
+  _type: {
+    id: 'datetime',
+    type: 'datetime-local',
+    in: (val: string) => {
+      console.log('in', val);
+      return DateTime.fromISO(val);
+    },
+    out: (val: DateTime) => {
+      console.log('out', val);
+      return val.toISO();
+    },
+  } as TypeDescriptor<DateTime>,
   defined,
   afterToday,
   greaterThan,

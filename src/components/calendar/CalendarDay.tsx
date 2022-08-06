@@ -5,13 +5,19 @@ import CalendarBox from "./CalendarBox";
 interface CalendarDayProps {
   date: DateTime
   clickedDate: (date:DateTime) => void;
+  active?: boolean;
 }
 
 const CalendarDay = ({
- date, clickedDate
+ active, date, clickedDate
 }: CalendarDayProps) => {
   return (
-    <CalendarBox className={$c('cursor-pointer')} onClick={() => clickedDate(date)}>
+    <CalendarBox
+      className={$c('cursor-default', {
+        'bg-violet-100': active === true
+      })}
+      onClick={() => clickedDate(date)}
+    >
       { date.day }
     </CalendarBox>
   )

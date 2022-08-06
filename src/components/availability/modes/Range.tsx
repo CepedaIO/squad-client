@@ -1,27 +1,29 @@
 import Button from "../../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import {DateTime} from "luxon";
+import {DateTime, Interval} from "luxon";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
 import useForm from "../../../hooks/useForm/index";
+import {ist} from "../../../services/utils";
+import Datetime from "../../../services/input-types/datetime";
 
-export interface OnceForm {
-  date: DateTime;
-  allDay: boolean;
+export interface RangeForm {
   start: DateTime;
   end: DateTime;
 }
 
-export interface OnceViewProps {
-  form: OnceForm;
-  onDelete: (form: OnceForm) => void;
-  onEdit: (form: OnceForm) => void;
+export const isRangeForm = ist<RangeForm>(obj => DateTime.isDateTime(obj.start) && DateTime.isDateTime(obj.end));
+
+export interface RangeViewProps {
+  form: RangeForm;
+  onDelete: (form: RangeForm) => void;
+  onEdit: (form: RangeForm) => void;
 }
 
-export const OnceView = ({
+export const RangeView = ({
   form, onDelete, onEdit
-}: OnceViewProps) => {
+}: RangeViewProps) => {
   const [active, setActive] = useState(false);
 
   const iconClasses = 'flex-1 text-center p-2 cursor-pointer';
@@ -36,17 +38,12 @@ export const OnceView = ({
         className={$c('py-3 md:px-3 flex flex-row justify-between cursor-pointer') }
       >
         <div>
-          { form.date.toFormat('LLLL dd') }
+          { form.start.toFormat('LLLL dd') }
         </div>
 
 
         <div>
-          { form.allDay && <>All Day</>}
-          { !form.allDay && (
-            <>
-              { form.start.toFormat('T') } {'->'} { form.end.toFormat('T') }
-            </>
-          )}
+          { form.start.toFormat('T') } {'->'} { form.end.toFormat('T') }
         </div>
       </section>
 
@@ -72,16 +69,16 @@ export const OnceView = ({
   )
 }
 
-interface OnceEditProps {
-  form?: Partial<OnceForm>;
-  onSubmit(form: OnceForm): void;
-  onCancel(form?: Partial<OnceForm>): void;
+interface RangeEditProps {
+  form?: Partial<RangeForm>;
+  onSubmit(form: RangeForm): void;
+  onCancel(form?: Partial<RangeForm>): void;
 }
 
-export const OnceEdit = ({
+export const RangeEdit = ({
   form, onSubmit, onCancel
-}: OnceEditProps) => {
-  const {validate, values, FormInput, FormToggle} = useForm<OnceForm>(form);
+}: RangeEditProps) => {
+  const {validate, values, FormInput, FormToggle} = useForm<RangeForm>(form);
 
   const onClickAdd = () => {
     const [valid, values] = validate();
@@ -93,49 +90,30 @@ export const OnceEdit = ({
   return (
     <main className={$c('flex flex-col gap-3')}>
       <FormInput
-        label={"When?"}
-        field={"date"}
-        type={Date}
+        label={"Start"}
+        field={"start"}
+        type={Datetime}
         nowrap={true}
-        validator={() => [
-          [Date.defined, 'Must pick a date'],
-          [Date.afterToday, 'Date must come after today']
+        validator={({ end }, { required,  }) => [
+          [Date.defined, 'Must pick a time'],
+          required('end', [
+            [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
+          ])
         ]}
       />
 
-      <FormToggle field={"allDay"} className={'mb-5'}>
-        All day?
-      </FormToggle>
-
-      {!values.allDay && <>
-        <FormInput
-          label={"Start"}
-          field={"start"}
-          type={Time}
-          nowrap={true}
-          omit={({allDay}) => !!allDay}
-          validator={({ end }, { required,  }) => [
-            [Date.defined, 'Must pick a time'],
-            required('end', [
-              [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
-            ])
-          ]}
-        />
-
-        <FormInput
-          label={"End"}
-          field={"end"}
-          type={Time}
-          nowrap={true}
-          omit={({allDay}) => !!allDay}
-          validator={({ start }, { required }) => [
-            [Date.defined, 'Must pick a time'],
-            required('start', [
-              [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
-            ])
-          ]}
-        />
-      </>}
+      <FormInput
+        label={"End"}
+        field={"end"}
+        type={Datetime}
+        nowrap={true}
+        validator={({ start }, { required }) => [
+          [Date.defined, 'Must pick a time'],
+          required('start', [
+            [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
+          ])
+        ]}
+      />
 
       <footer className={$c('center grow-children')}>
         <Button variant={"link"} onClick={onClickCancel}>
