@@ -1,44 +1,49 @@
-import React, {ChangeEvent, ChangeEventHandler, useMemo, useState} from "react";
+import React, {ChangeEvent, ChangeEventHandler, InputHTMLAttributes} from "react";
 import $c from "classnames";
-import {InputTypes} from "../../services/input-types";
+import {omit} from "lodash";
 
-export type InputProps<Type extends InputTypes = string> = {
-  placeholder?: string;
-  className?: string;
-  type: string;
-  value?: Type;
-  onChange?: (value?: Type) => void;
+export interface InputTypeMap {
+  date: string;
+  'datetime-local': string;
+  text: string;
+  textarea: string;
+  number: number;
 }
 
-const Input = <T extends InputTypes = string>(props: InputProps<T>) => {
-  const initialValue = useMemo(() => props.value ? props.value : '', []);
-  const [value, setValue] = useState<any>(initialValue);
+type InputElements = HTMLInputElement | HTMLTextAreaElement;
 
-  const onChange: ChangeEventHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+export type InputProps<Type extends keyof InputTypeMap> = Omit<InputHTMLAttributes<InputElements>, 'type' | 'value' | 'onChange'> & {
+  type: Type;
+  value?: InputTypeMap[Type];
+  onChange?: (value: InputTypeMap[Type]) => void;
+}
+
+const Input = <Type extends keyof InputTypeMap>(props: InputProps<Type>) => {
+  const _props = omit(props, ['onChange', 'className']);
+  const onChange: ChangeEventHandler = (event: ChangeEvent<InputElements>) => {
     if(props.onChange) {
-      setValue(event.target.value);
-      props.onChange(event.target.value as T);
+      props.onChange(event.target.value as unknown as InputTypeMap[Type]);
     }
   }
 
   if(props.type === 'textarea') {
     return (
       <textarea
-        placeholder={props.placeholder}
+        {..._props }
         className={$c(props.className, 'p-2 border-2')}
-        value={value}
         onChange={ onChange }
       />
     );
   }
 
-  return <input
-    type={props.type}
-    placeholder={props.placeholder}
-    className={$c(props.className, 'p-2')}
-    value={value}
-    onChange={ onChange }
-  />
+
+  return (
+    <input
+      {..._props }
+      className={$c(props.className, 'p-2')}
+      onChange={ onChange }
+    />
+  );
 };
 
 export default Input;

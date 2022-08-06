@@ -8,7 +8,7 @@ import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm/index";
 import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
-import {Duration} from "../services/input-types/duration";
+import {Duration} from "../services/input-types/duration/duration";
 
 export interface IGroupNewPageForm {
   name: string;

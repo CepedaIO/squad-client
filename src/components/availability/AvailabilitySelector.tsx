@@ -1,5 +1,5 @@
 import Button from "../inline/Button";
-import React, {useState} from "react";
+import React, {Fragment, useState} from "react";
 import {IAvailability, AvailabilityEdit, AvailabilityForm, AvailabilityView} from "./Availability";
 
 export interface AvailabilitySelectorProps {
@@ -37,25 +37,25 @@ const AvailabilitySelector = ({
         />
       }
 
-      { availability.map((entry, index) => <>
-        { entry === editing &&
-          <AvailabilityEdit
-            form={entry}
-            key={index}
-            onSubmit={onSubmitForm}
-            onCancel={onCancel}
-          />
-        }
+      { availability.map((entry, index) =>
+        <Fragment key={index}>
+          { entry === editing &&
+            <AvailabilityEdit
+              form={entry}
+              onSubmit={onSubmitForm}
+              onCancel={onCancel}
+            />
+          }
 
-        { entry !== editing &&
-          <AvailabilityView
-            form={entry}
-            key={index}
-            onDelete={onDeleteForm}
-            onEdit={onEdit}
-          />
-        }
-      </>)}
+          { entry !== editing &&
+            <AvailabilityView
+              form={entry}
+              onDelete={onDeleteForm}
+              onEdit={onEdit}
+            />
+          }
+        </Fragment>
+      )}
     </main>
   )
 }

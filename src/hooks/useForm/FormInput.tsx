@@ -4,11 +4,16 @@ import FormContext, {IFormContext} from "../../providers/FormContext";
 import {omit} from "lodash";
 import $c from "classnames";
 import Split from "../../components/Split";
-import {CustomInputProps, TypeDescriptor} from "../../services/input-types";
+import {
+  CustomInputProps,
+  InputDescriptor,
+  isAdapterDescriptor,
+  isCustomInputDescriptor
+} from "../../services/input-types";
 
 export interface FormInputProps<Values extends Keyed, Field extends StringKey<Values>> extends Omit<InputProps<Values[Field]>, 'type'> {
   field: Field;
-  type: { _descriptor: TypeDescriptor<Values[Field]> };
+  type: { _descriptor: InputDescriptor<Values[Field]> };
   validator?: Validator<Values, Field>;
   label: string;
   nowrap?: boolean;
@@ -21,8 +26,11 @@ const getInput = <Values extends Keyed, Field extends StringKey<Values>>(props: 
   const descriptor = props.type._descriptor;
   const { onChange, values, hasError } = useContext<IFormContext<Values>>(FormContext);
 
-  if(typeof descriptor.input === 'string') {
-    const inputProps: InputProps<Values[Field]> = {
+  if(isCustomInputDescriptor(descriptor)) {
+    const inputProps: CustomInputProps<Values[Field]> = omit(props, formProps.concat('type'));
+    return descriptor.input(inputProps);
+  } else if(isAdapterDescriptor(descriptor)) {
+    const inputProps: InputProps<InputDescriptor<Values[Field]>['input']> = {
       ...omit(props, formProps),
       type: descriptor.input
     };
@@ -40,9 +48,6 @@ const getInput = <Values extends Keyed, Field extends StringKey<Values>>(props: 
       />
     )
   }
-
-  const inputProps: CustomInputProps<Values[Field]> = omit(props, formProps.concat('type'));
-  return descriptor.input(inputProps);
 };
 
 const FormInput = <Values extends Keyed, Field extends StringKey<Values>>(props: FormInputProps<Values, Field>) => {
