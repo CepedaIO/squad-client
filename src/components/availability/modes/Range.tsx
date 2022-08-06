@@ -1,19 +1,16 @@
 import Button from "../../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import {DateTime, Interval} from "luxon";
+import {DateTime} from "luxon";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
 import useForm from "../../../hooks/useForm/index";
-import {ist} from "../../../services/utils";
 import Datetime from "../../../services/input-types/datetime";
 
 export interface RangeForm {
   start: DateTime;
   end: DateTime;
 }
-
-export const isRangeForm = ist<RangeForm>(obj => DateTime.isDateTime(obj.start) && DateTime.isDateTime(obj.end));
 
 export interface RangeViewProps {
   form: RangeForm;
@@ -78,7 +75,7 @@ interface RangeEditProps {
 export const RangeEdit = ({
   form, onSubmit, onCancel
 }: RangeEditProps) => {
-  const {validate, values, FormInput, FormToggle} = useForm<RangeForm>(form);
+  const {validate, values, FormInput} = useForm<RangeForm>(form);
 
   const onClickAdd = () => {
     const [valid, values] = validate();
@@ -94,7 +91,7 @@ export const RangeEdit = ({
         field={"start"}
         type={Datetime}
         nowrap={true}
-        validator={({ end }, { required,  }) => [
+        validator={({ end }, { required }) => [
           [Date.defined, 'Must pick a time'],
           required('end', [
             [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']

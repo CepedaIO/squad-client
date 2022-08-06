@@ -5,9 +5,9 @@ const greaterThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val
 const lessThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) < factor;
 
 const Time = {
-  _type: {
+  _descriptor: {
     id: 'time',
-    type: 'time',
+    input: 'time',
     in: (val: string) => DateTime.fromFormat(val, 'HH:mm'),
     out: (val: DateTime) => val.toFormat('HH:mm'),
   } as TypeDescriptor<DateTime>,

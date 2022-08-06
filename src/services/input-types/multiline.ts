@@ -1,9 +1,9 @@
 import {TypeDescriptor} from "./index";
 
 const Multiline = {
-  _type: {
+  _descriptor: {
     id: 'multiline',
-    type: 'textarea',
+    input: 'textarea',
     in: (val: string) => val,
     out: (val: string) => val
   } as TypeDescriptor<string>

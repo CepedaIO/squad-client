@@ -1,8 +1,11 @@
-import {DateTime} from "luxon";
+import {DateTime, DurationUnit} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
 import {TypeDescriptor} from "./index";
 
-const greaterThan = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > 1;
+const greaterThan = (time: DateTime, factor: number, unit: DurationUnit) => (val: DateTime) => {
+  return val.diff(time, unit).get(unit) > factor;
+};
+
 const greaterThanUnit = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);
 const greaterThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) => (val: DateTime) => [
   {
@@ -30,9 +33,9 @@ const afterToday:Assertion<DateTime> = greaterThanUnit(DateTime.now(), 'day');
 const defined:Assertion<DateTime> = (val: DateTime | undefined) => DateTime.isDateTime(val);
 
 export const DateAndTime = {
-  _type: {
+  _descriptor: {
     id: 'datetime',
-    type: 'datetime-local',
+    input: 'datetime-local',
     in: (val: string) => {
       console.log('in', val);
       return DateTime.fromISO(val);

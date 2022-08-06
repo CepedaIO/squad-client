@@ -8,10 +8,12 @@ import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm/index";
 import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
+import {Duration} from "../services/input-types/duration";
 
 export interface IGroupNewPageForm {
   name: string;
   description: string;
+  duration: DateTime;
   displayName: string;
   start: DateTime;
   end: DateTime;
@@ -20,8 +22,8 @@ export interface IGroupNewPageForm {
 const GroupNewContent = () => {
   const { validate, FormInput } = useForm<IGroupNewPageForm>();
   const [availability, setAvailability] = useState<IAvailability>([
-    { date: DateTime.now().plus({ day: 1 }), allDay: false, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) },
-    { date: DateTime.now().plus({ day: 1 }), allDay: true, end: DateTime.now(), start: DateTime.now().minus({hour: 3}) }
+    { start: DateTime.now().minus({hour: 3}), end: DateTime.now() },
+    { start: DateTime.now().minus({hour: 3}), end: DateTime.now() }
   ]);
   const onClickSubmit = () => {
     validate();
@@ -48,6 +50,12 @@ const GroupNewContent = () => {
         label={"Description:"}
         field={"description"}
         type={multiline}
+      />
+
+      <FormInput
+        label={"Duration:"}
+        field={"duration"}
+        type={Duration}
       />
 
       <h2>Member Info:</h2>

@@ -1,38 +1,27 @@
 import React, {ChangeEvent, ChangeEventHandler, useMemo, useState} from "react";
 import $c from "classnames";
-import {omit} from "lodash";
-import {InputTypes, TypeDescriptor} from "../../services/input-types";
+import {InputTypes} from "../../services/input-types";
 
-export type InputProps<Type extends InputTypes> = {
+export type InputProps<Type extends InputTypes = string> = {
   placeholder?: string;
   className?: string;
-  type: { _type: TypeDescriptor<Type> };
+  type: string;
   value?: Type;
-  onChange?: (value: Type) => void;
+  onChange?: (value?: Type) => void;
 }
 
-const Input = <T extends InputTypes>(props: InputProps<T>) => {
-  const descriptor = props.type._type;
-  const initialValue = useMemo(() => props.value ? descriptor.out(props.value) : '', []);
-  const [value, setValue] = useState<any>(initialValue)
-
-  /**
-   * We use field consistently here to denote the field of some data type (like error)
-   */
-  const _props = {
-    ...omit(props, 'onChange', 'type', 'value'),
-    'type': descriptor.type
-  };
+const Input = <T extends InputTypes = string>(props: InputProps<T>) => {
+  const initialValue = useMemo(() => props.value ? props.value : '', []);
+  const [value, setValue] = useState<any>(initialValue);
 
   const onChange: ChangeEventHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if(props.onChange) {
       setValue(event.target.value);
-      const value = descriptor.in(event.target.value);
-      props.onChange(value);
+      props.onChange(event.target.value as T);
     }
   }
 
-  if(_props.type === 'textarea') {
+  if(props.type === 'textarea') {
     return (
       <textarea
         placeholder={props.placeholder}
@@ -44,7 +33,7 @@ const Input = <T extends InputTypes>(props: InputProps<T>) => {
   }
 
   return <input
-    type={descriptor.type}
+    type={props.type}
     placeholder={props.placeholder}
     className={$c(props.className, 'p-2')}
     value={value}

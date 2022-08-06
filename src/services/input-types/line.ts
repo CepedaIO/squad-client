@@ -1,9 +1,9 @@
 import {TypeDescriptor} from "./index";
 
 const Line = {
-  _type: {
+  _descriptor: {
     id: 'line',
-    type: 'text',
+    input: 'text',
     in: (val: string) => val,
     out: (val: string) => val
   } as TypeDescriptor<string>,

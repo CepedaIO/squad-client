@@ -15,9 +15,7 @@ const useForm = <Values extends Keyed>(initialValues?: Partial<Values>) => {
   },[]);
 
   const _FormInput = useCallback(<Field extends StringKey<Values>>(props: Omit<FormInputProps<Values, Field>, 'values'>) => (
-    <FormInput
-      { ...props }
-    />
+    <FormInput { ...props } />
   ), []);
 
   const FormToggle = useCallback((props: FormToggleProps<Values>) => (
