@@ -1,6 +1,6 @@
 import {DateTime, DurationUnit} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
-import {TypeDescriptor} from "./index";
+import {InputDescriptor} from "./index";
 
 const greaterThan = (time: DateTime, factor: number, unit: DurationUnit) => (val: DateTime) => {
   return val.diff(time, unit).get(unit) > factor;
@@ -37,14 +37,12 @@ export const DateAndTime = {
     id: 'datetime',
     input: 'datetime-local',
     in: (val: string) => {
-      console.log('in', val);
-      return DateTime.fromISO(val);
+      return DateTime.fromISO(val)
     },
     out: (val: DateTime) => {
-      console.log('out', val);
-      return val.toISO();
+      return val.toFormat('yyyy-LL-dd\'T\'hh:mm')
     },
-  } as TypeDescriptor<DateTime>,
+  } as InputDescriptor<DateTime>,
   defined,
   afterToday,
   greaterThan,

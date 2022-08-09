@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 import datetime from "./datetime";
-import {TypeDescriptor} from "./index";
+import {InputDescriptor} from "./index";
 
 const Date = {
   _descriptor: {
@@ -8,7 +8,7 @@ const Date = {
     input: 'date',
     in: (val: string) => DateTime.fromISO(val),
     out: (val: DateTime) => val.toFormat('yyyy-MM-dd')
-  } as TypeDescriptor<DateTime>,
+  } as InputDescriptor<DateTime>,
   defined: datetime.defined,
   afterToday: datetime.afterToday,
   greaterThan: datetime.greaterThan

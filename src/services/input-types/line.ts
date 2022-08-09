@@ -1,4 +1,4 @@
-import {TypeDescriptor} from "./index";
+import {InputDescriptor} from "./index";
 
 const Line = {
   _descriptor: {
@@ -6,7 +6,7 @@ const Line = {
     input: 'text',
     in: (val: string) => val,
     out: (val: string) => val
-  } as TypeDescriptor<string>,
+  } as InputDescriptor<string>,
   defined: (value?: string) => !!value,
   greaterThan: (offset: number) => (value: string) => value.length > offset,
 };

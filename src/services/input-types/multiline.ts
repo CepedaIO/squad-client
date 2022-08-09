@@ -1,4 +1,4 @@
-import {TypeDescriptor} from "./index";
+import {InputDescriptor} from "./index";
 
 const Multiline = {
   _descriptor: {
@@ -6,7 +6,7 @@ const Multiline = {
     input: 'textarea',
     in: (val: string) => val,
     out: (val: string) => val
-  } as TypeDescriptor<string>
+  } as InputDescriptor<string>
 };
 
 export default Multiline;

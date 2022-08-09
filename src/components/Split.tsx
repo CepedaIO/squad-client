@@ -10,7 +10,7 @@ interface SplitProps {
 const Split = ({
   nowrap, left, right, className
 }: SplitProps) => {
-  console.log('classname', className);
+
   return (
     <section className={$c({
       'col-to-row grow-children': nowrap,

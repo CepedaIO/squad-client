@@ -35,11 +35,13 @@ const getInput = <Values extends Keyed, Field extends StringKey<Values>>(props: 
       type: descriptor.input
     };
 
+    const value = values[field] ? descriptor.out(values[field]) : '';
+
     return (
       <Input
         { ...inputProps }
         onChange={(value) => onChange(field, descriptor.in(value))}
-        value={descriptor.out(values[field]!)}
+        value={value}
         className={
           $c('w-full', {
             'border-error': hasError(props.field)
