@@ -5,7 +5,7 @@ import {DateTime} from "luxon";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
 import useForm from "../../../hooks/useForm";
-import Datetime from "../../../services/input-types/datetime";
+import Datetime, {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
 
 export interface RangeForm {
@@ -90,12 +90,12 @@ export const RangeEdit = ({
       <FormInput
         label={"Start"}
         field={"start"}
-        type={Datetime}
+        type={DateAndTime}
         nowrap={true}
         validator={({ end }, { required }) => [
-          [Date.defined, 'Must pick a time'],
+          [DateAndTime.defined, 'Must pick a time'],
           required('end', [
-            [Time.lessThan(end, -1, 'hour'), 'Must be at least 1 hour before end']
+            [DateAndTime.lessThan(end, -60, 'minute'), 'Must be at least 1 hour before end']
           ])
         ]}
       />
@@ -103,12 +103,12 @@ export const RangeEdit = ({
       <FormInput
         label={"End"}
         field={"end"}
-        type={Datetime}
+        type={DateAndTime}
         nowrap={true}
         validator={({ start }, { required }) => [
-          [Date.defined, 'Must pick a time'],
+          [DateAndTime.defined, 'Must pick a time'],
           required('start', [
-            [Time.greaterThan(start, 1, 'hour'), 'Must be at least 1 hour after start']
+            [DateAndTime.greaterThan(start, 60, 'minute'), 'Must be at least 1 hour after start']
           ])
         ]}
       />

@@ -28,16 +28,16 @@ export const useFormControls = <Values extends Keyed>() => {
       if(props.omit) { setOmitValidation(field, props.omit); }
     }, [])
 
-    const _props = {
-      ...omit(props, ['field', 'validator', 'omit']),
-      error,
-      value: values[props.field] ?? props.value,
-      onChange: (value: Values[Field]) => onChange(field, value)
-    };
+    return useMemo(() => {
+      const _props = {
+        ...omit(props, ['field', 'validator', 'omit']),
+        error,
+        value: values[props.field] ?? props.value,
+        onChange: (value: Values[Field]) => onChange(field, value)
+      };
 
-    return useMemo(() =>
-      <ControlInput { ..._props } />
-    , [values[field]])
+      return <ControlInput {..._props} />
+    }, [values[field], error])
   }, []);
 
   const FormToggle = useCallback(<Field extends StringKey<Values>>(props: FormToggleProps<Values, Field>) => {

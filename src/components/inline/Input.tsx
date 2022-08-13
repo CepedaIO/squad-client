@@ -23,7 +23,7 @@ const Input = <Type extends keyof InputTypeMap>(props: InputProps<Type>) => {
   const _props = omit(props, ['onChange', 'className']);
   const onChange: ChangeEventHandler = (event: ChangeEvent<InputElements>) => {
     if(props.onChange) {
-      props.onChange(event.target.value as unknown as InputTypeMap[Type]);
+      props.onChange(event.target.value as InputTypeMap[Type]);
     }
   }
 

@@ -13,7 +13,7 @@ export interface CustomInputDescriptor<Value> {
   input: (props: CustomInputProps<Value>) => JSX.Element;
 }
 
-export interface AdapterDescriptor<InputType extends keyof InputTypeMap, OutputType = string> {
+export interface AdapterDescriptor<InputType extends keyof InputTypeMap, OutputType = any> {
   id: string;
   input: InputType;
   in: (val: InputTypeMap[InputType]) => OutputType;

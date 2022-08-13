@@ -39,7 +39,8 @@ const getInput = <Value,>(props: ControlInputProps<Value>) => {
   } else {
     const inputProps: InputProps<InputDescriptor<Value>['input']> = {
       ...omit(props, formProps),
-      type: props.type._descriptor.input
+      type: props.type._descriptor.input,
+      onChange: (value) => props.onChange && props.onChange(props.type._descriptor.in(value))
     };
 
     const value = inputProps.value ? props.type._descriptor.out(inputProps.value) : '';
