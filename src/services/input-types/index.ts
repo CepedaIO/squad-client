@@ -6,14 +6,14 @@ export type CustomInputProps<Value> = {
   onChange?: (value:Value) => void;
 }
 
-export type InputDescriptor<Value> = CustomInputDescriptor<Value> | AdapterDescriptor<Value, any>;
+export type InputDescriptor<Value> = CustomInputDescriptor<Value> | AdapterDescriptor<any, Value>;
 
 export interface CustomInputDescriptor<Value> {
   id: string;
   input: (props: CustomInputProps<Value>) => JSX.Element;
 }
 
-export interface AdapterDescriptor<OutputType, InputType extends keyof InputTypeMap> {
+export interface AdapterDescriptor<InputType extends keyof InputTypeMap, OutputType = string> {
   id: string;
   input: InputType;
   in: (val: InputTypeMap[InputType]) => OutputType;

@@ -11,8 +11,9 @@ export interface InputTypeMap {
 }
 
 type InputElements = HTMLInputElement | HTMLTextAreaElement;
+export type SimpleInputTypes = keyof InputTypeMap;
 
-export type InputProps<Type extends keyof InputTypeMap> = Omit<InputHTMLAttributes<InputElements>, 'type' | 'value' | 'onChange'> & {
+export type InputProps<Type extends SimpleInputTypes> = Omit<InputHTMLAttributes<InputElements>, 'type' | 'value' | 'onChange'> & {
   type: Type;
   value?: InputTypeMap[Type];
   onChange?: (value: InputTypeMap[Type]) => void;

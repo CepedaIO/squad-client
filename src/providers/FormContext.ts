@@ -156,6 +156,7 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
 
   const onChange = useCallback(
     <Field extends StringKey<Values>>(field: Field, value: Values[Field]) => {
+      debugger;
       setValuesMap(prev => ({
         ...prev,
         [field]: value,

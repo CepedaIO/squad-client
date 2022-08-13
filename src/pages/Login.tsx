@@ -4,7 +4,8 @@ import Button from "../components/inline/Button";
 import AppContext from "../providers/AppContext";
 import Line from "../services/input-types/line";
 import FormContext, {createFormContext} from "../providers/FormContext";
-import useForm from "../hooks/useForm/index";
+import useForm from "../hooks/useForm";
+import {useFormControls} from "../hooks/useFormControls";
 
 interface ILoginForm {
   email: string;
@@ -17,7 +18,8 @@ const LoginPage = () => {
     notif: { addNotice, handleUnexpected, removeNotice }
   } = useContext(AppContext);
 
-  const { validate, FormInput } = useForm<ILoginForm>()
+  const { validate } = useForm<ILoginForm>()
+  const { FormInput } = useFormControls<ILoginForm>()
 
   const [mutLogin, { data, error, loading } ] = useMutation(gql`
     mutation Login($email: String!) {

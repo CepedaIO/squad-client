@@ -6,9 +6,10 @@ import FormContext, {createFormContext} from "../providers/FormContext";
 import {DateTime} from "luxon";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
-import useForm from "../hooks/useForm/index";
+import useForm from "../hooks/useForm";
 import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
 import {Duration} from "../services/input-types/duration/duration";
+import {useFormControls} from "../hooks/useFormControls";
 
 export interface IGroupNewPageForm {
   name: string;
@@ -20,7 +21,8 @@ export interface IGroupNewPageForm {
 }
 
 const GroupNewContent = () => {
-  const { validate, FormInput } = useForm<IGroupNewPageForm>();
+  const { validate } = useForm<IGroupNewPageForm>();
+  const { FormInput } = useFormControls<IGroupNewPageForm>();
   const [availability, setAvailability] = useState<IAvailability>([
     { start: DateTime.now().minus({hour: 3}), end: DateTime.now() },
     { start: DateTime.now().minus({hour: 3}), end: DateTime.now() }

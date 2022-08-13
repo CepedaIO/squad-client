@@ -1,17 +1,28 @@
 import Input from "../../../components/inline/Input";
 import Split from "../../../components/Split";
 import {CustomInputProps} from "../index";
-import {DateTime} from "luxon";
+import {DurationLikeObject} from "luxon";
 
-const DurationInput = (props: CustomInputProps<DateTime>) => {
-  const durations = ['days', 'hours', 'minutes'];
+const durations = ['days', 'hours', 'minutes'] as const
+type Durations = Pick<DurationLikeObject, typeof durations[number]>
+
+const DurationInput = (props: CustomInputProps<Durations>) => {
+  const precision = Object.keys(props.value ?? {})[0] ?? 'days';
+  const factor = Object.values(props.value ?? {})[0] ?? '';
 
   return (
     <Split
       className={'gap-5'}
       nowrap={true}
       left={
-        <select className={'w-full py-3'} placeholder={'Choose Precision'}>
+        <select
+          className={'w-full py-3'}
+          placeholder={'Choose Precision'}
+          value={precision}
+          onChange={(event) => props.onChange({
+            [event.target.value]: factor
+          })}
+        >
           { durations.map((duration) =>
             <option
               value={duration}
@@ -26,13 +37,13 @@ const DurationInput = (props: CustomInputProps<DateTime>) => {
         <Input
           { ...props }
           type={'number'}
-          value={1}
+          value={factor}
           className={'w-full'}
           min={1}
           step={1}
-          onChange={(value: number) => {
-            console.log(value);
-          }}
+          onChange={(value: number) => props.onChange({
+            [precision]: value
+          })}
         />
       }
     />

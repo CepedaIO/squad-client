@@ -4,8 +4,9 @@ import $c from "classnames";
 import {DateTime} from "luxon";
 import Date from "../../../services/input-types/date";
 import Time from "../../../services/input-types/time";
-import useForm from "../../../hooks/useForm/index";
+import useForm from "../../../hooks/useForm";
 import Datetime from "../../../services/input-types/datetime";
+import {useFormControls} from "../../../hooks/useFormControls";
 
 export interface RangeForm {
   start: DateTime;
@@ -75,8 +76,8 @@ interface RangeEditProps {
 export const RangeEdit = ({
   form, onSubmit, onCancel
 }: RangeEditProps) => {
-  const {validate, values, FormInput} = useForm<RangeForm>(form);
-
+  const {validate, values} = useForm<RangeForm>(form);
+  const {FormInput} = useFormControls<RangeForm>();
   const onClickAdd = () => {
     const [valid, values] = validate();
     if(valid) { onSubmit(values); }
