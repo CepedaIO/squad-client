@@ -66,7 +66,7 @@ const GroupNewContent = () => {
       />
 
       <AvailabilitySelector
-        limit={duration}
+        offset={duration}
         availability={availability}
         onSubmit={onSubmitAvailability}
         onDelete={onDeleteAvailability}

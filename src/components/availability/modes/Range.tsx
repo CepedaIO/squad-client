@@ -70,18 +70,18 @@ export const RangeView = ({
 }
 
 interface RangeEditProps {
-  limit: DurationLikeObject;
+  offset: DurationLikeObject;
   form?: Partial<RangeForm>;
   onSubmit(form: RangeForm): void;
   onCancel(form?: Partial<RangeForm>): void;
 }
 
 export const RangeEditContent = ({
-  limit, onSubmit, onCancel
+  offset, onSubmit, onCancel
 }: RangeEditProps) => {
   const {validate, values} = useForm<RangeForm>();
   const {FormInput} = useFormControls<RangeForm>();
-  const readableDuration = Duration.fromDurationLike(limit).toHuman();
+  const duration = Duration.fromDurationLike(offset);
 
   const onClickAdd = () => {
     const [valid, values] = validate();
@@ -101,9 +101,9 @@ export const RangeEditContent = ({
           ({ end }, { required }) => [
             [DateAndTime.defined, 'Must pick a time'],
             required('end', [
-              [DateAndTime.lessThan(end, limit), `Must be at least ${readableDuration} before end`]
+              [DateAndTime.lessThan(end, duration.negate()), `Must be at least ${duration.toHuman()} before end`]
             ])
-          ], [limit]
+          ], [offset]
         ]}
       />
 
@@ -116,9 +116,9 @@ export const RangeEditContent = ({
           ({ start }, { required }) => [
             [DateAndTime.defined, 'Must pick a time'],
             required('start', [
-              [DateAndTime.greaterThan(start, limit), `Must be at least ${readableDuration} after start`]
+              [DateAndTime.greaterThan(start, duration), `Must be at least ${duration.toHuman()} after start`]
             ])
-          ], [limit]
+          ], [offset]
         ]}
       />
 
@@ -131,13 +131,15 @@ export const RangeEditContent = ({
         </Button>
       </footer>
     </main>
-  )
+  );
 };
 
 export const RangeEdit = (props: RangeEditProps) => {
   const context = createFormContext(props.form);
 
-  return  <FormContext.Provider value={ context }>
-    <RangeEditContent { ...props } />
-  </FormContext.Provider>
-}
+  return (
+    <FormContext.Provider value={ context }>
+      <RangeEditContent { ...props } />
+    </FormContext.Provider>
+  );
+};

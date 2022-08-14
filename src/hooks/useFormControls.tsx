@@ -25,7 +25,9 @@ export const useFormControls = <Values extends Keyed>() => {
     const dependencies = Array.isArray(validator) ? validator[1] : [];
 
     useEffect(() => {
-      if(validator) { setValidator(field, Array.isArray(validator) ? validator[0] : validator); }
+      if(validator) {
+        setValidator(field, Array.isArray(validator) ? validator[0] : validator);
+      }
       if(props.omit) { setOmitValidation(field, props.omit); }
     }, dependencies)
 

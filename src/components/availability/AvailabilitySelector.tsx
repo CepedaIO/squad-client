@@ -1,11 +1,10 @@
 import Button from "../inline/Button";
-import React, {Fragment, useEffect, useState} from "react";
+import React, {Fragment, useState} from "react";
 import {IAvailability, AvailabilityEdit, AvailabilityForm, AvailabilityView} from "./Availability";
-import FormContext, {createFormContext} from "../../providers/FormContext";
-import {Duration, DurationLikeObject} from "luxon";
+import {DurationLikeObject} from "luxon";
 
 export interface AvailabilitySelectorProps {
-  limit: DurationLikeObject;
+  offset: DurationLikeObject;
   availability: IAvailability;
   onSubmit: (form: AvailabilityForm) => void;
   onDelete: (form: AvailabilityForm) => void;
@@ -14,7 +13,7 @@ export interface AvailabilitySelectorProps {
 const NULL_FORM: Partial<AvailabilityForm> = {};
 
 const AvailabilitySelector = ({
- limit, availability, onSubmit, onDelete
+ offset, availability, onSubmit, onDelete
 }: AvailabilitySelectorProps) => {
   const [editing, setEditing] = useState<Partial<AvailabilityForm> | null>(null);
   const clickedAvailability = () => setEditing(NULL_FORM);
@@ -37,7 +36,7 @@ const AvailabilitySelector = ({
 
       { editing && editing === NULL_FORM &&
         <AvailabilityEdit
-          limit={limit}
+          offset={offset}
           form={editing}
           onSubmit={onSubmitForm}
           onCancel={onCancel}
@@ -48,7 +47,7 @@ const AvailabilitySelector = ({
         <Fragment key={index}>
           { entry === editing &&
             <AvailabilityEdit
-              limit={limit}
+              offset={offset}
               form={entry}
               onSubmit={onSubmitForm}
               onCancel={onCancel}

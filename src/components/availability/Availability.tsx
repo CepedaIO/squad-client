@@ -1,8 +1,8 @@
 import {RangeEdit, RangeForm, RangeView} from "./modes/Range";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import $c from "classnames";
 import Button from "../inline/Button";
-import {Duration, DurationLikeObject} from "luxon";
+import {DurationLikeObject} from "luxon";
 
 export type AvailabilityForm = RangeForm;
 export type IAvailability = Array<AvailabilityForm>;
@@ -27,7 +27,7 @@ export const AvailabilityView = ({
 }
 
 export interface AvailabilityEditProps {
-  limit: DurationLikeObject;
+  offset: DurationLikeObject;
   form?: Partial<AvailabilityForm>;
   onSubmit: (form: AvailabilityForm) => void;
   onCancel: (form?: Partial<AvailabilityForm>) => void;
@@ -38,7 +38,7 @@ const CronTab = { label: 'Cron', key: 'cron' };
 const tabs = [RangeTab, CronTab];
 
 export const AvailabilityEdit = ({
-  limit, form, onSubmit, onCancel
+  offset, form, onSubmit, onCancel
 }: AvailabilityEditProps) => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
@@ -58,7 +58,7 @@ export const AvailabilityEdit = ({
       </section>
 
       <RangeEdit
-        limit={limit}
+        offset={offset}
         form={form}
         onSubmit={onSubmit}
         onCancel={onCancel}
