@@ -97,11 +97,13 @@ export const RangeEditContent = ({
         field={"start"}
         type={DateAndTime}
         nowrap={true}
-        validator={({ end }, { required }) => [
-          [DateAndTime.defined, 'Must pick a time'],
-          required('end', [
-            [DateAndTime.lessThan(end, limit), `Must be at least ${readableDuration} before end`]
-          ])
+        validator={[
+          ({ end }, { required }) => [
+            [DateAndTime.defined, 'Must pick a time'],
+            required('end', [
+              [DateAndTime.lessThan(end, limit), `Must be at least ${readableDuration} before end`]
+            ])
+          ], [limit]
         ]}
       />
 
@@ -110,11 +112,13 @@ export const RangeEditContent = ({
         field={"end"}
         type={DateAndTime}
         nowrap={true}
-        validator={({ start }, { required }) => [
-          [DateAndTime.defined, 'Must pick a time'],
-          required('start', [
-            [DateAndTime.greaterThan(start, limit), `Must be at least ${readableDuration} before end`]
-          ])
+        validator={[
+          ({ start }, { required }) => [
+            [DateAndTime.defined, 'Must pick a time'],
+            required('start', [
+              [DateAndTime.greaterThan(start, limit), `Must be at least ${readableDuration} after start`]
+            ])
+          ], [limit]
         ]}
       />
 

@@ -11,7 +11,6 @@ import {useFormControls} from "../hooks/useFormControls";
 import {DurationLikeObject} from 'luxon';
 import {Duration} from "../services/input-types/duration/duration";
 
-
 export interface IGroupNewPageForm {
   name: string;
   description: string;

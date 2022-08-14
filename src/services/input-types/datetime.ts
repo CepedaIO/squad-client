@@ -2,14 +2,11 @@ import {DateTime, Duration, DurationLikeObject} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
 import {InputDescriptor} from "./index";
 
-const greaterThan = (time: DateTime, durLike: DurationLikeObject) => (val: DateTime) => {
+const greaterThan = (time: DateTime, durLike: DurationLikeObject) =>
+  (val: DateTime) => val > time.plus(Duration.fromDurationLike(durLike));
 
-  return val > time.plus(Duration.fromDurationLike(durLike));
-};
-
-const lessThan = (time: DateTime, durLike: DurationLikeObject) => (val: DateTime) => {
-  return val < time.plus(Duration.fromDurationLike(durLike));
-};
+const lessThan = (time: DateTime, durLike: DurationLikeObject) =>
+  (val: DateTime) => val < time.plus(Duration.fromDurationLike(durLike));
 
 const greaterThanUnit = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);
 const greaterThanEQ = (unit: DateTimeUnit) => (time: DateTime,  message?: string) => (val: DateTime) => [

@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useMemo} from "react";
+import {DependencyList, useCallback, useContext, useEffect, useMemo} from "react";
 import ControlInput, {ControlInputProps} from "../components/ControlInput";
 import Button, {ToggleButtonProps} from "../components/inline/Button";
 import FormContext, {IFormContext} from "../providers/FormContext";
@@ -12,21 +12,22 @@ interface FormToggleProps<Values extends Keyed, Field extends StringKey<Values, 
 
 export type FormControlProps<Values extends Keyed, Field extends StringKey<Values>> = {
   field: Field;
-  validator?: Validator<Values, Field>;
+  validator?: Validator<Values, Field> | [Validator<Values, Field>, DependencyList]
   omit?: (values: Partial<Values>) => boolean;
 } & ControlInputProps<Values[Field]>;
 
 export const useFormControls = <Values extends Keyed>() => {
-  const _FormInput = useCallback(<Field extends StringKey<Values>>(props: FormControlProps<Values, Field>) => {
+  const FormInput = useCallback(<Field extends StringKey<Values>>(props: FormControlProps<Values, Field>) => {
     const { field, validator } = props;
     const { setValidator, getError, setOmitValidation, values, setValue } = useContext<IFormContext<Values>>(FormContext);
 
     const error = getError(field)?.message;
+    const dependencies = Array.isArray(validator) ? validator[1] : [];
 
     useEffect(() => {
-      if(validator) { setValidator(field, validator); }
+      if(validator) { setValidator(field, Array.isArray(validator) ? validator[0] : validator); }
       if(props.omit) { setOmitValidation(field, props.omit); }
-    }, [])
+    }, dependencies)
 
     return useMemo(() => {
       const _props = {
@@ -52,15 +53,6 @@ export const useFormControls = <Values extends Keyed>() => {
     );
   }, []);
 
-  return {
-    FormInput: _FormInput,
-    FormToggle
-  } as {
-    FormInput: typeof _FormInput;
-    FormToggle: typeof FormToggle;
-  } | {
-    FormInput: typeof _FormInput;
-    FormToggle: typeof FormToggle;
-  };
+  return { FormInput, FormToggle };
 };
 

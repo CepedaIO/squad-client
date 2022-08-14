@@ -40,15 +40,9 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
   const { addErrors, removeErrors, errors, getError, hasError } = errorContext();
   const [values, setValuesMap] = useState<Values>(initialValues as Values);
   const [pendingValidation, setPendingValidation] = useState<StringKey<Values>[]>([]);
-  const [validators, setValidationMap] = useState<{
-    [Field in StringKey<Values>]?: Validator<Values, Field>
-  }>({});
-  const [requiredFields, setRequiredFields] = useState<{
-    [Field in StringKey<Values>]?: StringKey<Values>[]
-  }>({});
-  const [omitValidation, setOmitValidation] = useState<{
-    [Field in StringKey<Values>]?: OmitValidation<Values>
-  }>({});
+  const [validators, setValidationMap] = useState<{[Field in StringKey<Values>]?: Validator<Values, Field>}>({});
+  const [requiredFields, setRequiredFields] = useState<{[Field in StringKey<Values>]?: StringKey<Values>[]}>({});
+  const [omitValidation, _setOmitValidation] = useState<{[Field in StringKey<Values>]?: OmitValidation<Values>}>({});
 
   useEffect(() => {
     if(pendingValidation.length > 0) {
@@ -59,37 +53,39 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
 
   const setValidator = useCallback(<Field extends StringKey<Values>>(field: Field, validator: Validator<Values, Field>) => {
     setValidationMap(prev => {
-      if(prev[field]) {
-        return prev;
-      }
-
       return {
         ...prev,
         [field]: validator,
       };
     });
-  }, []);
 
-  const _setOmitValidation = useCallback(<Field extends StringKey<Values>>(field: Field, omitValidation:OmitValidation<Values>) => setOmitValidation((prev) => ({
+    if(typeof values[field] !== 'undefined') {
+      setPendingValidation(prev => prev.concat(field));
+    }
+  }, [values]);
+
+  const setOmitValidation = useCallback(<Field extends StringKey<Values>>(field: Field, omitValidation:OmitValidation<Values>) => _setOmitValidation((prev) => ({
     ...prev,
     [field]: omitValidation
   })), []);
 
-  const requiredFactory = useCallback(<Field extends StringKey<Values>>(field:Field) => (otherField: StringKey<Values>, additionalAssertions: ValidatorSuite<Values[Field]>): ValidatorSuite<Values[Field]> => {
-    setRequiredFields((prev) => {
-      if(!prev[otherField]) prev[otherField] = [];
-      if(!prev[otherField]!.includes(field)) {
-        return {
-          ...prev,
-          [otherField]: prev[otherField]!.concat(field)
-        };
-      }
+  const requiredFactory = useCallback(<Field extends StringKey<Values>>(field:Field) =>
+    (otherField: StringKey<Values>, additionalAssertions: ValidatorSuite<Values[Field]>): ValidatorSuite<Values[Field]> => {
+      setRequiredFields((prev) => {
+        if(!prev[otherField]) prev[otherField] = [];
+        if(!prev[otherField]!.includes(field)) {
+          return {
+            ...prev,
+            [otherField]: prev[otherField]!.concat(field)
+          };
+        }
 
-      return prev;
-    });
+        return prev;
+      });
 
-    return values[otherField] ? additionalAssertions : [];
-  }, [values]);
+      return values[otherField] ? additionalAssertions : [];
+    }
+  , [values]);
 
   const runValidator = useCallback(<Field extends StringKey<Values>>(field: Field, validator:Validator<Values, Field>): AssertionResult<Values[Field]> =>  {
     const value = values[field];
@@ -173,7 +169,7 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
     errors,
     hasError,
     getError,
-    setOmitValidation: _setOmitValidation
+    setOmitValidation
   };
 }
 
