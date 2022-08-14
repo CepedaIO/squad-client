@@ -1,11 +1,10 @@
-import {DateTime} from "luxon";
 import {InputDescriptor} from "../index";
-import DurationInput from "./DurationInput";
+import DurationInput, {AvailDuration} from "./DurationInput";
 
 export const Duration = {
   _descriptor: {
     id: 'datetime',
     input: DurationInput,
-  } as InputDescriptor<DateTime>,
+  } as InputDescriptor<AvailDuration>,
 };
 

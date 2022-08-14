@@ -2,11 +2,10 @@ import Button from "../../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
 import {DateTime} from "luxon";
-import Date from "../../../services/input-types/date";
-import Time from "../../../services/input-types/time";
 import useForm from "../../../hooks/useForm";
-import Datetime, {DateAndTime} from "../../../services/input-types/datetime";
+import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
+import FormContext, {createFormContext} from "../../../providers/FormContext";
 
 export interface RangeForm {
   start: DateTime;
@@ -33,15 +32,18 @@ export const RangeView = ({
     <main>
       <section
         onClick={onClick}
-        className={$c('py-3 md:px-3 flex flex-row justify-between cursor-pointer') }
+        className={$c('py-3 md:px-3 flex flex-row justify-between items-center cursor-pointer') }
       >
-        <div>
-          { form.start.toFormat('LLLL dd') }
+        <div className={'flex flex-col items-center'}>
+          <span>{ form.start.toFormat('LLLL dd') }</span>
+          <span>{ form.start.toFormat('T') }</span>
         </div>
 
+        <span>{'->'}</span>
 
-        <div>
-          { form.start.toFormat('T') } {'->'} { form.end.toFormat('T') }
+        <div className={'flex flex-col items-center'}>
+          <span>{ form.end.toFormat('LLLL dd') }</span>
+          <span>{ form.end.toFormat('T') }</span>
         </div>
       </section>
 
@@ -73,10 +75,10 @@ interface RangeEditProps {
   onCancel(form?: Partial<RangeForm>): void;
 }
 
-export const RangeEdit = ({
-  form, onSubmit, onCancel
+export const RangeEditContent = ({
+  onSubmit, onCancel
 }: RangeEditProps) => {
-  const {validate, values} = useForm<RangeForm>(form);
+  const {validate, values} = useForm<RangeForm>();
   const {FormInput} = useFormControls<RangeForm>();
   const onClickAdd = () => {
     const [valid, values] = validate();
@@ -124,3 +126,11 @@ export const RangeEdit = ({
     </main>
   )
 };
+
+export const RangeEdit = (props: RangeEditProps) => {
+  const context = createFormContext(props.form);
+
+  return  <FormContext.Provider value={ context }>
+    <RangeEditContent { ...props } />
+  </FormContext.Provider>
+}

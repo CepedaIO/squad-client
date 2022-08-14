@@ -19,7 +19,7 @@ export type FormControlProps<Values extends Keyed, Field extends StringKey<Value
 export const useFormControls = <Values extends Keyed>() => {
   const _FormInput = useCallback(<Field extends StringKey<Values>>(props: FormControlProps<Values, Field>) => {
     const { field, validator } = props;
-    const { setValidator, getError, setOmitValidation, values, onChange } = useContext<IFormContext<Values>>(FormContext);
+    const { setValidator, getError, setOmitValidation, values, setValue } = useContext<IFormContext<Values>>(FormContext);
 
     const error = getError(field)?.message;
 
@@ -33,7 +33,7 @@ export const useFormControls = <Values extends Keyed>() => {
         ...omit(props, ['field', 'validator', 'omit']),
         error,
         value: values[props.field] ?? props.value,
-        onChange: (value: Values[Field]) => onChange(field, value)
+        onChange: (value: Values[Field]) => setValue(field, () => value)
       };
 
       return <ControlInput {..._props} />
@@ -41,13 +41,13 @@ export const useFormControls = <Values extends Keyed>() => {
   }, []);
 
   const FormToggle = useCallback(<Field extends StringKey<Values>>(props: FormToggleProps<Values, Field>) => {
-    const { values, onChange } = useContext(FormContext);
+    const { values, setValue } = useContext(FormContext);
     return (
       <Button
         { ...props }
         variant={"toggle"}
         active={values[props.field]}
-        onChange={ (value: boolean) => onChange(props.field, value)}
+        onChange={ (value: boolean) => setValue(props.field, () => value)}
       />
     );
   }, []);

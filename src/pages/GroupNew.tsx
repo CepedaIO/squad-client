@@ -1,42 +1,40 @@
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React, {useState} from "react";
+import React from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../providers/FormContext";
-import {DateTime} from "luxon";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
 import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
-import {Duration} from "../services/input-types/duration/duration";
+import {AvailDuration} from "../services/input-types/duration/DurationInput";
 import {useFormControls} from "../hooks/useFormControls";
+import {Duration} from "../services/input-types/duration/duration";
 
 export interface IGroupNewPageForm {
   name: string;
   description: string;
-  duration: DateTime;
+  duration: AvailDuration;
   displayName: string;
-  start: DateTime;
-  end: DateTime;
+  availability: IAvailability;
 }
 
 const GroupNewContent = () => {
-  const { validate } = useForm<IGroupNewPageForm>();
+  const { validate, setValue, values:{ availability } } = useForm<IGroupNewPageForm>();
   const { FormInput } = useFormControls<IGroupNewPageForm>();
-  const [availability, setAvailability] = useState<IAvailability>([
-    { start: DateTime.now().minus({hour: 3}), end: DateTime.now() },
-    { start: DateTime.now().minus({hour: 3}), end: DateTime.now() }
-  ]);
+
   const onClickSubmit = () => {
     validate();
   };
 
-  const onSubmitAvailability = (form: AvailabilityForm) => setAvailability((prev) => ({
-    ...prev,
-    form
-  }));
+  const onSubmitAvailability = (form: AvailabilityForm) => {
+    setValue('availability', (prev) => ([
+      ...(prev ?? []),
+      form
+    ]))
+  }
 
-  const onDeleteAvailability = (form: AvailabilityForm) => setAvailability((prev) => prev.filter((entry) => entry !== form));
+  const onDeleteAvailability = (form: AvailabilityForm) => setValue('availability', (prev) => prev.filter((entry) => entry !== form));
 
   return (
   <main className="flex flex-col h-full">
@@ -85,7 +83,13 @@ const GroupNewContent = () => {
 }
 
 const GroupNew = () => {
-  const context = createFormContext({});
+  const context = createFormContext<IGroupNewPageForm>({
+    name: '',
+    description: '',
+    duration: { hours: 1 },
+    displayName: '',
+    availability: []
+  });
 
   return (
     <FormContext.Provider value={ context }>

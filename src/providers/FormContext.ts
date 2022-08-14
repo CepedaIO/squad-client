@@ -3,12 +3,11 @@ import {ist} from "../services/utils";
 import {omitBy, isUndefined} from "lodash";
 import errorContext, {IErrorContext} from "./AppContext/errorContext";
 
-type OmitValidation<Values extends Keyed> = (values:Partial<Values>) => boolean;
+type OmitValidation<Values extends Keyed> = (values:Values) => boolean;
 
 export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 'hasError' | 'getError' | 'errors'> {
-  values: Partial<Values>;
-  setValues: (values:Partial<Values>) => void;
-  onChange: <Field extends StringKey<Values>>(field: Field, val: Values[Field]) => void;
+  values: Values;
+  setValue: <Field extends StringKey<Values>>(field: Field, setter: (prev?: Values[Field]) => Values[Field]) => void;
   setValidator: <Field extends StringKey<Values>>(field: Field, validators: Validator<Values, Field>) => void;
   validate: (fields?:StringKey<Values>[]) => ValidateResult<Values>;
   setOmitValidation: (field: StringKey<Values>, omitValidation:OmitValidation<Values>) => void
@@ -16,8 +15,7 @@ export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 
 
 const FormContext = createContext<IFormContext<any>>({
   values: {},
-  setValues: () => {},
-  onChange: () => {},
+  setValue: () => {},
   setValidator: () => {},
   validate: () => [false, {}],
   hasError: () => false,
@@ -38,9 +36,9 @@ interface ValidateOptions {
   stopOnFirstFail?: boolean
 }
 
-export const createFormContext = <Values extends Keyed>(initialValues:Partial<Values>): IFormContext<Values> => {
+export const createFormContext = <Values extends Keyed>(initialValues?:Values): IFormContext<Values> => {
   const { addErrors, removeErrors, errors, getError, hasError } = errorContext();
-  const [values, setValuesMap] = useState<Partial<Values>>(initialValues);
+  const [values, setValuesMap] = useState<Values>(initialValues as Values);
   const [pendingValidation, setPendingValidation] = useState<StringKey<Values>[]>([]);
   const [validators, setValidationMap] = useState<{
     [Field in StringKey<Values>]?: Validator<Values, Field>
@@ -154,26 +152,22 @@ export const createFormContext = <Values extends Keyed>(initialValues:Partial<Va
     return [isValid, omitBy(values, isUndefined)] as ValidateResult<Values>;
   }, [values, validators]);
 
-  const onChange = useCallback(
-    <Field extends StringKey<Values>>(field: Field, value: Values[Field]) => {
-      setValuesMap(prev => ({
-        ...prev,
-        [field]: value,
-      }));
+  const setValue = useCallback(
+    <Field extends StringKey<Values>>(field: Field, setter:(prev?:Values[Field]) => Values[Field]) => {
+      setValuesMap(prev => {
+        return {
+          ...prev,
+          [field]: setter(prev[field])
+        }
+      });
 
       setPendingValidation(prev => prev.concat(field));
     }
   , []);
 
-  const setValues = useCallback((values: Partial<Values>) => setValuesMap((prev) => ({
-    ...prev,
-    ...values
-  })), []);
-
   return {
     values,
-    setValues,
-    onChange,
+    setValue,
     setValidator,
     validate,
     errors,

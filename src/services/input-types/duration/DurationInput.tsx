@@ -4,9 +4,9 @@ import {CustomInputProps} from "../index";
 import {DurationLikeObject} from "luxon";
 
 const durations = ['days', 'hours', 'minutes'] as const
-type Durations = Pick<DurationLikeObject, typeof durations[number]>
+export type AvailDuration = Pick<DurationLikeObject, typeof durations[number]>
 
-const DurationInput = (props: CustomInputProps<Durations>) => {
+const DurationInput = (props: CustomInputProps<AvailDuration>) => {
   const precision = Object.keys(props.value ?? {})[0] ?? 'days';
   const factor = Object.values(props.value ?? {})[0] ?? '';
 
@@ -19,7 +19,7 @@ const DurationInput = (props: CustomInputProps<Durations>) => {
           className={'w-full py-3'}
           placeholder={'Choose Precision'}
           value={precision}
-          onChange={(event) => props.onChange({
+          onChange={(event) => props.onChange && props.onChange({
             [event.target.value]: factor
           })}
         >
@@ -41,7 +41,7 @@ const DurationInput = (props: CustomInputProps<Durations>) => {
           className={'w-full'}
           min={1}
           step={1}
-          onChange={(value: number) => props.onChange({
+          onChange={(value: number) => props.onChange && props.onChange({
             [precision]: value
           })}
         />

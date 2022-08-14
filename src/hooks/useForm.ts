@@ -1,23 +1,18 @@
-import {useContext, useEffect} from "react";
+import {useContext, } from "react";
 import FormContext from "../providers/FormContext";
 
-const useForm = <Values extends Keyed>(initialValues?: Partial<Values>) => {
-  const { values, validate, setValues } = useContext(FormContext);
-
-  useEffect(() => {
-    if(initialValues) setValues(initialValues);
-  },[]);
+const useForm = <Values extends Keyed>() => {
+  const { values, validate, setValue } = useContext(FormContext);
 
   return {
     validate,
-    values
+    values,
+    setValue
   } as {
-    validate: (fields?:string[]) => [false, Partial<Values>];
-    values: Partial<Values>;
-  } | {
-    validate: (fields?: string[]) => [true, Values];
+    validate: (fields?:string[]) => [boolean, Values];
     values: Values;
-  };
+    setValue: <Field extends StringKey<Values>>(field: Field, setter: (prev: Values[Field]) => Values[Field]) => void;
+  }
 }
 
 export default useForm;

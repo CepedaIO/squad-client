@@ -2,6 +2,7 @@ import {RangeEdit, RangeForm, RangeView} from "./modes/Range";
 import React, {useState} from "react";
 import $c from "classnames";
 import Button from "../inline/Button";
+import {Duration} from "luxon";
 
 export type AvailabilityForm = RangeForm;
 export type IAvailability = Array<AvailabilityForm>;
@@ -26,6 +27,7 @@ export const AvailabilityView = ({
 }
 
 export interface AvailabilityEditProps {
+  limit: Duration;
   form?: Partial<AvailabilityForm>;
   onSubmit: (form: AvailabilityForm) => void;
   onCancel: (form?: Partial<AvailabilityForm>) => void;
