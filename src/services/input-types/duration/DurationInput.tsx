@@ -4,9 +4,8 @@ import {CustomInputProps} from "../index";
 import {DurationLikeObject} from "luxon";
 
 const durations = ['days', 'hours', 'minutes'] as const
-export type AvailDuration = Pick<DurationLikeObject, typeof durations[number]>
 
-const DurationInput = (props: CustomInputProps<AvailDuration>) => {
+const DurationInput = (props: CustomInputProps<DurationLikeObject>) => {
   const precision = Object.keys(props.value ?? {})[0] ?? 'days';
   const factor = Object.values(props.value ?? {})[0] ?? '';
 

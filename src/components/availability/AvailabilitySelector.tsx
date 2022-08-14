@@ -2,10 +2,10 @@ import Button from "../inline/Button";
 import React, {Fragment, useState} from "react";
 import {IAvailability, AvailabilityEdit, AvailabilityForm, AvailabilityView} from "./Availability";
 import FormContext, {createFormContext} from "../../providers/FormContext";
-import {Duration} from "luxon";
+import {DurationLikeObject} from "luxon";
 
 export interface AvailabilitySelectorProps {
-  limit: Duration;
+  limit: DurationLikeObject;
   availability: IAvailability;
   onSubmit: (form: AvailabilityForm) => void;
   onDelete: (form: AvailabilityForm) => void;
@@ -39,6 +39,7 @@ const AvailabilitySelector = ({
 
       { editing && editing === NULL_FORM &&
         <AvailabilityEdit
+          limit={limit}
           form={editing}
           onSubmit={onSubmitForm}
           onCancel={onCancel}
@@ -49,6 +50,7 @@ const AvailabilitySelector = ({
         <Fragment key={index}>
           { entry === editing &&
             <AvailabilityEdit
+              limit={limit}
               form={entry}
               onSubmit={onSubmitForm}
               onCancel={onCancel}

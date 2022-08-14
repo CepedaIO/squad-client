@@ -37,7 +37,7 @@ export const useFormControls = <Values extends Keyed>() => {
       };
 
       return <ControlInput {..._props} />
-    }, [values[field], error])
+    }, [values[field], error, props])
   }, []);
 
   const FormToggle = useCallback(<Field extends StringKey<Values>>(props: FormToggleProps<Values, Field>) => {

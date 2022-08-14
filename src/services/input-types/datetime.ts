@@ -1,13 +1,14 @@
-import {DateTime, DurationUnit} from "luxon";
+import {DateTime, Duration, DurationLikeObject} from "luxon";
 import {DateTimeUnit} from "luxon/src/datetime";
 import {InputDescriptor} from "./index";
 
-const greaterThan = (time: DateTime, factor: number, unit: DurationUnit) => (val: DateTime) => {
-  return val.diff(time, unit).get(unit) > factor;
+const greaterThan = (time: DateTime, durLike: DurationLikeObject) => (val: DateTime) => {
+
+  return val > time.plus(Duration.fromDurationLike(durLike));
 };
 
-const lessThan = (time: DateTime, factor: number, unit: DurationUnit) => (val: DateTime) => {
-  return val.diff(time, unit).get(unit) < factor;
+const lessThan = (time: DateTime, durLike: DurationLikeObject) => (val: DateTime) => {
+  return val < time.plus(Duration.fromDurationLike(durLike));
 };
 
 const greaterThanUnit = (time: DateTime, unit: DateTimeUnit) => (val: DateTime) => val.startOf(unit) > time.startOf(unit);

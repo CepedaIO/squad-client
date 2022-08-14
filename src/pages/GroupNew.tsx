@@ -7,20 +7,21 @@ import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
 import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
-import {AvailDuration} from "../services/input-types/duration/DurationInput";
 import {useFormControls} from "../hooks/useFormControls";
+import {DurationLikeObject} from 'luxon';
 import {Duration} from "../services/input-types/duration/duration";
+
 
 export interface IGroupNewPageForm {
   name: string;
   description: string;
-  duration: AvailDuration;
+  duration: DurationLikeObject;
   displayName: string;
   availability: IAvailability;
 }
 
 const GroupNewContent = () => {
-  const { validate, setValue, values:{ availability } } = useForm<IGroupNewPageForm>();
+  const { validate, setValue, values:{ availability, duration } } = useForm<IGroupNewPageForm>();
   const { FormInput } = useFormControls<IGroupNewPageForm>();
 
   const onClickSubmit = () => {
@@ -66,6 +67,7 @@ const GroupNewContent = () => {
       />
 
       <AvailabilitySelector
+        limit={duration}
         availability={availability}
         onSubmit={onSubmitAvailability}
         onDelete={onDeleteAvailability}

@@ -1,7 +1,7 @@
 import Button from "../../inline/Button";
 import React, {useState} from "react";
 import $c from "classnames";
-import {DateTime} from "luxon";
+import {DateTime, Duration, DurationLikeObject} from "luxon";
 import useForm from "../../../hooks/useForm";
 import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
@@ -70,16 +70,19 @@ export const RangeView = ({
 }
 
 interface RangeEditProps {
+  limit: DurationLikeObject;
   form?: Partial<RangeForm>;
   onSubmit(form: RangeForm): void;
   onCancel(form?: Partial<RangeForm>): void;
 }
 
 export const RangeEditContent = ({
-  onSubmit, onCancel
+  limit, onSubmit, onCancel
 }: RangeEditProps) => {
   const {validate, values} = useForm<RangeForm>();
   const {FormInput} = useFormControls<RangeForm>();
+  const readableDuration = Duration.fromDurationLike(limit).toHuman();
+
   const onClickAdd = () => {
     const [valid, values] = validate();
     if(valid) { onSubmit(values); }
@@ -97,7 +100,7 @@ export const RangeEditContent = ({
         validator={({ end }, { required }) => [
           [DateAndTime.defined, 'Must pick a time'],
           required('end', [
-            [DateAndTime.lessThan(end, -60, 'minute'), 'Must be at least 1 hour before end']
+            [DateAndTime.lessThan(end, limit), `Must be at least ${readableDuration} before end`]
           ])
         ]}
       />
@@ -110,7 +113,7 @@ export const RangeEditContent = ({
         validator={({ start }, { required }) => [
           [DateAndTime.defined, 'Must pick a time'],
           required('start', [
-            [DateAndTime.greaterThan(start, 60, 'minute'), 'Must be at least 1 hour after start']
+            [DateAndTime.greaterThan(start, limit), `Must be at least ${readableDuration} before end`]
           ])
         ]}
       />
