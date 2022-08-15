@@ -10,6 +10,7 @@ import {Availability, IAvailability, IAvailabilityForm} from "../components/avai
 import {useFormControls} from "../hooks/useFormControls";
 import {DurationLikeObject} from 'luxon';
 import {Duration} from "../services/input-types/duration/duration";
+import $c from "classnames";
 
 export interface IGroupNewPageForm {
   name: string;
@@ -81,6 +82,12 @@ const GroupNewContent = () => {
           onSubmit={onSubmitAvailability}
           onDelete={onDeleteAvailability}
         />
+
+        { invalidAvailability.length > 0 && (
+          <section className={$c('text-error text-center')}>
+            Invalid availabilities
+          </section>
+        )}
 
         <Calendar
           month={1}

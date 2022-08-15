@@ -1,6 +1,6 @@
 import {createContext, useEffect, useState} from "react";
 import {ist} from "../services/utils";
-import {omitBy, isUndefined} from "lodash";
+import {omitBy, isUndefined, isNil} from "lodash";
 import errorContext, {IErrorContext} from "./AppContext/errorContext";
 
 type OmitValidation<Values extends Keyed> = (values:Values) => boolean;
@@ -164,8 +164,9 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
   };
 
   const validate = (fields:StringKey<Values>[] = Object.keys(validators), options: ValidateOptions = {}): ValidateResult<Values> => {
-    const [isValid, values] = _validate(fields, options);
-    return [isValid, omitBy(values, isUndefined)] as ValidateResult<Values>;
+    const [isValid, _values] = _validate(fields, options);
+    const omitted = omitBy(_values, isNil);
+    return [isValid, omitted] as ValidateResult<Values>;
   };
 
   const setValue = <Field extends StringKey<Values>>(field: Field, setter:(prev?:Values[Field]) =>

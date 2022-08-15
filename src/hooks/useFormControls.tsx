@@ -23,7 +23,7 @@ export const useFormControls = <Values extends Keyed>() => {
     const { values, setValue, setValidation } = useForm<Values>()
 
     const dependencies = Array.isArray(validator) ? validator[1] : [];
-    const _validator = Array.isArray(validator) ? validator[0] : undefined;
+    const _validator = Array.isArray(validator) ? validator[0] : validator;
 
     const [error] = setValidation(field, _validator, dependencies);
 
