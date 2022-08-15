@@ -119,7 +119,6 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
 
     if(isAssertionWithMessage(assertion)) {
       const [assert, message] = assertion;
-      debugger;
       const isValid = assert(value!);
       if(!isValid) return [false, message];
     } else {
@@ -141,7 +140,7 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
 
   const _validate = (fields:StringKey<Values>[] = Object.keys(validators), options: ValidateOptions = {}, result: ValidateResult<Values> = [true, {} as Values]): ValidateResult<Values> => {
     if(fields.length === 0 || (options.stopOnFirstFail && !result[0])) return result;
-    const [field, ...nextFields] = fields as [StringKey<Values>, ...StringKey<Values>[]];
+    const [field, ...nextFields] = fields;
     const validator = validators[field];
 
     if(validator && !shouldOmit(field)) {

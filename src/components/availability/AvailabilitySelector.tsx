@@ -1,29 +1,30 @@
 import Button from "../inline/Button";
 import React, {Fragment, useState} from "react";
-import {IAvailability, AvailabilityEdit, AvailabilityForm, AvailabilityView} from "./Availability";
+import {IAvailability, AvailabilityEdit, IAvailabilityForm, AvailabilityView} from "./Availability";
 import {DurationLikeObject} from "luxon";
 
 export interface AvailabilitySelectorProps {
   offset: DurationLikeObject;
   availability: IAvailability;
-  onSubmit: (form: AvailabilityForm) => void;
-  onDelete: (form: AvailabilityForm) => void;
+  onSubmit: (form: IAvailabilityForm) => void;
+  onDelete: (form: IAvailabilityForm) => void;
+  erroredIndexes?: number[];
 }
 
-const NULL_FORM: Partial<AvailabilityForm> = {};
+const NULL_FORM: Partial<IAvailabilityForm> = {};
 
 const AvailabilitySelector = ({
- offset, availability, onSubmit, onDelete
+ offset, availability, onSubmit, onDelete, erroredIndexes
 }: AvailabilitySelectorProps) => {
-  const [editing, setEditing] = useState<Partial<AvailabilityForm> | null>(null);
+  const [editing, setEditing] = useState<Partial<IAvailabilityForm> | null>(null);
   const clickedAvailability = () => setEditing(NULL_FORM);
-  const onSubmitForm = (form: AvailabilityForm) => {
+  const onSubmitForm = (form: IAvailabilityForm) => {
     onSubmit(form);
     onCancel();
   };
   const onCancel = () => setEditing(null);
-  const onEdit = (availability: AvailabilityForm) => setEditing(availability);
-  const onDeleteForm = (form: AvailabilityForm) => onDelete(form);
+  const onEdit = (availability: IAvailabilityForm) => setEditing(availability);
+  const onDeleteForm = (form: IAvailabilityForm) => onDelete(form);
 
   return (
     <main>
@@ -56,6 +57,7 @@ const AvailabilitySelector = ({
 
           { entry !== editing &&
             <AvailabilityView
+              errored={!!erroredIndexes && erroredIndexes.includes(index)}
               form={entry}
               onDelete={onDeleteForm}
               onEdit={onEdit}

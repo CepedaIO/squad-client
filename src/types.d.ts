@@ -1,3 +1,4 @@
+type DependencyList = ReadonlyArray<unknown>;
 interface Array<T> {
   forEach(callbackfn: (value: T, index: number, array: T[]) => void, thisArg?: any): Array<T>;
 }
@@ -13,6 +14,7 @@ type Validator<Values extends Keyed, Field extends StringKey<Values>> =
     value?: Values[Field],
     required: (field: StringKey<Values>, assertions:ValidatorSuite<Values[Field]>) => ValidatorSuite<Values[Field]>
   }) => ValidatorSuite<Values[Field]>;
+type ValidatorAsProp<Values extends Keyed, Field extends StringKey<Values>> = Validator<Values, Field> | [Validator<Values, Field>, DependencyList];
 
 type Assertion<Value> = ((val: Value) => boolean);
 type AssertionWithMessage<Value> = Tuple<Assertion<Value>, string>;

@@ -1,11 +1,20 @@
-import Button from "../../inline/Button";
-import React, {useState} from "react";
+import React from "react";
 import $c from "classnames";
 import {DateTime, Duration, DurationLikeObject} from "luxon";
-import useForm from "../../../hooks/useForm";
 import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
 import FormContext, {createFormContext} from "../../../providers/FormContext";
+import {IAvailabilityMode} from "../Availability";
+import {ist} from "../../../services/utils";
+
+export const Range: IAvailabilityMode<RangeForm> = {
+  label: 'Range',
+  applies: ist<RangeForm>((obj) => DateTime.isDateTime(obj.start) && DateTime.isDateTime(obj.end)),
+  Edit: (props) => <RangeEdit {...props} />,
+  View: (props) => <RangeView {...props} />,
+  durationValid: (range: RangeForm, durLike: DurationLikeObject) =>
+    DateAndTime.greaterThan(range.start, Duration.fromDurationLike(durLike))(range.end)
+}
 
 export interface RangeForm {
   start: DateTime;
@@ -14,81 +23,34 @@ export interface RangeForm {
 
 export interface RangeViewProps {
   form: RangeForm;
-  onDelete: (form: RangeForm) => void;
-  onEdit: (form: RangeForm) => void;
 }
 
-export const RangeView = ({
-  form, onDelete, onEdit
-}: RangeViewProps) => {
-  const [active, setActive] = useState(false);
+export const RangeView = ({form}: RangeViewProps) => (
+  <main
+    className={$c('py-3 md:px-3 flex flex-row justify-between items-center cursor-pointer') }
+  >
+    <div className={'flex flex-col items-center'}>
+      <span>{ form.start.toFormat('LLLL dd') }</span>
+      <span>{ form.start.toFormat('T') }</span>
+    </div>
 
-  const iconClasses = 'flex-1 text-center p-2 cursor-pointer';
-  const onClick = () => setActive(!active);
-  const onClickDelete = () => onDelete(form);
-  const onClickEdit = () => onEdit(form);
+    <span>{'->'}</span>
 
-  return (
-    <main>
-      <section
-        onClick={onClick}
-        className={$c('py-3 md:px-3 flex flex-row justify-between items-center cursor-pointer') }
-      >
-        <div className={'flex flex-col items-center'}>
-          <span>{ form.start.toFormat('LLLL dd') }</span>
-          <span>{ form.start.toFormat('T') }</span>
-        </div>
-
-        <span>{'->'}</span>
-
-        <div className={'flex flex-col items-center'}>
-          <span>{ form.end.toFormat('LLLL dd') }</span>
-          <span>{ form.end.toFormat('T') }</span>
-        </div>
-      </section>
-
-      { active &&
-        <section
-          className={$c('flex flex-row items-center justify-around') }
-        >
-          <div
-            onClick={onClickDelete}
-            className={$c(iconClasses, 'text-reject')}
-          >
-            <i className="fa-solid fa-trash-can"></i>
-          </div>
-          <div
-            onClick={onClickEdit}
-            className={$c(iconClasses, 'text-active')}
-          >
-            <i className="fa-solid fa-pen-to-square"></i>
-          </div>
-        </section>
-      }
-    </main>
-  )
-}
+    <div className={'flex flex-col items-center'}>
+      <span>{ form.end.toFormat('LLLL dd') }</span>
+      <span>{ form.end.toFormat('T') }</span>
+    </div>
+  </main>
+);
 
 interface RangeEditProps {
   offset: DurationLikeObject;
   form?: Partial<RangeForm>;
-  onSubmit(form: RangeForm): void;
-  onCancel(form?: Partial<RangeForm>): void;
 }
 
-export const RangeEditContent = ({
-  offset, onSubmit, onCancel
-}: RangeEditProps) => {
-  const {validate, values} = useForm<RangeForm>();
+export const RangeEdit = ({offset}: RangeEditProps) => {
   const {FormInput} = useFormControls<RangeForm>();
   const duration = Duration.fromDurationLike(offset);
-
-  const onClickAdd = () => {
-    const [valid, values] = validate();
-    if(valid) { onSubmit(values); }
-  };
-
-  const onClickCancel = () => onCancel(values);
 
   return (
     <main className={$c('flex flex-col gap-3')}>
@@ -121,25 +83,6 @@ export const RangeEditContent = ({
           ], [offset]
         ]}
       />
-
-      <footer className={$c('center grow-children')}>
-        <Button variant={"link"} onClick={onClickCancel}>
-          Cancel
-        </Button>
-        <Button variant={"link"} onClick={onClickAdd}>
-          Add
-        </Button>
-      </footer>
     </main>
-  );
-};
-
-export const RangeEdit = (props: RangeEditProps) => {
-  const context = createFormContext(props.form);
-
-  return (
-    <FormContext.Provider value={ context }>
-      <RangeEditContent { ...props } />
-    </FormContext.Provider>
   );
 };

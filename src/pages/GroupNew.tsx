@@ -1,12 +1,12 @@
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React from "react";
+import React, {useMemo} from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
-import {IAvailability, AvailabilityForm} from "../components/availability/Availability";
+import {Availability, IAvailability, IAvailabilityForm} from "../components/availability/Availability";
 import {useFormControls} from "../hooks/useFormControls";
 import {DurationLikeObject} from 'luxon';
 import {Duration} from "../services/input-types/duration/duration";
@@ -20,66 +20,76 @@ export interface IGroupNewPageForm {
 }
 
 const GroupNewContent = () => {
-  const { validate, setValue, values:{ availability, duration } } = useForm<IGroupNewPageForm>();
+  const { validate, setValue, values:{ availability, duration }, setValidation } = useForm<IGroupNewPageForm>();
   const { FormInput } = useFormControls<IGroupNewPageForm>();
+
+  const invalidAvailability = useMemo(() =>
+    Availability.durationInvalidIndexes(availability, duration)
+  , [availability, duration]);
+
+  setValidation('availability', () => [
+    [(value) => value.length > 0, 'Must select availability'],
+    [() => invalidAvailability.length === 0, 'Invalid availabilities']
+  ], [JSON.stringify(invalidAvailability)]);
 
   const onClickSubmit = () => {
     validate();
   };
 
-  const onSubmitAvailability = (form: AvailabilityForm) => {
+  const onSubmitAvailability = (form: IAvailabilityForm) => {
     setValue('availability', (prev) => ([
       ...(prev ?? []),
       form
     ]))
   }
 
-  const onDeleteAvailability = (form: AvailabilityForm) => setValue('availability', (prev) => prev.filter((entry) => entry !== form));
+  const onDeleteAvailability = (form: IAvailabilityForm) => setValue('availability', (prev) => prev.filter((entry) => entry !== form));
 
   return (
-  <main className="flex flex-col h-full">
-    <div className="mx-auto flex flex-col gap-6 w-full max-w-screen-sm">
-      <h2>Event Info:</h2>
-      <FormInput
-        label={"Name:"}
-        field={"name"}
-        type={line}
-      />
+    <main className="flex flex-col h-full">
+      <div className="mx-auto flex flex-col gap-6 w-full max-w-screen-sm">
+        <h2>Event Info:</h2>
+        <FormInput
+          label={"Name:"}
+          field={"name"}
+          type={line}
+        />
 
-      <FormInput
-        label={"Description:"}
-        field={"description"}
-        type={multiline}
-      />
+        <FormInput
+          label={"Description:"}
+          field={"description"}
+          type={multiline}
+        />
 
-      <FormInput
-        label={"Duration:"}
-        field={"duration"}
-        type={Duration}
-      />
+        <FormInput
+          label={"Duration:"}
+          field={"duration"}
+          type={Duration}
+        />
 
-      <h2>Member Info:</h2>
-      <FormInput
-        label={"Display Name:"}
-        field={"displayName"}
-        type={line}
-      />
+        <h2>Member Info:</h2>
+        <FormInput
+          label={"Display Name:"}
+          field={"displayName"}
+          type={line}
+        />
 
-      <AvailabilitySelector
-        offset={duration}
-        availability={availability}
-        onSubmit={onSubmitAvailability}
-        onDelete={onDeleteAvailability}
-      />
+        <AvailabilitySelector
+          erroredIndexes={invalidAvailability}
+          offset={duration}
+          availability={availability}
+          onSubmit={onSubmitAvailability}
+          onDelete={onDeleteAvailability}
+        />
 
-      <Calendar
-        month={1}
-        availability={availability}
-      />
+        <Calendar
+          month={1}
+          availability={availability}
+        />
 
-      <Button variant={"submit"} onClick={onClickSubmit}>Submit</Button>
-    </div>
-  </main>
+        <Button variant={"submit"} onClick={onClickSubmit}>Submit</Button>
+      </div>
+    </main>
   )
 }
 
