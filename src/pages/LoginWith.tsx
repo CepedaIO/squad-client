@@ -60,7 +60,10 @@ const LoginWith = () => {
           < br/>
           <span className="font-bold">OR</span>
           < br/>
-          <Button variant="link" onClick={() => navigate("/home")} >Click Here to go the homepage</Button>
+          <Button
+            variant="link"
+            onClick={() => navigate("/home")}
+            data-cy={'navigate:home'}>Click Here to go the homepage</Button>
         </p>
       )}
 
