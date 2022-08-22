@@ -1,45 +1,8 @@
-import {App, User} from "../fixtures/data";
-import {CyHttpMessages} from "cypress/types/net-stubbing";
+import {User} from "../fixtures/data";
+import {dataCY, visit, wait} from "../utils";
 
-// Utility to match GraphQL mutation based on the operation name
-export const hasOperationName = (req: CyHttpMessages.IncomingHttpRequest, operationName: string) => {
-  const { body } = req
-  return body.hasOwnProperty('operationName') && body.operationName === operationName;
-}
-
-// Alias query if operationName matches
-export const aliasQuery = (req:CyHttpMessages.IncomingHttpRequest, operationName:string) => {
-  if (hasOperationName(req, operationName)) {
-    req.alias = `gql${operationName}Query`
-  }
-}
-
-// Alias mutation if operationName matches
-export const aliasMutation = (req:CyHttpMessages.IncomingHttpRequest, operationName:string) => {
-  if (hasOperationName(req, operationName)) {
-    req.alias = `gql${operationName}Mutation`
-  }
-}
-
-const dataCY = (tag: string) => cy.get(`[data-cy="${tag}"]`);
-const visit = (relative: string) => cy.visit(`${App.client}/${relative}`);
-const wait = (queries: string[], mutations: string[] = [], between?: () => void) => {
-  cy.intercept('POST', `${App.server}`, (req) => {
-    queries.forEach((query) => aliasQuery(req, query))
-    mutations.forEach((mutation) => aliasMutation(req, mutation));
-  });
-
-  between && between();
-
-  return queries.map((query) => `@gql${query}Query`)
-    .concat(
-      mutations.map((mutation) => `@gql${mutation}Mutation`)
-    )
-    .map((operation) => cy.wait(operation));
-}
-
-describe('empty spec', () => {
-  it('passes', () => {
+describe('login', () => {
+  it('logs in with test user', () => {
     visit('login');
     dataCY('email').type(User.email);
 

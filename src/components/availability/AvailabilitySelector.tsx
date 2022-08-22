@@ -1,35 +1,41 @@
 import Button from "../inline/Button";
 import React, {Fragment, useState} from "react";
-import {IAvailability, AvailabilityEdit, IAvailabilityForm, AvailabilityView} from "./Availability";
+import {AvailabilityEdit, AvailabilityView} from "./Availability";
 import {DurationLikeObject} from "luxon";
+import {remove, upsert} from "../../services/utils";
+import { IAvailability, IAvailabilityForm } from "event-matcher-shared";
 
 export interface AvailabilitySelectorProps {
   offset: DurationLikeObject;
   availability: IAvailability;
-  onSubmit: (form: IAvailabilityForm) => void;
-  onDelete: (form: IAvailabilityForm) => void;
+  onChange: (form: IAvailability) => void;
   erroredIndexes?: number[];
 }
 
 const NULL_FORM: Partial<IAvailabilityForm> = {};
 
 const AvailabilitySelector = ({
- offset, availability, onSubmit, onDelete, erroredIndexes
+ offset, availability, onChange, erroredIndexes
 }: AvailabilitySelectorProps) => {
   const [editing, setEditing] = useState<Partial<IAvailabilityForm> | null>(null);
   const clickedAvailability = () => setEditing(NULL_FORM);
   const onSubmitForm = (form: IAvailabilityForm) => {
-    onSubmit(form);
+    onChange(upsert(availability, editing, form));
     onCancel();
   };
   const onCancel = () => setEditing(null);
   const onEdit = (availability: IAvailabilityForm) => setEditing(availability);
-  const onDeleteForm = (form: IAvailabilityForm) => onDelete(form);
+  const onDeleteForm = (form: IAvailabilityForm) => onChange(remove(availability, form));
 
   return (
     <main>
       { editing !== NULL_FORM &&
-        <Button variant={"optional"} onClick={clickedAvailability} className={'w-full mb-3'}>
+        <Button
+          variant={"optional"}
+          onClick={clickedAvailability}
+          className={'w-full mb-3'}
+          data-cy={'availability'}
+        >
           <i className="fa-solid fa-circle-plus mr-3" />
           Availability
         </Button>

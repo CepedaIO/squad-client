@@ -15,6 +15,7 @@ mailServer.bind((addr, id, email) => {
 
 export default defineConfig({
   e2e: {
+    supportFile: false,
     setupNodeEvents(on, config) {
       on("task", {
         getLastEmail(email) {

@@ -1,28 +1,20 @@
 import React from "react";
 import $c from "classnames";
-import {DateTime, Duration, DurationLikeObject} from "luxon";
+import {Duration, DurationLikeObject} from "luxon";
 import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
-import FormContext, {createFormContext} from "../../../providers/FormContext";
 import {IAvailabilityMode} from "../Availability";
-import {ist} from "../../../services/utils";
+import {RangeUtils, IRangeForm} from "event-matcher-shared";
 
-export const Range: IAvailabilityMode<RangeForm> = {
+export const Range: IAvailabilityMode = {
   label: 'Range',
-  applies: ist<RangeForm>((obj) => DateTime.isDateTime(obj.start) && DateTime.isDateTime(obj.end)),
+  applies: RangeUtils.applies,
   Edit: (props) => <RangeEdit {...props} />,
-  View: (props) => <RangeView {...props} />,
-  durationValid: (range: RangeForm, durLike: DurationLikeObject) =>
-    DateAndTime.greaterThan(range.start, Duration.fromDurationLike(durLike))(range.end)
-}
-
-export interface RangeForm {
-  start: DateTime;
-  end: DateTime;
-}
+  View: (props) => <RangeView {...props} />
+};
 
 export interface RangeViewProps {
-  form: RangeForm;
+  form: IRangeForm;
 }
 
 export const RangeView = ({form}: RangeViewProps) => (
@@ -45,11 +37,11 @@ export const RangeView = ({form}: RangeViewProps) => (
 
 interface RangeEditProps {
   offset: DurationLikeObject;
-  form?: Partial<RangeForm>;
+  form?: Partial<IRangeForm>;
 }
 
 export const RangeEdit = ({offset}: RangeEditProps) => {
-  const {FormInput} = useFormControls<RangeForm>();
+  const {FormInput} = useFormControls<IRangeForm>();
   const duration = Duration.fromDurationLike(offset);
 
   return (

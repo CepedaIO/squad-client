@@ -39,8 +39,8 @@ const classesForVariant = new Map<Variants, string | ((props: ButtonProps) => st
 ]);
 
 const getClasses = (props: ButtonProps) => {
-  const { variant, loading, className } = props;
-  const buttonClasses = loading ? classesForVariant.get('disabled') : classesForVariant.get(variant);
+  const { variant, loading, disabled, className } = props;
+  const buttonClasses = (loading || disabled) ? classesForVariant.get('disabled') : classesForVariant.get(variant);
 
   if(typeof buttonClasses === 'function') {
     return $c(className, buttonClasses(props));
@@ -64,7 +64,7 @@ const ToggleDecorator = ({ variant, active }: ButtonProps) => {
 }
 
 const Button = (props: ButtonProps) => {
-  const { loading, active } = props;
+  const { loading, disabled, active } = props;
   const buttonProps = omit(props, 'variant', 'loading', 'disabled', 'className', 'active', 'children', 'onChange');
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
     if(isToggleButtonProps(props)) {
@@ -80,7 +80,7 @@ const Button = (props: ButtonProps) => {
     <button
       {...buttonProps}
       className={getClasses(props)}
-      disabled={loading}
+      disabled={loading || disabled}
       onClick={onClick}
     >
       { props.children }

@@ -4,16 +4,17 @@ import {ist} from "../utils";
 export type CustomInputProps<Value> = {
   value?: Value;
   onChange?: (value:Value) => void;
+  'data-cy'?: string;
 }
 
-export type InputDescriptor<Value> = CustomInputDescriptor<Value> | AdapterDescriptor<any, Value>;
+export type InputDescriptor<Value> = CustomInputDescriptor<Value> | AdapterDescriptor<Value>;
 
 export interface CustomInputDescriptor<Value> {
   id: string;
   input: (props: CustomInputProps<Value>) => JSX.Element;
 }
 
-export interface AdapterDescriptor<InputType extends keyof InputTypeMap, OutputType = any> {
+export interface AdapterDescriptor<OutputType, InputType extends keyof InputTypeMap = any> {
   id: string;
   input: InputType;
   in: (val: InputTypeMap[InputType]) => OutputType;

@@ -6,11 +6,12 @@ import FormContext, {createFormContext} from "../providers/FormContext";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
-import {Availability, IAvailability, IAvailabilityForm} from "../components/availability/Availability";
+import {Availability} from "../components/availability/Availability";
 import {useFormControls} from "../hooks/useFormControls";
 import {DurationLikeObject} from 'luxon';
 import {Duration} from "../services/input-types/duration/duration";
 import $c from "classnames";
+import { IAvailability } from "event-matcher-shared";
 
 export interface IGroupNewPageForm {
   name: string;
@@ -21,9 +22,9 @@ export interface IGroupNewPageForm {
 }
 
 const GroupNewContent = () => {
-  const { validate, setValue, values:{ availability, duration }, setValidation } = useForm<IGroupNewPageForm>();
+  const { validate, setValue, getError, values:{ availability, duration }, setValidation } = useForm<IGroupNewPageForm>();
   const { FormInput } = useFormControls<IGroupNewPageForm>();
-
+  const availabilityError = getError('availability');
   const invalidAvailability = useMemo(() =>
     Availability.durationInvalidIndexes(availability, duration)
   , [availability, duration]);
@@ -34,17 +35,17 @@ const GroupNewContent = () => {
   ], [JSON.stringify(invalidAvailability)]);
 
   const onClickSubmit = () => {
-    validate();
+    const [isValid, values] = validate();
+    if(isValid) {
+      console.log('is valid', values)
+
+    } else {
+      console.log('is not valid', values);
+    }
   };
 
-  const onSubmitAvailability = (form: IAvailabilityForm) => {
-    setValue('availability', (prev) => ([
-      ...(prev ?? []),
-      form
-    ]))
-  }
-
-  const onDeleteAvailability = (form: IAvailabilityForm) => setValue('availability', (prev) => prev.filter((entry) => entry !== form));
+  const onChangeAvailability = (availability: IAvailability) =>
+    setValue('availability', () => availability)
 
   return (
     <main className="flex flex-col h-full">
@@ -79,22 +80,27 @@ const GroupNewContent = () => {
           erroredIndexes={invalidAvailability}
           offset={duration}
           availability={availability}
-          onSubmit={onSubmitAvailability}
-          onDelete={onDeleteAvailability}
+          onChange={onChangeAvailability}
         />
 
-        { invalidAvailability.length > 0 && (
+        { availabilityError  && (
           <section className={$c('text-error text-center')}>
-            Invalid availabilities
+            { availabilityError.message }
           </section>
         )}
 
         <Calendar
-          month={1}
           availability={availability}
         />
 
-        <Button variant={"submit"} onClick={onClickSubmit}>Submit</Button>
+        <Button
+          className={"mt-2"}
+          variant={"submit"}
+          onClick={onClickSubmit}
+          data-cy={'submit'}
+        >
+          Submit
+        </Button>
       </div>
     </main>
   )

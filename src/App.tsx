@@ -50,7 +50,7 @@ function App() {
 			{ modal }
 
 			<main className="h-screen w-screen flex flex-col">
-				<section className="p-8 h-full overflow-auto">
+				<section className="p-8">
 					{ routes }
 				</section>
 			</main>

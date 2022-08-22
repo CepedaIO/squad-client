@@ -40,6 +40,7 @@ const getInput = <Value,>(props: ControlInputProps<Value>) => {
     const inputProps: InputProps<InputDescriptor<Value>['input']> = {
       ...omit(props, formProps),
       type: props.type._descriptor.input,
+      // @ts-ignore
       onChange: (value) => props.onChange && props.onChange(props.type._descriptor.in(value))
     };
 

@@ -1,31 +1,34 @@
-import {Range, RangeForm} from "./modes/Range";
+import {Range} from "./modes/Range";
 import React, {Fragment, useState} from "react";
 import $c from "classnames";
 import Button from "../inline/Button";
-import {DurationLikeObject} from "luxon";
+import {DateTime, DurationLikeObject} from "luxon";
 import useForm from "../../hooks/useForm";
 import FormContext, {createFormContext} from "../../providers/FormContext";
+import {RangeUtils, IAvailability, IAvailabilityForm} from "event-matcher-shared";
 
+export const helpers = [RangeUtils];
 export const modes = [Range];
-export type IAvailabilityForm = RangeForm;
-export type IAvailability = Array<IAvailabilityForm>;
+
+const helperFor = (form: IAvailabilityForm) => helpers.find((helper) => helper.applies(form))!
 
 export const Availability = {
+  availableOnDate: (availability: IAvailability, date: DateTime): boolean =>
+    availability.some((form) => helperFor(form).dateValid(form, date)),
   durationInvalidIndexes: (availability: IAvailability, durLike: DurationLikeObject): number[] =>
     availability.map((form) =>
-      modes.find((mode) => mode.applies(form))!.durationValid(form, durLike)
+    helperFor(form).durationValid(form, durLike)
     )
     .map((valid, index) => [valid, index] as Tuple<boolean,  number>)
     .filter(([valid]) => !valid)
-    .map(([, index]) => index)
+    .map(([, index]) => index),
 }
 
-export interface IAvailabilityMode<AvailabilityType extends IAvailabilityForm> {
+export interface IAvailabilityMode {
+  applies: (form: IAvailabilityForm) => boolean;
   label: string;
-  applies: (form: IAvailabilityForm) => form is AvailabilityType;
   View: (props: AvailabilityViewProps) => JSX.Element;
   Edit: (props: AvailabilityEditProps) => JSX.Element;
-  durationValid: (form: IAvailabilityForm, durLike: DurationLikeObject) => boolean;
 }
 
 export interface AvailabilityViewProps {
@@ -104,6 +107,7 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
             active={mode === activeMode}
             key={mode.label}
             onClick={() => setActiveTab(mode)}
+            data-cy={mode.label}
           >
             { mode.label }
           </Button>
@@ -122,7 +126,11 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
         <Button variant={"link"} onClick={onClickCancel}>
           Cancel
         </Button>
-        <Button variant={"link"} onClick={onClickAdd}>
+        <Button
+          variant={"link"}
+          onClick={onClickAdd}
+          data-cy={"submit:availability"}
+        >
           Add
         </Button>
       </footer>

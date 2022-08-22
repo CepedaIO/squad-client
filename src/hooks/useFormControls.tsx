@@ -35,7 +35,7 @@ export const useFormControls = <Values extends Keyed>() => {
         onChange: (value: Values[Field]) => setValue(field, () => value)
       };
 
-      return <ControlInput {..._props} />
+      return <ControlInput {..._props} data-cy={props.field} />
     }, [values[field], error, props])
   }, []);
 

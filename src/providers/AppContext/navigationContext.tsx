@@ -25,7 +25,7 @@ interface NavigationGuard {
 const guards: NavigationGuard[] = [{
     id: 'Noop Paths',
     applies({ path }) {
-      return [
+      return true || [
         /^\/login$/,
         /^\/awaiting-access$/,
         /^\/login-with/,

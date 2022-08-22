@@ -2,23 +2,24 @@ import $c from "classnames";
 import {DateTime, Interval} from "luxon";
 import CalendarDay from "./CalendarDay";
 import CalendarBox from "./CalendarBox";
-import {IAvailability} from "../availability/Availability";
+import {Availability} from "../availability/Availability";
+import {useState} from "react";
+import { IAvailability } from "event-matcher-shared";
 
 export interface CalendarProps {
   availability: IAvailability;
-  month: DateTime['month']
 }
 
-const Calendar = ({ month }: CalendarProps) => {
+const Calendar = ({ availability }: CalendarProps) => {
+  const [month, setMonth] = useState(DateTime.now().month);
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
     start: interval.start,
     length: interval.length('days')
   };
-
-  const clickedDate = (date:DateTime) => {
-    console.log('clicked date:', date.toLocaleString());
-  }
+  const clickedPrevious = () => setMonth(DateTime.fromObject({ month }).minus({ months: 1 }).month);
+  const clickedNext = () => setMonth(DateTime.fromObject({ month }).plus({ months: 1 }).month);
+  const chevronClasses = 'fa-solid cursor-pointer';
 
   let daysLeft = metadata.length;
   const dates = [];
@@ -32,7 +33,9 @@ const Calendar = ({ month }: CalendarProps) => {
         <CalendarDay
           key={i}
           date={nextDay}
-          clickedDate={clickedDate}
+          className={$c({
+            'bg-violet-100': Availability.availableOnDate(availability, nextDay)
+          })}
         />
       );
 
@@ -55,8 +58,10 @@ const Calendar = ({ month }: CalendarProps) => {
 
   return (
     <main>
-      <header className={$c("text-center")}>
-        { metadata.start.monthLong }
+      <header className={$c("text-center flex flex-row justify-between items-center")}>
+        <i className={$c('fa-chevron-left ml-5', chevronClasses)} onClick={clickedPrevious}></i>
+        <span>{ metadata.start.monthLong }</span>
+        <i className={$c('fa-chevron-right mr-5', chevronClasses)} onClick={clickedNext}></i>
       </header>
       <section className={$c("grid grid-cols-7 justify-center text-center")}>
         {

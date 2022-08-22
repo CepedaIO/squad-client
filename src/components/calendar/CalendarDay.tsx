@@ -3,20 +3,21 @@ import $c from "classnames";
 import CalendarBox from "./CalendarBox";
 
 interface CalendarDayProps {
-  date: DateTime
-  clickedDate: (date:DateTime) => void;
+  className?: string;
+  date: DateTime;
+  clickedDate?: (date:DateTime) => void;
   active?: boolean;
 }
 
 const CalendarDay = ({
- active, date, clickedDate
+ active, date, clickedDate, className
 }: CalendarDayProps) => {
   return (
     <CalendarBox
       className={$c('cursor-default', {
         'bg-violet-100': active === true
-      })}
-      onClick={() => clickedDate(date)}
+      }, className)}
+      onClick={() => clickedDate && clickedDate(date)}
     >
       { date.day }
     </CalendarBox>

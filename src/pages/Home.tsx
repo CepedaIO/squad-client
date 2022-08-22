@@ -6,7 +6,13 @@ const Home = () => {
 
   return (
   <main>
-    <Button variant={"submit"} onClick={() => navigate('/group/new')}>New Events</Button>
+    <Button
+      variant={"submit"}
+      onClick={() => navigate('/group/new')}
+      data-cy={'create:group'}
+    >
+      New Events
+    </Button>
   </main>
   )
 }
