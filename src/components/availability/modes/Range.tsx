@@ -4,7 +4,7 @@ import {Duration, DurationLikeObject} from "luxon";
 import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
 import {IAvailabilityMode} from "../Availability";
-import {RangeUtils, IRangeForm} from "event-matcher-shared";
+import {RangeUtils, IRangeForm, RangeFormFactory} from "event-matcher-shared";
 
 export const Range: IAvailabilityMode = {
   label: 'Range',
@@ -43,6 +43,7 @@ interface RangeEditProps {
 export const RangeEdit = ({offset}: RangeEditProps) => {
   const {FormInput} = useFormControls<IRangeForm>();
   const duration = Duration.fromDurationLike(offset);
+  const rangeForm = RangeFormFactory({ duration })
 
   return (
     <main className={$c('flex flex-col gap-3')}>
@@ -51,14 +52,7 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"start"}
         type={DateAndTime}
         nowrap={true}
-        validator={[
-          ({ end }, { required }) => [
-            [DateAndTime.defined, 'Must pick a time'],
-            required('end', [
-              [DateAndTime.lessThan(end, duration.negate()), `Must be at least ${duration.toHuman()} before end`]
-            ])
-          ], [offset]
-        ]}
+        validator={[rangeForm.validation.start, [offset]]}
       />
 
       <FormInput
@@ -66,14 +60,7 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"end"}
         type={DateAndTime}
         nowrap={true}
-        validator={[
-          ({ start }, { required }) => [
-            [DateAndTime.defined, 'Must pick a time'],
-            required('start', [
-              [DateAndTime.greaterThan(start, duration), `Must be at least ${duration.toHuman()} after start`]
-            ])
-          ], [offset]
-        ]}
+        validator={[rangeForm.validation.end, [offset]]}
       />
     </main>
   );

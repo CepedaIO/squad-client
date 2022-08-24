@@ -2,9 +2,8 @@ import $c from "classnames";
 import {DateTime, Interval} from "luxon";
 import CalendarDay from "./CalendarDay";
 import CalendarBox from "./CalendarBox";
-import {Availability} from "../availability/Availability";
 import {useState} from "react";
-import { IAvailability } from "event-matcher-shared";
+import {IAvailability, AvailabilityValidation} from "event-matcher-shared";
 
 export interface CalendarProps {
   availability: IAvailability;
@@ -34,7 +33,7 @@ const Calendar = ({ availability }: CalendarProps) => {
           key={i}
           date={nextDay}
           className={$c({
-            'bg-violet-100': Availability.availableOnDate(availability, nextDay)
+            'bg-violet-100': AvailabilityValidation.availableOnDate(availability, nextDay)
           })}
         />
       );

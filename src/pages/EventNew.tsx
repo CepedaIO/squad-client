@@ -1,38 +1,27 @@
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React, {useMemo} from "react";
+import React from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import line from "../services/input-types/line";
 import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
-import {Availability} from "../components/availability/Availability";
 import {useFormControls} from "../hooks/useFormControls";
-import {DurationLikeObject} from 'luxon';
-import {Duration} from "../services/input-types/duration/duration";
+import {DurationLike} from "../services/input-types/duration/durationLike";
+import {Duration} from "luxon";
 import $c from "classnames";
-import { IAvailability } from "event-matcher-shared";
+import {IAvailability, AvailabilityValidation, ICreateEventForm} from "event-matcher-shared";
 
-export interface IGroupNewPageForm {
-  name: string;
-  description: string;
-  duration: DurationLikeObject;
-  displayName: string;
-  availability: IAvailability;
-}
-
-const GroupNewContent = () => {
-  const { validate, setValue, getError, values:{ availability, duration }, setValidation } = useForm<IGroupNewPageForm>();
-  const { FormInput } = useFormControls<IGroupNewPageForm>();
+const EventNewContent = () => {
+  const { validate, setValue, getError, values:{ availability, duration }, setValidation } = useForm<ICreateEventForm>();
+  const { FormInput } = useFormControls<ICreateEventForm>();
   const availabilityError = getError('availability');
-  const invalidAvailability = useMemo(() =>
-    Availability.durationInvalidIndexes(availability, duration)
-  , [availability, duration]);
+  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availability, duration);
 
   setValidation('availability', () => [
     [(value) => value.length > 0, 'Must select availability'],
-    [() => invalidAvailability.length === 0, 'Invalid availabilities']
-  ], [JSON.stringify(invalidAvailability)]);
+    [() => invalidAvailability.length === 0, `Invalid availabilities: ${Duration.fromDurationLike(duration).toHuman()}`]
+  ], [JSON.stringify(invalidAvailability), duration]);
 
   const onClickSubmit = () => {
     const [isValid, values] = validate();
@@ -66,7 +55,7 @@ const GroupNewContent = () => {
         <FormInput
           label={"Duration:"}
           field={"duration"}
-          type={Duration}
+          type={DurationLike}
         />
 
         <h2>Member Info:</h2>
@@ -106,8 +95,8 @@ const GroupNewContent = () => {
   )
 }
 
-const GroupNew = () => {
-  const context = createFormContext<IGroupNewPageForm>({
+const EventNew = () => {
+  const context = createFormContext<ICreateEventForm>({
     name: '',
     description: '',
     duration: { hours: 1 },
@@ -117,9 +106,9 @@ const GroupNew = () => {
 
   return (
     <FormContext.Provider value={ context }>
-      <GroupNewContent />
+      <EventNewContent />
     </FormContext.Provider>
   )
 }
 
-export default GroupNew;
+export default EventNew;

@@ -12,7 +12,7 @@ export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 
   values: Values;
   setValue: <Field extends StringKey<Values>>(field: Field, setter: (prev?: Values[Field]) => Values[Field]) => void;
   setValidator: <Field extends StringKey<Values>>(field: Field, validators: Validator<Values, Field>) => void;
-  validate: (fields?:StringKey<Values>[]) => ValidateResult<Values>;
+  validate: (fields:StringKey<Values>[], options: ValidateOptions) => ValidateResult<Values>;
   setOmitValidation: (field: StringKey<Values>, omitValidation:OmitValidation<Values>) => void
 }
 
@@ -56,9 +56,21 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
     }
   };
 
+  const _validate = <Field extends StringKey<Values>>(fields:Field[] = Object.keys(values) as Field[], options: ValidateOptions = {}): ValidateResult<Values> => {
+    const [isValid, _values, errors] = validate(fields, values, options);
+
+    removeErrors(fields);
+
+    if(!isValid) {
+      Object.entries(errors).forEach(([field, error]) => addErrors({ field, message: error as string }))
+    }
+
+    return [isValid, _values, errors] as ValidateResult<Values>;
+  }
+
   useEffect(() => {
     if(pendingValidation.fields.length > 0) {
-      validate(pendingValidation.fields, values, pendingValidation.options);
+      _validate(pendingValidation.fields, pendingValidation.options);
       setPendingValidation(NULL_PENDING_VALIDATIONS);
     }
   }, [pendingValidation]);
@@ -95,18 +107,6 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
         stopOnFirstFail: true
       });
     };
-
-  const _validate = <Field extends StringKey<Values>>(fields:Field[] = Object.keys(values) as Field[]): ValidateResult<Values> => {
-    const [isValid, _values, errors] = validate(fields, values);
-
-    removeErrors(fields);
-
-    if(!isValid) {
-      Object.entries(errors).forEach(([field, error]) => addErrors({ field, message: error as string }))
-    }
-
-    return [isValid, _values, errors] as ValidateResult<Values>;
-  }
 
   return {
     values,

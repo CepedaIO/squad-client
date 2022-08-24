@@ -6,7 +6,7 @@ import AwaitingAccess from "./pages/AwaitingAccess";
 import LoginWith from "./pages/LoginWith";
 import Home from "./pages/Home";
 import Fallback from "./pages/Fallback";
-import GroupNew from "./pages/GroupNew";
+import EventNew from "./pages/EventNew";
 import AppContext, {createAppContext} from "./providers/AppContext";
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
 			element: <Home />
 		}, {
 			path: '/group/new',
-			element: <GroupNew />
+			element: <EventNew />
 		}, {
 			path: '*',
 			element: <Fallback />

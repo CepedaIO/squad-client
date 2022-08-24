@@ -2,27 +2,12 @@ import {Range} from "./modes/Range";
 import React, {Fragment, useState} from "react";
 import $c from "classnames";
 import Button from "../inline/Button";
-import {DateTime, DurationLikeObject} from "luxon";
+import {DurationLikeObject} from "luxon";
 import useForm from "../../hooks/useForm";
 import FormContext, {createFormContext} from "../../providers/FormContext";
-import {RangeUtils, IAvailability, IAvailabilityForm} from "event-matcher-shared";
+import {IAvailabilityForm} from "event-matcher-shared";
 
-export const helpers = [RangeUtils];
 export const modes = [Range];
-
-const helperFor = (form: IAvailabilityForm) => helpers.find((helper) => helper.applies(form))!
-
-export const Availability = {
-  availableOnDate: (availability: IAvailability, date: DateTime): boolean =>
-    availability.some((form) => helperFor(form).dateValid(form, date)),
-  durationInvalidIndexes: (availability: IAvailability, durLike: DurationLikeObject): number[] =>
-    availability.map((form) =>
-    helperFor(form).durationValid(form, durLike)
-    )
-    .map((valid, index) => [valid, index] as Tuple<boolean,  number>)
-    .filter(([valid]) => !valid)
-    .map(([, index]) => index),
-}
 
 export interface IAvailabilityMode {
   applies: (form: IAvailabilityForm) => boolean;
@@ -123,7 +108,10 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
       )}
 
       <footer className={$c('center grow-children')}>
-        <Button variant={"link"} onClick={onClickCancel}>
+        <Button
+          variant={"link"}
+          onClick={onClickCancel}
+        >
           Cancel
         </Button>
         <Button
@@ -131,7 +119,7 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
           onClick={onClickAdd}
           data-cy={"submit:availability"}
         >
-          Add
+          Save
         </Button>
       </footer>
     </main>
