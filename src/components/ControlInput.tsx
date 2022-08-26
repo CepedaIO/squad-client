@@ -11,14 +11,14 @@ import {
 import {ist} from "../services/utils";
 
 export interface AdapterInputProps<Value extends SimpleInputTypes> extends Omit<InputProps<Value>, 'type'> {
-  type: { _descriptor: AdapterDescriptor<Value> },
+  type: AdapterDescriptor<Value>,
   label: string;
   nowrap?: boolean;
   error?: string;
 }
 
 export interface InjectedInputProps<Value> {
-  type: { _descriptor: CustomInputDescriptor<Value> };
+  type: CustomInputDescriptor<Value>;
   label: string;
   nowrap?: boolean;
   value?: Value;
@@ -31,20 +31,20 @@ export type ControlInputProps<Value> = Value extends SimpleInputTypes ? AdapterI
 const formProps = ['field', 'validator', 'label', 'nowrap', 'omit'];
 
 const getInput = <Value,>(props: ControlInputProps<Value>) => {
-  const isInjectedInputProps = ist<InjectedInputProps<Value>>((obj) => isCustomInputDescriptor(obj.type._descriptor));
+  const isInjectedInputProps = ist<InjectedInputProps<Value>>((obj) => isCustomInputDescriptor(obj.type));
 
   if(isInjectedInputProps(props)) {
     const inputProps = omit(props, formProps.concat('type'));
-    return props.type._descriptor.input(inputProps);
+    return props.type.input(inputProps);
   } else {
     const inputProps: InputProps<InputDescriptor<Value>['input']> = {
       ...omit(props, formProps),
-      type: props.type._descriptor.input,
+      type: props.type.input,
       // @ts-ignore
-      onChange: (value) => props.onChange && props.onChange(props.type._descriptor.in(value))
+      onChange: (value) => props.onChange && props.onChange(props.type.in(value))
     };
 
-    const value = inputProps.value ? props.type._descriptor.out(inputProps.value) : '';
+    const value = inputProps.value ? props.type.out(inputProps.value) : '';
 
     return (
       <Input

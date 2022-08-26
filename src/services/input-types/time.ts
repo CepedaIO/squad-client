@@ -1,19 +1,13 @@
-import {DateTime, DateTimeUnit} from "luxon";
+import {DateTime} from "luxon";
 import {InputDescriptor} from "./index";
+import DateAndTime from "./datetime";
 
-const greaterThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) > factor;
-const lessThan = (time: DateTime, factor: number, unit: DateTimeUnit) => (val: DateTime) => val.diff(time, unit).get(unit) < factor;
-
-const Time = {
-  _descriptor: {
-    id: 'time',
-    input: 'time',
-    in: (val: string) => DateTime.fromFormat(val, 'HH:mm'),
-    out: (val: DateTime) => val.toFormat('HH:mm'),
-  } as InputDescriptor<DateTime>,
-  defined: DateTime.isDateTime,
-  greaterThan: greaterThan,
-  lessThan: lessThan
+const Time: InputDescriptor<DateTime> = {
+  id: 'time',
+  input: 'time',
+  in: (val: string) => DateTime.fromFormat(val, 'HH:mm'),
+  out: (val: DateTime) => val.toFormat('HH:mm'),
+  ist: DateAndTime.ist
 }
 
 export default Time;

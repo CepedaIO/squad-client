@@ -11,12 +11,12 @@ describe('groups', () => {
     click('create:group');
     dataCY('name').type(Event.name);
     dataCY('description').type(Event.description);
-    dataCY('select:duration').select(Object.keys(Event.duration)[0]);
-    dataCY('input:duration').clear().type(Object.values(Event.duration)[0].toString());
+    dataCY('duration:select').select(Object.keys(Event.duration)[0]);
+    dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
     dataCY('displayName').type(Member.displayName);
     dataCY('availability').click();
-    dataCY('start').type(DateAndTime._descriptor.out(DateTime.fromISO(Member.availability.start)))
-    dataCY('end').type(DateAndTime._descriptor.out(DateTime.fromISO(Member.availability.end)))
+    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Member.availability.start)))
+    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
     dataCY('submit:availability').click();
     dataCY('submit').click();
   })

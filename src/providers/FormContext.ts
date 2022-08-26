@@ -1,18 +1,15 @@
 import {createContext, useEffect, useState} from "react";
-import {useValidation, ValidateResult} from "event-matcher-shared";
+import {useValidation, ValidateResult, ValidateOptions, FieldValidation} from "event-matcher-shared";
 import errorContext, {IErrorContext} from "./AppContext/errorContext";
 
 const NULL_PENDING_VALIDATIONS = { fields: [], options: {} };
 type OmitValidation<Values extends Keyed> = (values:Values) => boolean;
-interface ValidateOptions {
-  stopOnFirstFail?: boolean
-}
 
 export interface IFormContext<Values extends Keyed> extends Pick<IErrorContext, 'hasError' | 'getError' | 'errors'> {
   values: Values;
   setValue: <Field extends StringKey<Values>>(field: Field, setter: (prev?: Values[Field]) => Values[Field]) => void;
-  setValidator: <Field extends StringKey<Values>>(field: Field, validators: Validator<Values, Field>) => void;
-  validate: (fields:StringKey<Values>[], options: ValidateOptions) => ValidateResult<Values>;
+  setValidator: <Field extends StringKey<Values>>(field: Field, validation: FieldValidation<Values, Field>) => void;
+  validate: (fields:StringKey<Values>[], options?: ValidateOptions) => ValidateResult<Values>;
   setOmitValidation: (field: StringKey<Values>, omitValidation:OmitValidation<Values>) => void
 }
 
@@ -35,15 +32,15 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
     fields: StringKey<Values>[],
     options: ValidateOptions
   }>(NULL_PENDING_VALIDATIONS);
-  const [validators, setValidationMap] = useState<{[Field in StringKey<Values>]?: Validator<Values, Field>}>({});
+  const [validation, setValidationMap] = useState<{[Field in StringKey<Values>]?: FieldValidation<Values, Field>}>({});
   const [omitValidation, _setOmitValidation] = useState<{[Field in StringKey<Values>]?: OmitValidation<Values>}>({});
 
   const shouldOmit = (field: StringKey<Values>) => omitValidation[field] && omitValidation[field]!(values);
-  const validate = useValidation<Values>({ validators, shouldOmit });
+  const validate = useValidation<Values>({ validation, shouldOmit });
 
   const concatPendingValidation = <Field extends StringKey<Values>>(field: StringKey<Values> | StringKey<Values>[], options: ValidateOptions = {}) => {
     const fields = Array.isArray(field) ? field : [field];
-    const fieldsWithValidators = fields.filter((field) => !!validators[field]);
+    const fieldsWithValidators = fields.filter((field) => validation[field] && !!validation[field]!.validator);
 
     if(fieldsWithValidators.length > 0) {
       setPendingValidation(prev => ({
@@ -75,11 +72,11 @@ export const createFormContext = <Values extends Keyed>(initialValues?:Values): 
     }
   }, [pendingValidation]);
 
-  const setValidator = <Field extends StringKey<Values>>(field: Field, validator: Validator<Values, Field>) => {
+  const setValidator = <Field extends StringKey<Values>>(field: Field, validation: FieldValidation<Values, Field>) => {
     setValidationMap(prev => {
       return {
         ...prev,
-        [field]: validator,
+        [field]: validation,
       };
     });
 

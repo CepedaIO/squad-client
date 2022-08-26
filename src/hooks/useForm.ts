@@ -1,27 +1,34 @@
 import {useContext, useEffect} from "react";
 import FormContext from "../providers/FormContext";
 import {FieldError} from "../providers/AppContext/errorContext";
+import {ValidateOptions, FieldValidation} from "event-matcher-shared";
 
 type setValidationReturn<Values extends Keyed, Field extends StringKey<Values>> = [string | undefined, () => [boolean, Values[Field]]];
 
 interface useFormReturn<Values extends Keyed> {
-  validate: (fields?:string[]) => [boolean, Values];
+  validate: (fields?:string[], options?: ValidateOptions) => [boolean, Values];
   values: Values;
   setValue: <Field extends StringKey<Values>>(field: Field, setter: (prev: Values[Field]) => Values[Field]) => void;
   getError: <Field extends StringKey<Values>>(field: Field) => FieldError | undefined;
-  setValidation: <Field extends StringKey<Values>>(field: Field, validator?: Validator<Values, Field>, dependencies?: DependencyList) => setValidationReturn<Values, Field>
+  setValidation: <Field extends StringKey<Values>>(field: Field, params: {
+    validator?: Validator<Values, Field>;
+    ist: (val: any) => val is Values[Field];
+  }, dependencies?: DependencyList) => setValidationReturn<Values, Field>
 }
 
 const useForm = <Values extends Keyed>() => {
   const { values, validate, setValue, setValidator, getError } = useContext(FormContext);
 
-  const setValidation = <Field extends StringKey<Values>>(field: Field, validator?: Validator<Values, Field>, dependencies?: DependencyList) => {
+  const setValidation = <Field extends StringKey<Values>>(field: Field, validation: FieldValidation<Values, Field>, dependencies?: DependencyList) => {
     const { getError } = useContext(FormContext);
 
     useEffect(() => {
-      if(validator) {
-        setValidator(field, validator)
-        validate([field])
+      if(validation) {
+        setValidator(field, validation);
+      }
+
+      if(values[field]) {
+        validate([field]);
       }
     }, dependencies || []);
 

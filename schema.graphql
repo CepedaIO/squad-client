@@ -5,16 +5,67 @@ schema {
     mutation: Mutation
 }
 
+type Availability {
+    createdOn: DateTime!
+    end: DateTime!
+    id: Float!
+    modifiedOn: DateTime!
+    start: DateTime!
+}
+
+type Event {
+    createdOn: DateTime!
+    description: String!
+    factor: Float!
+    id: Float!
+    memberships: [Membership!]!
+    modifiedOn: DateTime!
+    name: String!
+    precision: String!
+}
+
+type Membership {
+    availability: [Availability!]!
+    createdOn: DateTime!
+    displayName: String!
+    email: String!
+    id: Float!
+}
+
 type Mutation {
+    "Create an event"
+    createEvent(payload: CreateEventInput!): Event!
+    getNewToken(email: String!): SimpleResponse!
+    "Creates an unauthenticated session and emails the login token"
     login(email: String!): SimpleResponse!
-    useLoginToken(expires: Float!, token: String!, uuid: String!): SimpleResponse!
+    "Consume login token and attempt to authenticate with services"
+    useLoginToken(expires: Int!, token: String!, uuid: String!): SimpleResponse!
 }
 
 type Query {
+    "Used to check if you're currently authenticated with services"
     authenticated: SimpleResponse!
 }
 
 type SimpleResponse {
     result: String!
     success: Boolean!
+}
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime
+
+input CreateEventInput {
+    availability: [RangeForm!]!
+    description: String!
+    displayName: String!
+    email: String!
+    factor: Float!
+    name: String!
+    precision: String!
+}
+
+input RangeForm {
+    end: DateTime!
+    start: DateTime!
 }

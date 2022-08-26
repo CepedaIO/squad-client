@@ -1,8 +1,8 @@
 import {useParams, useSearchParams} from "react-router-dom";
-import {gql, useMutation} from "@apollo/client";
 import {useContext, useEffect, useRef} from "react";
 import Button from "../components/inline/Button";
 import AppContext from "../providers/AppContext";
+import {useLoginToken} from "../services/api/auth";
 
 const LoginWith = () => {
   const didAttemptLogin = useRef(false);
@@ -15,21 +15,15 @@ const LoginWith = () => {
 
   const variables = { token, uuid, expires: parseInt(searchParams.get('expires') || '0') };
 
-  const [login, { error, data }] = useMutation(gql`
-    mutation UseLoginToken($token: String!, $uuid: String!, $expires: Int!) {
-      useLoginToken(token: $token, uuid: $uuid, expires: $expires) {
-        success
-      }
-    }
-  `, {
-    variables
-  });
+  const [login, { error, data }] = useLoginToken();
 
   const failedLogin = error || data?.useLoginToken?.success === false;
 
   useEffect(() => {
     if(!didAttemptLogin.current) {
-      login();
+      login({
+        variables
+      });
       pollForAuthentication();
       didAttemptLogin.current = true;
     }

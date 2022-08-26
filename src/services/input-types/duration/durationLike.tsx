@@ -1,11 +1,19 @@
 import {InputDescriptor} from "../index";
 import DurationInput from "./DurationInput";
-import {DurationLikeObject} from 'luxon';
+import {Duration, DurationLikeObject} from 'luxon';
+import {ist} from "../../utils";
 
-export const DurationLike = {
-  _descriptor: {
-    id: 'datetime',
-    input: DurationInput,
-  } as InputDescriptor<DurationLikeObject>,
+export const DurationLike: InputDescriptor<DurationLikeObject> = {
+  id: 'datetime',
+  input: DurationInput,
+  ist: ist<DurationLikeObject>((val) => {
+    debugger;
+    try {
+      Duration.fromDurationLike(val)
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })
 };
 

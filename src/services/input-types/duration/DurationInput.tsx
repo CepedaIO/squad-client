@@ -21,7 +21,7 @@ const DurationInput = (props: CustomInputProps<DurationLikeObject>) => {
           onChange={(event) => props.onChange && props.onChange({
             [event.target.value]: factor
           })}
-          data-cy={`select:${props["data-cy"]}`}
+          data-cy={`${props["data-cy"]}:select`}
         >
           { durations.map((duration) =>
             <option
@@ -44,7 +44,7 @@ const DurationInput = (props: CustomInputProps<DurationLikeObject>) => {
           onChange={(value: number) => props.onChange && props.onChange({
             [precision]: value
           })}
-          data-cy={`input:${props["data-cy"]}`}
+          data-cy={`${props["data-cy"]}:input`}
         />
       }
     />

@@ -19,13 +19,19 @@ export type FormControlProps<Values extends Keyed, Field extends StringKey<Value
 
 export const useFormControls = <Values extends Keyed>() => {
   const FormInput = useCallback(<Field extends StringKey<Values>>(props: FormControlProps<Values, Field>) => {
-    const { field, validator } = props;
+    const { field, validator, type } = props;
     const { values, setValue, setValidation } = useForm<Values>()
 
     const dependencies = Array.isArray(validator) ? validator[1] : [];
     const _validator = Array.isArray(validator) ? validator[0] : validator;
 
-    const [error] = setValidation(field, _validator, dependencies);
+    if(field === 'duration') {
+      debugger;
+    }
+    const [error] = setValidation(field, {
+      validator: _validator,
+      ist: type.ist
+    }, dependencies);
 
     return useMemo(() => {
       const _props = {

@@ -1,6 +1,6 @@
 import Button from "../components/inline/Button";
 import Calendar from "../components/calendar";
-import React from "react";
+import React, {useEffect} from "react";
 import AvailabilitySelector from "../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import line from "../services/input-types/line";
@@ -8,28 +8,51 @@ import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
 import {useFormControls} from "../hooks/useFormControls";
 import {DurationLike} from "../services/input-types/duration/durationLike";
-import {Duration} from "luxon";
+import {Duration, DurationLikeObject} from "luxon";
 import $c from "classnames";
 import {IAvailability, AvailabilityValidation, ICreateEventForm} from "event-matcher-shared";
+import {useCreateEvent} from "../services/api/event";
+import {useApp} from "../hooks/useApp";
+
+const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
 const EventNewContent = () => {
+  const { err: { addErrors } } = useApp();
   const { validate, setValue, getError, values:{ availability, duration }, setValidation } = useForm<ICreateEventForm>();
   const { FormInput } = useFormControls<ICreateEventForm>();
   const availabilityError = getError('availability');
   const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availability, duration);
+  const [mutCreateEvent, { data, error, loading } ] = useCreateEvent();
 
-  setValidation('availability', () => [
-    [(value) => value.length > 0, 'Must select availability'],
-    [() => invalidAvailability.length === 0, `Invalid availabilities: ${Duration.fromDurationLike(duration).toHuman()}`]
-  ], [JSON.stringify(invalidAvailability), duration]);
+  useEffect(() => {
+    if(error) {
+      addErrors({
+        field: 'createEvent',
+        message: error.message
+      });
+    }
+
+    if(data) {
+      debugger;
+    }
+  }, [error, data])
+
+  console.log(Duration.isDuration(duration));
+
+  setValidation('availability', {
+    ist: AvailabilityValidation.ist,
+    validator: (_, {required}) => [
+      [(value) => value.length > 0, 'Must select availability'],
+      required('duration', [
+        [() => invalidAvailability.length === 0, `Invalid availabilities: ${labelFrom(duration)}`]
+      ])
+    ],
+  }, [JSON.stringify(invalidAvailability), duration]);
 
   const onClickSubmit = () => {
-    const [isValid, values] = validate();
+    const [isValid, variables] = validate();
     if(isValid) {
-      console.log('is valid', values)
-
-    } else {
-      console.log('is not valid', values);
+      mutCreateEvent({ variables });
     }
   };
 
@@ -87,6 +110,7 @@ const EventNewContent = () => {
           variant={"submit"}
           onClick={onClickSubmit}
           data-cy={'submit'}
+          disabled={loading}
         >
           Submit
         </Button>

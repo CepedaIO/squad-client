@@ -1,11 +1,12 @@
 import React, {useContext, useEffect} from "react";
-import {gql, useMutation} from "@apollo/client";
 import Button from "../components/inline/Button";
 import AppContext from "../providers/AppContext";
 import Line from "../services/input-types/line";
 import FormContext, {createFormContext} from "../providers/FormContext";
 import useForm from "../hooks/useForm";
 import {useFormControls} from "../hooks/useFormControls";
+import {useLogin} from "../services/api/auth";
+import {TextValidation} from "event-matcher-shared";
 
 interface ILoginForm {
   email: string;
@@ -21,14 +22,7 @@ const LoginPage = () => {
   const { validate } = useForm<ILoginForm>()
   const { FormInput } = useFormControls<ILoginForm>()
 
-  const [mutLogin, { data, error, loading } ] = useMutation(gql`
-    mutation Login($email: String!) {
-      login(email: $email) {
-        success,
-        result
-      }
-    }
-  `);
+  const [mutLogin, { data, error, loading } ] = useLogin();
 
   useEffect(() => {
     handleUnexpected(error)
@@ -68,8 +62,8 @@ const LoginPage = () => {
             placeholder={"Enter email"}
             className={"w-full"}
             validator={() => [
-              [Line.defined, 'Must enter an email'],
-              [Line.greaterThan(3), 'Email must be greater than 3 characters']
+              [TextValidation.defined, 'Must enter an email'],
+              [TextValidation.greaterThan(3), 'Email must be greater than 3 characters']
             ]}
             data-cy={'email'}
           />
