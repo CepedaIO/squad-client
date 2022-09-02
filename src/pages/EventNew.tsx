@@ -13,11 +13,16 @@ import $c from "classnames";
 import {IAvailability, AvailabilityValidation, ICreateEventForm} from "event-matcher-shared";
 import {useCreateEvent} from "../services/api/event";
 import {useApp} from "../hooks/useApp";
+import {omit} from "lodash";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
 const EventNewContent = () => {
-  const { err: { addErrors } } = useApp();
+  const {
+    err: { addErrors },
+    notif: { addNotice },
+    nav: { navigate }
+  } = useApp();
   const { validate, setValue, getError, values:{ availabilities, duration }, setValidation } = useForm<ICreateEventForm>();
   const { FormInput } = useFormControls<ICreateEventForm>();
   const availabilityError = getError('availabilities');
@@ -30,6 +35,17 @@ const EventNewContent = () => {
         field: 'createEvent',
         message: error.message
       });
+    }
+
+    if(data) {
+      addNotice({
+        id: 'Created Event',
+        message: 'You have created an event!',
+        level: 'success',
+        dismissable: true,
+      });
+
+      navigate('/home');
     }
   }, [error, data]);
 
@@ -49,7 +65,7 @@ const EventNewContent = () => {
       return mutCreateEvent({
         variables: {
           payload: {
-            ...payload,
+            ...omit(payload, 'duration'),
             precision: Object.keys(payload.duration)[0],
             factor: Object.values(payload.duration)[0]
           }

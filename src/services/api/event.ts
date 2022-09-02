@@ -5,21 +5,16 @@ export const useCreateEvent = () => useMutation<IEvent, Payload<ICreateEventInpu
   mutation createEvent($payload: CreateEventInput!) {
     createEvent(payload: $payload) {
       id
-      createdOn
-      modifiedOn
       name
       description
       precision
       factor
       memberships {
         id
-        createdOn
         email
         displayName
-        availability {
+        availabilities {
           id
-          createdOn
-          modifiedOn
           start
           end
         }

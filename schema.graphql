@@ -5,7 +5,7 @@ schema {
     mutation: Mutation
 }
 
-type Availability {
+type AvailabilityModel {
     createdOn: DateTime!
     end: DateTime!
     id: Float!
@@ -13,28 +13,29 @@ type Availability {
     start: DateTime!
 }
 
-type Event {
+type EventModel {
     createdOn: DateTime!
     description: String!
     factor: Float!
     id: Float!
-    memberships: [Membership!]!
+    memberships: [MembershipModel!]!
     modifiedOn: DateTime!
     name: String!
     precision: String!
 }
 
-type Membership {
-    availability: [Availability!]!
+type MembershipModel {
+    availabilities: [AvailabilityModel!]!
     createdOn: DateTime!
     displayName: String!
     email: String!
     id: Float!
+    modifiedOn: DateTime!
 }
 
 type Mutation {
     "Create an event"
-    createEvent(payload: CreateEventInput!): Event!
+    createEvent(payload: CreateEventInput!): EventModel!
     getNewToken(email: String!): SimpleResponse!
     "Creates an unauthenticated session and emails the login token"
     login(email: String!): SimpleResponse!
@@ -56,10 +57,9 @@ type SimpleResponse {
 scalar DateTime
 
 input CreateEventInput {
-    availability: [RangeForm!]!
+    availabilities: [RangeForm!]!
     description: String!
     displayName: String!
-    email: String!
     factor: Float!
     name: String!
     precision: String!

@@ -7,7 +7,6 @@ export const DurationLike: InputDescriptor<DurationLikeObject> = {
   id: 'datetime',
   input: DurationInput,
   ist: ist<DurationLikeObject>((val) => {
-    debugger;
     try {
       Duration.fromDurationLike(val)
       return true;

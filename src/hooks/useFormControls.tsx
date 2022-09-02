@@ -25,9 +25,6 @@ export const useFormControls = <Values extends Keyed>() => {
     const dependencies = Array.isArray(validator) ? validator[1] : [];
     const _validator = Array.isArray(validator) ? validator[0] : validator;
 
-    if(field === 'duration') {
-      debugger;
-    }
     const [error] = setValidation(field, {
       validator: _validator,
       ist: type.ist
@@ -38,7 +35,10 @@ export const useFormControls = <Values extends Keyed>() => {
         ...omit(props, ['field', 'validator', 'omit']),
         error,
         value: values[props.field] ?? props.value,
-        onChange: (value: Values[Field]) => setValue(field, () => value)
+        onChange: (value: Values[Field]) => {
+          debugger;
+          setValue(field, () => value)
+        }
       };
 
       return <ControlInput {..._props} data-cy={props.field} />

@@ -1,6 +1,6 @@
 import React, {ChangeEvent, ChangeEventHandler, InputHTMLAttributes} from "react";
 import $c from "classnames";
-import {omit} from "lodash";
+import {isNaN, omit} from "lodash";
 
 export interface InputTypeMap {
   date: string;
@@ -16,14 +16,23 @@ export type SimpleInputTypes = keyof InputTypeMap;
 export type InputProps<Type extends SimpleInputTypes> = Omit<InputHTMLAttributes<InputElements>, 'type' | 'value' | 'onChange'> & {
   type: Type;
   value?: InputTypeMap[Type];
-  onChange?: (value: InputTypeMap[Type]) => void;
+  onChange?: (value: InputTypeMap[Type] | null) => void;
 }
 
 const Input = <Type extends keyof InputTypeMap>(props: InputProps<Type>) => {
   const _props = omit(props, ['onChange', 'className']);
   const onChange: ChangeEventHandler = (event: ChangeEvent<InputElements>) => {
+    const val = event.target.value;
     if(props.onChange) {
-      props.onChange(event.target.value as InputTypeMap[Type]);
+      if(props.type === 'number') {
+        if(isNaN(val) || val === '') {
+          props.onChange(null);
+        } else {
+          props.onChange(parseFloat(val) as InputTypeMap[Type]);
+        }
+      } else {
+        props.onChange(val as InputTypeMap[Type]);
+      }
     }
   }
 
@@ -42,7 +51,7 @@ const Input = <Type extends keyof InputTypeMap>(props: InputProps<Type>) => {
     <input
       {..._props }
       className={$c(props.className, 'p-2')}
-      onChange={ onChange }
+      onChange={onChange}
     />
   );
 };
