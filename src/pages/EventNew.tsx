@@ -8,7 +8,7 @@ import multiline from "../services/input-types/multiline";
 import useForm from "../hooks/useForm";
 import {useFormControls} from "../hooks/useFormControls";
 import {DurationLike} from "../services/input-types/duration/durationLike";
-import {Duration, DurationLikeObject} from "luxon";
+import {DurationLikeObject} from "luxon";
 import $c from "classnames";
 import {IAvailability, AvailabilityValidation, ICreateEventForm} from "event-matcher-shared";
 import {useCreateEvent} from "../services/api/event";
@@ -18,10 +18,10 @@ const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]}
 
 const EventNewContent = () => {
   const { err: { addErrors } } = useApp();
-  const { validate, setValue, getError, values:{ availability, duration }, setValidation } = useForm<ICreateEventForm>();
+  const { validate, setValue, getError, values:{ availabilities, duration }, setValidation } = useForm<ICreateEventForm>();
   const { FormInput } = useFormControls<ICreateEventForm>();
-  const availabilityError = getError('availability');
-  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availability, duration);
+  const availabilityError = getError('availabilities');
+  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
   const [mutCreateEvent, { data, error, loading } ] = useCreateEvent();
 
   useEffect(() => {
@@ -31,15 +31,9 @@ const EventNewContent = () => {
         message: error.message
       });
     }
+  }, [error, data]);
 
-    if(data) {
-      debugger;
-    }
-  }, [error, data])
-
-  console.log(Duration.isDuration(duration));
-
-  setValidation('availability', {
+  setValidation('availabilities', {
     ist: AvailabilityValidation.ist,
     validator: (_, {required}) => [
       [(value) => value.length > 0, 'Must select availability'],
@@ -50,14 +44,22 @@ const EventNewContent = () => {
   }, [JSON.stringify(invalidAvailability), duration]);
 
   const onClickSubmit = () => {
-    const [isValid, variables] = validate();
+    const [isValid, payload] = validate();
     if(isValid) {
-      mutCreateEvent({ variables });
+      return mutCreateEvent({
+        variables: {
+          payload: {
+            ...payload,
+            precision: Object.keys(payload.duration)[0],
+            factor: Object.values(payload.duration)[0]
+          }
+        }
+      });
     }
   };
 
-  const onChangeAvailability = (availability: IAvailability) =>
-    setValue('availability', () => availability)
+  const onChangeAvailability = (availability: IAvailability[]) =>
+    setValue('availabilities', () => availability)
 
   return (
     <main className="flex flex-col h-full">
@@ -91,7 +93,7 @@ const EventNewContent = () => {
         <AvailabilitySelector
           erroredIndexes={invalidAvailability}
           offset={duration}
-          availability={availability}
+          availabilities={availabilities}
           onChange={onChangeAvailability}
         />
 
@@ -102,7 +104,7 @@ const EventNewContent = () => {
         )}
 
         <Calendar
-          availability={availability}
+          availabilities={availabilities}
         />
 
         <Button
@@ -125,7 +127,7 @@ const EventNew = () => {
     description: '',
     duration: { hours: 1 },
     displayName: '',
-    availability: []
+    availabilities: []
   });
 
   return (

@@ -6,10 +6,10 @@ import {useState} from "react";
 import {IAvailability, AvailabilityValidation} from "event-matcher-shared";
 
 export interface CalendarProps {
-  availability: IAvailability;
+  availabilities: IAvailability[];
 }
 
-const Calendar = ({ availability }: CalendarProps) => {
+const Calendar = ({ availabilities }: CalendarProps) => {
   const [month, setMonth] = useState(DateTime.now().month);
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
@@ -33,7 +33,7 @@ const Calendar = ({ availability }: CalendarProps) => {
           key={i}
           date={nextDay}
           className={$c({
-            'bg-violet-100': AvailabilityValidation.availableOnDate(availability, nextDay)
+            'bg-violet-100': AvailabilityValidation.availableOnDate(availabilities, nextDay)
           })}
         />
       );

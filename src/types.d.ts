@@ -20,3 +20,5 @@ type Assertion<Value> = ((val: Value) => boolean);
 type AssertionWithMessage<Value> = Tuple<Assertion<Value>, string>;
 type AssertionResult<Value> = Tuple<true, Value> | Tuple<false, string>
 type ValidatorSuite<Value> = Array<AssertionWithMessage<Value> | ValidatorSuite<Value>>
+
+type Payload<Type> = { payload: Type };

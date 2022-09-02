@@ -6,7 +6,7 @@ import DateAndTime from "../../src/services/input-types/datetime";
 describe('groups', () => {
   beforeEach(() => login(User.email))
 
-  it.only('should create a group', () => {
+  it('should create a group', () => {
     visit('home');
     click('create:group');
     dataCY('name').type(Event.name);
