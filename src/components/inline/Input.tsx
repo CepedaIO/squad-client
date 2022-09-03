@@ -17,6 +17,7 @@ export type InputProps<Type extends SimpleInputTypes> = Omit<InputHTMLAttributes
   type: Type;
   value?: InputTypeMap[Type];
   onChange?: (value: InputTypeMap[Type] | null) => void;
+  placeholder?: string;
 }
 
 const Input = <Type extends keyof InputTypeMap>(props: InputProps<Type>) => {

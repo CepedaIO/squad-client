@@ -10,10 +10,10 @@ import {useFormControls} from "../hooks/useFormControls";
 import {DurationLike} from "../services/input-types/duration/durationLike";
 import {DurationLikeObject} from "luxon";
 import $c from "classnames";
-import {IAvailability, AvailabilityValidation, ICreateEventForm} from "event-matcher-shared";
-import {useCreateEvent} from "../services/api/event";
+import {IAvailability, AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
+import {apiCreateEvent} from "../services/api/event";
 import {useApp} from "../hooks/useApp";
-import {omit} from "lodash";
+import {values} from "lodash";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
@@ -23,11 +23,12 @@ const EventNewContent = () => {
     notif: { addNotice },
     nav: { navigate }
   } = useApp();
-  const { validate, setValue, getError, values:{ availabilities, duration }, setValidation } = useForm<ICreateEventForm>();
-  const { FormInput } = useFormControls<ICreateEventForm>();
+  const { validate, setValue, getError, values:{ availabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
+  const { FormInput } = useFormControls<ICreateEventInput>();
   const availabilityError = getError('availabilities');
+  debugger;
   const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
-  const [mutCreateEvent, { data, error, loading } ] = useCreateEvent();
+  const [mutCreateEvent, { data, error, loading } ] = apiCreateEvent();
 
   useEffect(() => {
     if(error) {
@@ -63,13 +64,7 @@ const EventNewContent = () => {
     const [isValid, payload] = validate();
     if(isValid) {
       return mutCreateEvent({
-        variables: {
-          payload: {
-            ...omit(payload, 'duration'),
-            precision: Object.keys(payload.duration)[0],
-            factor: Object.values(payload.duration)[0]
-          }
-        }
+        variables: { payload }
       });
     }
   };
@@ -79,12 +74,23 @@ const EventNewContent = () => {
 
   return (
     <main className="flex flex-col h-full">
-      <div className="mx-auto flex flex-col gap-6 w-full max-w-screen-sm">
-        <h2>Event Info:</h2>
+      <div className="mx-auto flex flex-col w-full max-w-screen-sm">
+        <h2 className={"mb-3"}>Event Info:</h2>
         <FormInput
           label={"Name:"}
           field={"name"}
           type={line}
+        />
+
+        <FormInput
+          label={"Image:"}
+          field={"img"}
+          type={line}
+        />
+
+        <img
+          className={'w-full h-[250px] bg-slight mb-4'}
+          src={img}
         />
 
         <FormInput
@@ -99,7 +105,7 @@ const EventNewContent = () => {
           type={DurationLike}
         />
 
-        <h2>Member Info:</h2>
+        <h2 className={"mb-3"}>Member Info:</h2>
         <FormInput
           label={"Display Name:"}
           field={"displayName"}
@@ -114,7 +120,7 @@ const EventNewContent = () => {
         />
 
         { availabilityError  && (
-          <section className={$c('text-error text-center')}>
+          <section className={$c('text-error text-center mb-4')}>
             { availabilityError.message }
           </section>
         )}
@@ -124,7 +130,7 @@ const EventNewContent = () => {
         />
 
         <Button
-          className={"mt-2"}
+          className={"mt-8"}
           variant={"submit"}
           onClick={onClickSubmit}
           data-cy={'submit'}
@@ -138,8 +144,9 @@ const EventNewContent = () => {
 }
 
 const EventNew = () => {
-  const context = createFormContext<ICreateEventForm>({
+  const context = createFormContext<ICreateEventInput>({
     name: '',
+    img: '',
     description: '',
     duration: { hours: 1 },
     displayName: '',

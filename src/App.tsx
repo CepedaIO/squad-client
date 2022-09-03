@@ -32,7 +32,7 @@ function App() {
 			path: '/home',
 			element: <Home />
 		}, {
-			path: '/group/new',
+			path: '/event/new',
 			element: <EventNew />
 		}, {
 			path: '*',

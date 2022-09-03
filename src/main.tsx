@@ -20,7 +20,9 @@ const client = new ApolloClient({
   })).concat(createHttpLink({
     uri: 'http://localhost:8080',
   })),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false
+  }),
 });
 
 Array.prototype.forEach = (function() {

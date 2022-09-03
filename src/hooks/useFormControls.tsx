@@ -1,9 +1,10 @@
 import {useCallback, useContext, useMemo} from "react";
-import ControlInput, {ControlInputProps} from "../components/ControlInput";
+import ControlInput, {AdapterInputProps, InjectedInputProps} from "../components/ControlInput";
 import Button, {ToggleButtonProps} from "../components/inline/Button";
 import FormContext from "../providers/FormContext";
 import {omit} from "lodash";
 import useForm from "./useForm";
+import {SimpleInputTypes} from "../components/inline/Input";
 
 interface FormToggleProps<Values extends Keyed, Field extends StringKey<Values, boolean>> extends Omit<ToggleButtonProps, 'variant'> {
   field: Field;
@@ -11,11 +12,19 @@ interface FormToggleProps<Values extends Keyed, Field extends StringKey<Values, 
   omit?: (values: Partial<Values>) => boolean;
 }
 
-export type FormControlProps<Values extends Keyed, Field extends StringKey<Values>> = {
+export interface AdapterFormControlProps<Values extends Keyed, Field extends StringKey<Values>> extends AdapterInputProps<Values[Field]> {
   field: Field;
   validator?: ValidatorAsProp<Values, Field>
   omit?: (values: Partial<Values>) => boolean;
-} & ControlInputProps<Values[Field]>;
+}
+
+export interface InjectedFormControlProps<Values extends Keyed, Field extends StringKey<Values>> extends InjectedInputProps<Values[Field]> {
+  field: Field;
+  validator?: ValidatorAsProp<Values, Field>
+  omit?: (values: Partial<Values>) => boolean;
+}
+
+export type FormControlProps<Values extends Keyed, Field extends StringKey<Values>> = Values[Field] extends SimpleInputTypes ? AdapterFormControlProps<Values, Field> : InjectedFormControlProps<Values, Field>;
 
 export const useFormControls = <Values extends Keyed>() => {
   const FormInput = useCallback(<Field extends StringKey<Values>>(props: FormControlProps<Values, Field>) => {
@@ -36,11 +45,11 @@ export const useFormControls = <Values extends Keyed>() => {
         error,
         value: values[props.field] ?? props.value,
         onChange: (value: Values[Field]) => {
-          debugger;
           setValue(field, () => value)
         }
       };
 
+      // @ts-ignore
       return <ControlInput {..._props} data-cy={props.field} />
     }, [values[field], error, props])
   }, []);
