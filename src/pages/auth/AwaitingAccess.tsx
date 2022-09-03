@@ -1,5 +1,6 @@
 import {useContext, useEffect} from "react";
-import AppContext from "../providers/AppContext";
+import AppContext from "../../providers/AppContext";
+import Cat from "../../components/Cat";
 
 const AwaitingAccess = () => {
   const {
@@ -22,7 +23,7 @@ const AwaitingAccess = () => {
       </p>
 
       <div className="mt-12">
-        <img src="/cat.gif"  alt={"cat"}/>
+        <Cat />
       </div>
     </div>
   )

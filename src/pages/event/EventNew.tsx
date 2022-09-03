@@ -1,19 +1,18 @@
-import Button from "../components/inline/Button";
-import Calendar from "../components/calendar";
+import Button from "../../components/inline/Button";
+import Calendar from "../../components/calendar";
 import React, {useEffect} from "react";
-import AvailabilitySelector from "../components/availability/AvailabilitySelector";
-import FormContext, {createFormContext} from "../providers/FormContext";
-import line from "../services/input-types/line";
-import multiline from "../services/input-types/multiline";
-import useForm from "../hooks/useForm";
-import {useFormControls} from "../hooks/useFormControls";
-import {DurationLike} from "../services/input-types/duration/durationLike";
+import AvailabilitySelector from "../../components/availability/AvailabilitySelector";
+import FormContext, {createFormContext} from "../../providers/FormContext";
+import line from "../../services/input-types/line";
+import multiline from "../../services/input-types/multiline";
+import useForm from "../../hooks/useForm";
+import {useFormControls} from "../../hooks/useFormControls";
+import {DurationLike} from "../../services/input-types/duration/durationLike";
 import {DurationLikeObject} from "luxon";
 import $c from "classnames";
 import {IAvailability, AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
-import {apiCreateEvent} from "../services/api/event";
-import {useApp} from "../hooks/useApp";
-import {values} from "lodash";
+import {apiCreateEvent} from "../../services/api/event";
+import {useApp} from "../../hooks/useApp";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 

@@ -1,4 +1,3 @@
-import Button from "../components/inline/Button";
 import {useNavigate} from "react-router-dom";
 import {apiGetEventSummaries} from "../services/api/event";
 import {Duration} from "luxon";
@@ -9,7 +8,7 @@ const Home = () => {
   const { data } = apiGetEventSummaries();
 
   const events = !data ? [] : data.map((event) => (
-    <section className={'shadow-xl max-w-xs p-2 cursor-pointer'} key={event.id}>
+    <section className={'shadow-xl max-w-xs p-2 cursor-pointer'} key={event.id} onClick={() => navigate(`/event/${event.id}`)}>
       <header className={'text-center font-bold'}>
         {event.name}
       </header>
@@ -31,23 +30,23 @@ const Home = () => {
 
   return (
   <main>
-    { events.length > 0 && (
-      <section className={'mb-8'}>
-        <h1 className={'mb-5 center'}>
-          Events
+    <section className={'mb-8'}>
+      <h1 className={'mb-5 center'}>
+        Events
 
-          <i
-            className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-            onClick={() => navigate('/event/new')}
-            data-cy={'create:group'}
-          />
-        </h1>
+        <i
+          className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
+          onClick={() => navigate('/event/new')}
+          data-cy={'create:group'}
+        />
+      </h1>
 
+      { events.length > 0 && (
         <div className={'flex gap-8 flex-row flex-wrap'}>
           {events}
         </div>
-      </section>
-    )}
+      )}
+    </section>
   </main>
   )
 }

@@ -1,8 +1,8 @@
 import {useParams, useSearchParams} from "react-router-dom";
 import {useContext, useEffect, useRef} from "react";
-import Button from "../components/inline/Button";
-import AppContext from "../providers/AppContext";
-import {useLoginToken} from "../services/api/auth";
+import Button from "../../components/inline/Button";
+import AppContext from "../../providers/AppContext";
+import {useLoginToken} from "../../services/api/auth";
 
 const LoginWith = () => {
   const didAttemptLogin = useRef(false);
@@ -62,7 +62,7 @@ const LoginWith = () => {
       )}
 
       <div className="mt-12">
-        <img src="/cat.gif"  alt="Swaying Cat"/>
+        <img src="/Users/alfred/repos/cepedaio/event-matcher/services/client/public/cat.gif" alt="Swaying Cat"/>
       </div>
     </div>
   )
