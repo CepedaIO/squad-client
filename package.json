@@ -6,7 +6,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "schema": "npx apollo schema:download --endpoint=http://localhost:8080/graphql schema.json",
+    "schema": "npx apollo schema:download --endpoint=http://localhost:8080/graphql schema.graphql",
     "test": "jest --watch",
     "e2e": "cypress open"
   },

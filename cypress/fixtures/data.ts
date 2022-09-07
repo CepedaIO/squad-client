@@ -1,7 +1,7 @@
 import {DateTime} from "luxon";
 
 export const App = {
-  client: 'http://localhost:3000',
+  client: 'http://localhost:3100',
   server: 'http://localhost:8080'
 }
 

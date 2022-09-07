@@ -1,8 +1,8 @@
 export const appConfig = {
-	environment: import.meta.env.NODE_ENV,
+	environment: 'development',
 	debug: false,
 	isProd: import.meta.env.NODE_ENV === 'production',
-	isDev: import.meta.env.NODE_ENV === 'development',
+	isDev: true,
 	baseAPI: ''
 }
 

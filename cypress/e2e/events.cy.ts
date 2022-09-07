@@ -3,10 +3,10 @@ import {User, Event, Member} from "../fixtures/data";
 import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 
-describe('groups', () => {
+describe('events', () => {
   beforeEach(() => login(User.email))
 
-  it('should create a group', () => {
+  it('should create a event', () => {
     visit('home');
     click('create:group');
     dataCY('name').type(Event.name);
@@ -19,5 +19,9 @@ describe('groups', () => {
     dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
     dataCY('submit:availability').click();
     dataCY('submit').click();
-  })
+  });
+
+  it.only('should error for name field', () => {
+    visit('home');
+  });
 })
