@@ -10,6 +10,7 @@ describe('events', () => {
     visit('home');
     click('create:group');
     dataCY('name').type(Event.name);
+    dataCY('img').type(Event.img);
     dataCY('description').type(Event.description);
     dataCY('duration:select').select(Object.keys(Event.duration)[0]);
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
@@ -21,7 +22,7 @@ describe('events', () => {
     dataCY('submit').click();
   });
 
-  it.only('should error for name field', () => {
+  it('should error for name field', () => {
     visit('home');
   });
 })

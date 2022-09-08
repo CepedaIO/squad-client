@@ -20,6 +20,7 @@ export const Member = {
 export const Event = {
   name: 'test-event',
   description: 'This is a test event',
+  img: 'https://cepeda.io/pictures/luna5.jpg',
   duration: {
     hours: 1
   }
