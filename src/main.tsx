@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
+import {appConfig} from "./configs/app";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,7 +19,7 @@ const client = new ApolloClient({
       authorization: localStorage.getItem('auth') || ''
     }
   })).concat(createHttpLink({
-    uri: 'http://localhost:8080',
+    uri: appConfig.baseAPI,
   })),
   cache: new InMemoryCache({
     addTypename: false
