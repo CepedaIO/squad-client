@@ -41,8 +41,7 @@ const DurationInput = (props: CustomInputProps<DurationLikeObject>) => {
           className={'w-full'}
           min={1}
           step={1}
-          onChange={(value: number) => {
-            debugger;
+          onChange={(value: number | null) => {
             return props.onChange && props.onChange({
               [precision]: value
             })

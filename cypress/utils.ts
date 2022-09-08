@@ -37,8 +37,8 @@ export const wait = (queries: string[], mutations: string[] = [], between?: () =
   between && between();
 
   return queries.map((query) => `@gql${query}Query`)
-  .concat(
-  mutations.map((mutation) => `@gql${mutation}Mutation`)
-  )
-  .map((operation) => cy.wait(operation));
+    .concat(
+      mutations.map((mutation) => `@gql${mutation}Mutation`)
+    )
+    .map((operation) => cy.wait(operation));
 }

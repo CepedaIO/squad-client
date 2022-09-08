@@ -25,7 +25,6 @@ const EventNewContent = () => {
   const { validate, setValue, getError, values:{ availabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
   const { FormInput } = useFormControls<ICreateEventInput>();
   const availabilityError = getError('availabilities');
-  debugger;
   const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
   const [mutCreateEvent, { data, error, loading } ] = apiCreateEvent();
 
@@ -143,7 +142,7 @@ const EventNewContent = () => {
 }
 
 const EventNew = () => {
-  const context = createFormContext<ICreateEventInput>({
+  const context = createFormContext({
     name: '',
     img: '',
     description: '',

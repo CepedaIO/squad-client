@@ -2,11 +2,11 @@ import {DateTime} from "luxon";
 
 export const App = {
   client: 'http://localhost:3100',
-  server: 'http://localhost:8080'
+  server: 'http://localhost:8100'
 }
 
 export const User = {
-  email: 'test@cepeda.io'
+  email: 'cypress@cepeda.io'
 };
 
 export const Member = {
