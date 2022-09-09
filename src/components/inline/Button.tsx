@@ -29,7 +29,7 @@ const classesForVariant = new Map<Variants, string | ((props: ButtonProps) => st
   ['reject', $c('bg-gray-200', padding)],
   ['optional', $c('bg-violet-100', padding)],
   ['toggle', $c('text-left p-0')],
-  ['link', ({active}) => $c('border-0 underline', padding, {
+  ['link', ({active}) => $c('border-0 underline', {
     'bg-red-100': active
   })],
   ['tab', ({active}) => $c('border-2', padding, {

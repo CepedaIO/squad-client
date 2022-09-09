@@ -24,7 +24,7 @@ function App() {
 			path: '/login',
 			element: <Login />
 		}, {
-			path: '/login-with/:uuid/:token',
+			path: '/login-with/:uuid/:key',
 			element: <LoginWith/>
 		}, {
 			path: '/awaiting-access',

@@ -10,8 +10,8 @@ export const useLogin = () => useMutation(gql`
 `);
 
 export const useLoginToken = () => useMutation(gql`
-  mutation UseLoginToken($token: String!, $uuid: String!, $expires: Int!) {
-    useLoginToken(token: $token, uuid: $uuid, expires: $expires) {
+  mutation UseLoginToken($key: String!, $uuid: String!, $expires: Int!) {
+    useLoginToken(key: $key, uuid: $uuid, expires: $expires) {
       success
     }
   }

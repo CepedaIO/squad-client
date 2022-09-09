@@ -3,17 +3,18 @@ import {useContext, useEffect, useRef} from "react";
 import Button from "../../components/inline/Button";
 import AppContext from "../../providers/AppContext";
 import {useLoginToken} from "../../services/api/auth";
+import Cat from "../../components/Cat";
 
 const LoginWith = () => {
   const didAttemptLogin = useRef(false);
-  const { token, uuid } = useParams();
+  const { key, uuid } = useParams();
   const [searchParams] = useSearchParams();
   const {
     auth: { authenticated, pollForAuthentication },
     nav: { navigate }
   } = useContext(AppContext);
 
-  const variables = { token, uuid, expires: parseInt(searchParams.get('expires') || '0') };
+  const variables = { key, uuid, expires: parseInt(searchParams.get('expires') || '0') };
 
   const [login, { error, data }] = useLoginToken();
 
@@ -21,11 +22,9 @@ const LoginWith = () => {
 
   useEffect(() => {
     if(!didAttemptLogin.current) {
-      login({
-        variables
-      });
-      pollForAuthentication();
-      didAttemptLogin.current = true;
+      login({ variables })
+        .then(() => pollForAuthentication())
+        .finally(() => didAttemptLogin.current = true);
     }
   }, []);
 
@@ -34,11 +33,11 @@ const LoginWith = () => {
       <h1 className="text-center">Accepting Access ... </h1>
 
       { failedLogin &&
-        <p className={"text-center"}>
+        <p className={"text-center cursor-pointer"} onClick={() => navigate('/login')}>
           <span className={"text-fatal"}>Oh No! </span>
           We were
           <span className={"text-fatal"}> unable </span>
-          to log you in please <Button variant={"link"} onClick={() => navigate('/login')}> Click Here</Button> to try again
+          to log you in.. please <Button variant={"link"}>click here</Button> to try again
         </p>
       }
 
@@ -62,7 +61,7 @@ const LoginWith = () => {
       )}
 
       <div className="mt-12">
-        <img src="/Users/alfred/repos/cepedaio/event-matcher/services/client/public/cat.gif" alt="Swaying Cat"/>
+        <Cat />
       </div>
     </div>
   )

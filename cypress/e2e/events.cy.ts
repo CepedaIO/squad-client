@@ -22,7 +22,7 @@ describe('events', () => {
     dataCY('submit').click();
   });
 
-  it('should error for name field', () => {
+  it.only('should error for name field', () => {
     visit('home');
   });
 })
