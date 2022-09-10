@@ -1,18 +1,16 @@
-import {click, dataCY, login, stopOnFirstFail, visit, wait} from "../utils";
+import {click, dataCY, stopOnFirstFail, visit, wait} from "../utils";
 import {User, Event, Member, Invite} from "../fixtures/data";
 import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
-import {deleteTestData} from "../api";
+import {deleteTestData, loginTestUser} from "../api";
 
 describe('events', () => {
   stopOnFirstFail();
   
-  before(() => {
-    login(User.email)
-    deleteTestData()
-  });
+  before(() => deleteTestData());
   
   it('should create a event', () => {
+    loginTestUser(User.email);
     visit('home');
     click('create:group');
     dataCY('name').type(Event.name);
@@ -37,7 +35,8 @@ describe('events', () => {
     cy.get('.event-card').its('length').should('eq', 1)
   });
 
-  it.skip('should invite user', () => {
+  it('should invite user', () => {
+    loginTestUser(User.email);
     visit('home');
     dataCY('event:card:0').click();
     dataCY('invite:create').click();

@@ -87,7 +87,11 @@ export const apiCreateEvent = () => useMutation<IEvent, Payload<ICreateEventInpu
   mutation CreateEvent($payload: CreateEventInput!) {
     createEvent(payload: $payload) { id }
   }
-`);
+`, {
+  refetchQueries: [
+    {query: GET_EVENT_SUMMARIES}
+  ]
+});
 
 export const apiCreateInvite = () =>
   useMutation<{ inviteMember: ISimpleResponse }, Payload<IInviteMemberInput>>(gql`
@@ -97,8 +101,4 @@ export const apiCreateInvite = () =>
         result
       }
     }
-  `, {
-    refetchQueries: [
-      {query: GET_EVENT_SUMMARIES}
-    ]
-  });
+  `);
