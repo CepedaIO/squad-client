@@ -12,7 +12,8 @@ export const useLogin = () => useMutation(gql`
 export const useLoginToken = () => useMutation(gql`
   mutation UseLoginToken($key: String!, $uuid: String!, $expires: Int!) {
     useLoginToken(key: $key, uuid: $uuid, expires: $expires) {
-      success
+      success,
+      result
     }
   }
 `);

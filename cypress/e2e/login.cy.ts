@@ -25,6 +25,9 @@ describe('login', () => {
       expect(response!.body.data.useLoginToken.success).to.equal(true);
     });
 
+    /**
+     * TODO: Should be able to test both screens, not just LoginWith
+     */
     dataCY('navigate:home').click();
     cy.location('pathname').should('contain', 'home');
   });

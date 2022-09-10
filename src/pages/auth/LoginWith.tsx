@@ -10,23 +10,28 @@ const LoginWith = () => {
   const { key, uuid } = useParams();
   const [searchParams] = useSearchParams();
   const {
-    auth: { authenticated, pollForAuthentication },
+    auth: { authenticated, setAuthToken },
     nav: { navigate }
   } = useContext(AppContext);
 
   const variables = { key, uuid, expires: parseInt(searchParams.get('expires') || '0') };
 
-  const [login, { error, data }] = useLoginToken();
+  const [loginWith, { error, data }] = useLoginToken();
 
   const failedLogin = error || data?.useLoginToken?.success === false;
 
   useEffect(() => {
     if(!didAttemptLogin.current) {
-      login({ variables })
-        .then(() => pollForAuthentication())
-        .finally(() => didAttemptLogin.current = true);
+      didAttemptLogin.current = true
+      loginWith({ variables });
     }
   }, []);
+
+  useEffect(() => {
+    if(data && !failedLogin) {
+      setAuthToken(data.useLoginToken.result, true);
+    }
+  }, [failedLogin, data]);
 
   return (
     <div className="flex flex-col gap-12 items-center h-full">

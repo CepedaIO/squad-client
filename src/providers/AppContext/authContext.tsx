@@ -4,7 +4,7 @@ import {gql, useQuery} from "@apollo/client";
 export interface IAuthContext {
   loading: boolean;
   authenticated: boolean;
-  setAuthToken(token:string): void;
+  setAuthToken(token:string, isAuthenticated?: boolean): void;
   pollForAuthentication(): void;
 }
 
@@ -27,9 +27,10 @@ const authContext = () => {
     }
   });
 
-  const setAuthToken = (token:string) => {
+  const setAuthToken = (token:string, isAuthenticated: boolean = false) => {
     localStorage.setItem('auth', token);
     setToken(token);
+    setAuthenticated(isAuthenticated);
   }
 
   const pollForAuthentication = () => {
