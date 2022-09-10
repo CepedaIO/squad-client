@@ -1,11 +1,17 @@
-import {click, dataCY, login, visit} from "../utils";
-import {User, Event, Member} from "../fixtures/data";
+import {click, dataCY, login, stopOnFirstFail, visit, wait} from "../utils";
+import {User, Event, Member, Invite} from "../fixtures/data";
 import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
+import {deleteTestData} from "../api";
 
 describe('events', () => {
-  beforeEach(() => login(User.email))
-
+  stopOnFirstFail();
+  
+  before(() => {
+    login(User.email)
+    deleteTestData()
+  });
+  
   it('should create a event', () => {
     visit('home');
     click('create:group');
@@ -19,10 +25,42 @@ describe('events', () => {
     dataCY('start').type(DateAndTime.out(DateTime.fromISO(Member.availability.start)))
     dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
     dataCY('submit:availability').click();
-    dataCY('submit').click();
+  
+    const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit').click());
+    CreateEvent.then(({ response }) => {
+      expect(response!.statusCode).to.equal(200);
+      expect(response!.body.errors).to.be.undefined;
+      expect(response!.body.data.createEvent.id).to.not.be.undefined;
+    });
+  
+    cy.location('pathname').should('contain', 'home');
+    cy.get('.event-card').its('length').should('eq', 1)
   });
 
-  it('should error for name field', () => {
+  it.skip('should invite user', () => {
     visit('home');
+    dataCY('event:card:0').click();
+    dataCY('invite:create').click();
+    dataCY('email').type(Invite.member.email);
+    dataCY('message').type(Invite.message);
+  
+    const [InviteMember] = wait([], ['InviteMember'], () => dataCY('invite:submit').click());
+    InviteMember.then(({ response }) => {
+      expect(response!.statusCode).to.equal(200);
+      expect(response!.body.errors).to.be.undefined;
+      expect(response!.body.data.inviteMember.success).to.equal(true);
+    });
+  
+    cy.task('getLastEmail', Invite.member.email).its('html').then((email) => {
+      cy.document().invoke('write', email);
+      cy.contains('Accept').click();
+    });
+  
+    dataCY('displayName').type(Invite.member.displayName);
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.start)))
+    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.end)))
+    dataCY('submit:availability').click();
+    dataCY('submit').click();
   });
 })

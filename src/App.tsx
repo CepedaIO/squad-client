@@ -57,7 +57,7 @@ function App() {
 			{ notif }
 			{ modal }
 
-			<main className="h-screen w-screen flex flex-col">
+			<main className="h-screen w-screen flex flex-col items-center">
 				<section className="p-8">
 					{ routes }
 				</section>

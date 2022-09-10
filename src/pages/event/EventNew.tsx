@@ -44,6 +44,7 @@ const EventNewContent = () => {
         dismissable: true,
       });
 
+      debugger;
       navigate('/home');
     }
   }, [error, data]);

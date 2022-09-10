@@ -1,5 +1,5 @@
 import {gql, useMutation, useQuery} from "@apollo/client";
-import {IEvent, IEventSummary, ICreateEventInput, Availability, Demote} from "event-matcher-shared";
+import {IEvent, IEventSummary, ICreateEventInput, Availability, Demote, IInviteMemberInput, ISimpleResponse} from "event-matcher-shared";
 
 export const apiGetEvent = (id: number) => {
   const useQuery1 = useQuery<{ getEvent: Demote<IEvent> }>(gql`
@@ -57,24 +57,25 @@ export const apiGetEvent = (id: number) => {
   };
 }
 
-export const apiGetEventSummaries = () => {
-  const useQuery1 = useQuery<{ getEventSummaries: IEventSummary[] }>(gql`
-    query GetEventSummaries {
-        getEventSummaries {
-        id
-        name
-        img
-        duration {
-          days
-          minutes
-          hours
-        }
-        admin {
-          displayName
-        }
+export const GET_EVENT_SUMMARIES = gql`
+  query GetEventSummaries {
+    getEventSummaries {
+      id
+      name
+      img
+      duration {
+        days
+        minutes
+        hours
+      }
+      admin {
+        displayName
       }
     }
-  `)
+  }
+`;
+export const apiGetEventSummaries = () => {
+  const useQuery1 = useQuery<{ getEventSummaries: IEventSummary[] }>(GET_EVENT_SUMMARIES);
 
   return {
     ...useQuery1,
@@ -87,3 +88,17 @@ export const apiCreateEvent = () => useMutation<IEvent, Payload<ICreateEventInpu
     createEvent(payload: $payload) { id }
   }
 `);
+
+export const apiCreateInvite = () =>
+  useMutation<{ inviteMember: ISimpleResponse }, Payload<IInviteMemberInput>>(gql`
+    mutation InviteMember($payload: InviteMemberInput!) {
+      inviteMember(payload: $payload) {
+        success
+        result
+      }
+    }
+  `, {
+    refetchQueries: [
+      {query: GET_EVENT_SUMMARIES}
+    ]
+  });

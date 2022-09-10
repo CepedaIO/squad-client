@@ -4,15 +4,13 @@ import {apiGetEvent} from "../../services/api/event";
 import {isNaN} from "lodash";
 import Calendar from "../../components/calendar";
 import React, {useState} from "react";
-import {useFormControls} from "../../hooks/useFormControls";
-import line from "../../services/input-types/line";
-import multiline from "../../services/input-types/multiline";
-import $c from "classnames";
-import Button from "../../components/inline/Button";
+import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
 
 const EventView = () => {
-  const [showInvite, setInvite] = useState(true);
-  const { FormInput } = useFormControls();
+  const [showInvite, setInvite] = useState(false);
+  const [invites, setInvites] = useState<IInviteMemberForm[]>([
+    {email:'test', message: 'whocares?' }
+  ]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
 
@@ -24,7 +22,9 @@ const EventView = () => {
 
   const { data: event, loading } = apiGetEvent(id);
   const onClickBack = () => navigate('/home');
-
+  
+  const onSubmitInvite = (invite: IInviteMemberForm) => setInvites((prev) => [...prev, invite]);
+  
   if(loading) {
     return (
       <main className={'flex flex-col items-center'}>
@@ -59,39 +59,20 @@ const EventView = () => {
           <i
             className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
             onClick={() => setInvite(true)}
-            data-cy={'user:invite'}
+            data-cy={'invite:create'}
           />
         </div>
 
-        <section>
-          <FormInput
-            label={"Email:"}
-            field={"email"}
-            type={line}
-          />
-
-          <FormInput
-            label={"Message:"}
-            field={"message"}
-            type={multiline}
-          />
-
-          <footer className={$c('center grow-children')}>
-            <Button
-              variant={"link"}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              variant={"link"}
-              data-cy={"submit:availability"}
-            >
-              Invite
-            </Button>
-          </footer>
-        </section>
-
+        { showInvite &&
+          <InviteMember onSubmit={ onSubmitInvite } />
+        }
+  
+        { invites.length > 0 && (
+          <section>
+            Pending Invites { invites.length }
+          </section>
+        )}
+        
         { event.memberships.map((member) => (
           <section key={member.email} className={'max-w-xs'}>
             <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>

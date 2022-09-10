@@ -5,12 +5,12 @@ import Button from "../inline/Button";
 import {DurationLikeObject} from "luxon";
 import useForm from "../../hooks/useForm";
 import FormContext, {createFormContext} from "../../providers/FormContext";
-import {IAvailabilityForm} from "event-matcher-shared";
+import {IAvailability} from "event-matcher-shared";
 
 export const modes = [Range];
 
 export interface IAvailabilityMode {
-  applies: (form: IAvailabilityForm) => boolean;
+  applies: (form: IAvailability) => boolean;
   label: string;
   View: (props: AvailabilityViewProps) => JSX.Element;
   Edit: (props: AvailabilityEditProps) => JSX.Element;
@@ -18,9 +18,9 @@ export interface IAvailabilityMode {
 
 export interface AvailabilityViewProps {
   errored: boolean;
-  form: IAvailabilityForm;
-  onDelete: (form: IAvailabilityForm) => void;
-  onEdit: (form:IAvailabilityForm) => void;
+  form: IAvailability;
+  onDelete: (form: IAvailability) => void;
+  onEdit: (form:IAvailability) => void;
 }
 
 export const AvailabilityView = (props: AvailabilityViewProps) => {
@@ -67,14 +67,14 @@ export const AvailabilityView = (props: AvailabilityViewProps) => {
 
 export interface AvailabilityEditProps {
   offset: DurationLikeObject;
-  form?: Partial<IAvailabilityForm>;
-  onSubmit: (form: IAvailabilityForm) => void;
-  onCancel: (form?: Partial<IAvailabilityForm>) => void;
+  form?: Partial<IAvailability>;
+  onSubmit: (form: IAvailability) => void;
+  onCancel: (form?: Partial<IAvailability>) => void;
 }
 
 const AvailabilityEditContent = (props: AvailabilityEditProps) => {
   const {onSubmit, onCancel} = props;
-  const {validate, values} = useForm<IAvailabilityForm>();
+  const {validate, values} = useForm<IAvailability>();
   const [activeMode, setActiveTab] = useState(modes[0]);
 
   const onClickAdd = () => {

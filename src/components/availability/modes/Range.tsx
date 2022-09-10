@@ -52,7 +52,7 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"start"}
         type={DateAndTime}
         nowrap={true}
-        validator={[rangeForm.validation.start, [offset]]}
+        validator={[rangeForm.validation.start!, [offset]]}
       />
 
       <FormInput
@@ -60,7 +60,7 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"end"}
         type={DateAndTime}
         nowrap={true}
-        validator={[rangeForm.validation.end, [offset]]}
+        validator={[rangeForm.validation.end!, [offset]]}
       />
     </main>
   );

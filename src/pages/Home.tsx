@@ -7,8 +7,13 @@ const Home = () => {
   const navigate = useNavigate();
   const { data } = apiGetEventSummaries();
 
-  const events = !data ? [] : data.map((event) => (
-    <section className={'shadow-xl max-w-xs p-2 cursor-pointer'} key={event.id} onClick={() => navigate(`/event/${event.id}`)}>
+  const events = !data ? [] : data.map((event, index) => (
+    <section
+      className={'shadow-xl max-w-xs p-2 cursor-pointer event-card'}
+      key={event.id}
+      onClick={() => navigate(`/event/${event.id}`)}
+      data-cy={`event:card:${index}`}
+    >
       <header className={'text-center font-bold'}>
         {event.name}
       </header>

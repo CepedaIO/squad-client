@@ -1,8 +1,10 @@
 // Utility to match GraphQL mutation based on the operation name
 import {CyHttpMessages} from "cypress/types/net-stubbing";
 import {App} from "./fixtures/data";
+import {ApolloClient, createHttpLink, InMemoryCache} from "@apollo/client";
+import {appConfig} from "../src/configs/app";
 
-export const login = (email: string) => {
+export const  login = (email: string) => {
   window.localStorage.setItem('auth', email);
 }
 
@@ -42,3 +44,26 @@ export const wait = (queries: string[], mutations: string[] = [], between?: () =
     )
     .map((operation) => cy.wait(operation));
 }
+
+let failed = false
+export const stopOnFirstFail = () => {
+  failed = false;
+  Cypress.on('fail', (e) => {
+    failed = true
+    throw e
+  })
+  
+  afterEach(function() {
+    if (failed) {
+      // @ts-ignore
+      Cypress.runner.stop()
+    }
+  });
+}
+
+export const client = new ApolloClient({
+  link: createHttpLink({
+    uri: 'http://localhost:8100',
+  }),
+  cache: new InMemoryCache(),
+});
