@@ -8,9 +8,7 @@ import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMemb
 
 const EventView = () => {
   const [showInvite, setInvite] = useState(false);
-  const [invites, setInvites] = useState<IInviteMemberForm[]>([
-    {email:'test', message: 'whocares?' }
-  ]);
+  const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
 

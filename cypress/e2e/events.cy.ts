@@ -6,7 +6,6 @@ import {deleteTestData, loginTestUser} from "../api";
 
 describe('events', () => {
   stopOnFirstFail();
-  
   before(() => deleteTestData());
   
   it('should create a event', () => {
