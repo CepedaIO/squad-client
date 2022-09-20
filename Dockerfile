@@ -1,4 +1,4 @@
-FROM vlegm/dev-alpine:latest
+FROM node:18
 
 WORKDIR /mnt/host
 COPY . .

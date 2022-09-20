@@ -5,6 +5,7 @@ schema.graphql
 /node_modules
 /.pnp
 .pnp.js
+dist
 
 # testing
 /coverage

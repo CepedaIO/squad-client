@@ -59,6 +59,7 @@ const LoginPage = () => {
             type={Line}
             label={"Email:"}
             field={"email"}
+            // @ts-ignore
             placeholder={"Enter email"}
             className={"w-full"}
             validator={() => [

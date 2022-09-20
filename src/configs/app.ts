@@ -1,12 +1,17 @@
+const isProd = import.meta.env.NODE_ENV === 'production';
+const isDev = !isProd;
 export const appConfig = {
 	environment: 'development',
-	debug: false,
-	isProd: import.meta.env.NODE_ENV === 'production',
-	isDev: true,
-	baseAPI: 'http://localhost:8100'
+	debug: isDev,
+	isProd,
+	isDev,
+	baseAPI: ''
 }
 
-if(appConfig.isProd) throw new Error('Production parameters undefined');
+if(appConfig.isProd) {
+	appConfig.baseAPI = 'http://207.246.75.75:8100';
+	
+}
 if(appConfig.isDev) {
-	appConfig.debug = true;
+	appConfig.baseAPI = 'http://localhost:8100';
 }
