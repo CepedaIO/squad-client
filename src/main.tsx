@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './main.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
 import {appConfig} from "./configs/app";
@@ -39,9 +39,9 @@ Array.prototype.forEach = (function() {
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <BrowserRouter>
+      <HashRouter>
         <App />
-      </BrowserRouter>
+      </HashRouter>
     </ApolloProvider>
   </React.StrictMode>
 );
