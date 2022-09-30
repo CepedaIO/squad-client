@@ -9,16 +9,14 @@ import {gql, useMutation, useQuery} from "@apollo/client";
 import Cat from "../../components/Cat";
 import {IEventSummary} from "event-matcher-shared";
 
-type EventJoinForm = IMembershipForm;
-
 const EventJoinContent = () => {
   const { validate } = useForm<IMembershipForm>();
   const { id, key, uuid } = useParams();
   const navigate = useNavigate();
   
   const {data, loading} = useQuery(gql`
-    query GetEventSummaryFor($id: Float!) {
-      getEventSummaryFor(id: $id){
+    query GetEventSummaryForInvite($uuid: String!, $key: String!) {
+      getEventSummaryForInvite(uuid: $uuid, key: $key){
         id
         img
         name
@@ -30,11 +28,11 @@ const EventJoinContent = () => {
       }
     }
   `, {
-    variables: { id: parseInt(id!) }
+    variables: { uuid, key }
   });
   
   const [acceptInviteMut, {}] = useMutation(gql`
-    mutation AcceptInvite($payload: AcceptInviteInput!) {
+    mutation AcceptInvite($payload: AcceptEventInput!) {
       acceptInvite(payload: $payload) {
         success
         result
@@ -46,8 +44,7 @@ const EventJoinContent = () => {
     return <Cat />
   }
   
-  const summary = data?.getEventSummaryFor as IEventSummary;
-  
+  const summary = data.getEventSummaryForInvite as IEventSummary;
   const duration = Duration.fromDurationLike(summary.duration || {
     hours: 1
   });
@@ -73,7 +70,10 @@ const EventJoinContent = () => {
     <main className="flex flex-col gap-5 items-center h-full max-w-xs">
       <h1 className="text-center">Joining event ... </h1>
       <h2>{ summary.name }</h2>
-      <img src={summary.img} />
+      <img
+        alt={'Event Image'}
+        src={summary.img}
+      />
       <MembershipEdit duration={duration} onChange={onChange} />
       <footer className={"center"}>
         <Button

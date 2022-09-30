@@ -48,10 +48,14 @@ describe('events', () => {
       expect(response!.body.errors).to.be.undefined;
       expect(response!.body.data.inviteMember.success).to.equal(true);
     });
+  });
   
+  it('should accept invitation to event', () => {
+    loginTestUser(Invite.member.email);
     cy.task('getLastEmail', Invite.member.email).its('html').then((email) => {
       cy.document().invoke('write', email);
       cy.contains('Accept').click();
+      cy.location('pathname').should('contain', 'invite');
     });
   
     dataCY('displayName').type(Invite.member.displayName);
