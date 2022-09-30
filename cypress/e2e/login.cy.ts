@@ -1,13 +1,15 @@
 import {User} from "../fixtures/data";
 import {dataCY, visit, wait} from "../utils";
+import {deleteTestData} from "../api";
 
 describe('login', () => {
+  before(() => deleteTestData());
+
   it('logs in with test user', () => {
     visit('login');
     dataCY('email').type(User.email);
 
     const [Login] = wait([], ['Login'], () => dataCY('submit').click());
-
     Login.then(({ response }) => {
       expect(response!.statusCode).to.equal(200);
       expect(response!.body.data.login.success).to.equal(true);

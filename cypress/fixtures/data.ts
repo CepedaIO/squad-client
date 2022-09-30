@@ -1,10 +1,5 @@
 import {DateTime} from "luxon";
 
-export const App = {
-  client: 'http://localhost:3100',
-  server: 'http://localhost:8100'
-}
-
 export const User = {
   email: 'cypress@cepeda.io'
 };
@@ -32,7 +27,7 @@ export const Invite = {
 export const Event = {
   name: 'Luna Event',
   description: 'This is an event dedicated to telling Luna how amazing she is',
-  img: 'https://cepeda.io/pictures/luna5.jpg',
+  img: 'http://cepedaio.ue.r.appspot.com/pictures/luna5.jpg',
   duration: {
     hours: 1
   }

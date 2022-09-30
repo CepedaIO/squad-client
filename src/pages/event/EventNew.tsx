@@ -13,6 +13,7 @@ import $c from "classnames";
 import {IAvailability, AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
 import {apiCreateEvent} from "../../services/api/event";
 import {useApp} from "../../hooks/useApp";
+import useDebounce from "../../hooks/useDebounce";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
@@ -27,6 +28,7 @@ const EventNewContent = () => {
   const availabilityError = getError('availabilities');
   const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
   const [mutCreateEvent, { data, error, loading } ] = apiCreateEvent();
+  const debounceRead = useDebounce((val) => val, 500);
 
   useEffect(() => {
     if(error) {
@@ -88,7 +90,8 @@ const EventNewContent = () => {
 
         <img
           className={'w-full h-[250px] bg-slight mb-4'}
-          src={img}
+          src={debounceRead(img)}
+          alt={'Event image'}
         />
 
         <FormInput
@@ -131,7 +134,7 @@ const EventNewContent = () => {
           className={"mt-8"}
           variant={"submit"}
           onClick={onClickSubmit}
-          data-cy={'submit'}
+          data-cy={'submit:event'}
           disabled={loading}
         >
           Submit

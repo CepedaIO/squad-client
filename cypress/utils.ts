@@ -3,6 +3,7 @@ import {CyHttpMessages} from "cypress/types/net-stubbing";
 import {App} from "./fixtures/data";
 import {ApolloClient, createHttpLink, InMemoryCache} from "@apollo/client";
 import {appConfig} from "../src/configs/app";
+import config from "./config";
 
 export const  login = (email: string) => {
   window.localStorage.setItem('auth', email);
@@ -29,9 +30,9 @@ export const aliasMutation = (req:CyHttpMessages.IncomingHttpRequest, operationN
 
 export const dataCY = (tag: string) => cy.get(`[data-cy="${tag}"]`);
 export const click = (tag: string) => dataCY(tag).click();
-export const visit = (relative: string) => cy.visit(`${App.client}/${relative}`);
+export const visit = (relative: string) => cy.visit(`${config.client}/${relative}`);
 export const wait = (queries: string[], mutations: string[] = [], between?: () => void) => {
-  cy.intercept('POST', `${App.server}`, (req) => {
+  cy.intercept('POST', `${config.server}`, (req) => {
     queries.forEach((query) => aliasQuery(req, query))
     mutations.forEach((mutation) => aliasMutation(req, mutation));
   });
@@ -63,7 +64,7 @@ export const stopOnFirstFail = () => {
 
 export const client = new ApolloClient({
   link: createHttpLink({
-    uri: 'http://localhost:8100',
+    uri: 'http://localhost:8100/graphql',
   }),
   cache: new InMemoryCache(),
 });

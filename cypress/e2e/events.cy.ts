@@ -23,7 +23,7 @@ describe('events', () => {
     dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
     dataCY('submit:availability').click();
   
-    const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit').click());
+    const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
     CreateEvent.then(({ response }) => {
       expect(response!.statusCode).to.equal(200);
       expect(response!.body.errors).to.be.undefined;
