@@ -1,6 +1,6 @@
 // Utility to match GraphQL mutation based on the operation name
 import {CyHttpMessages} from "cypress/types/net-stubbing";
-import {App} from "./fixtures/data";
+import {App, User} from "./fixtures/data";
 import {ApolloClient, createHttpLink, InMemoryCache} from "@apollo/client";
 import {appConfig} from "../src/configs/app";
 import config from "./config";
@@ -61,6 +61,30 @@ export const stopOnFirstFail = () => {
     }
   });
 }
+
+export const manuallyLogin = (email:string) => {
+  dataCY('email').type(email);
+  
+  const [Login] = wait([], ['Login'], () => dataCY('submit').click());
+  Login.then(({ response }) => {
+    expect(response!.statusCode).to.equal(200);
+    expect(response!.body.data.login.success).to.equal(true);
+  });
+  
+  cy.task('getLastEmail', email).its('html').then((email) => {
+    cy.document().invoke('write', email);
+    cy.contains('Expire after 2 weeks').click();
+    cy.location('pathname').should('contain', 'login-with');
+  });
+  
+  const [UseLoginToken] = wait([], ['UseLoginToken']);
+  UseLoginToken.then(({ response }) => {
+    expect(response!.statusCode).to.equal(200);
+    expect(response!.body.data.useLoginToken.success).to.equal(true);
+  });
+  
+  dataCY('navigate:home').click();
+};
 
 export const client = new ApolloClient({
   link: createHttpLink({

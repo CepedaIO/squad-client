@@ -48,44 +48,43 @@ const LoginPage = () => {
   }
 
   return (
-      <div className="flex flex-col h-full justify-center">
-        <div className="mx-auto flex flex-col gap-6 w-full max-w-screen-sm">
-          <h1>
-            Welcome!
-            { loading && (<i className="fa-solid fa-yin-yang fa-spin ml-3" />)}
-          </h1>
-
-          <FormInput
-            type={Line}
-            label={"Email:"}
-            field={"email"}
-            // @ts-ignore
-            placeholder={"Enter email"}
-            className={"w-full"}
-            validator={() => [
-              [TextValidation.defined, 'Must enter an email'],
-              [TextValidation.greaterThan(3), 'Email must be greater than 3 characters']
-            ]}
-            data-cy={'email'}
-          />
-
-          <div>
-            <Button
-              variant={"submit"}
-              loading={loading}
-              className="w-full"
-              onClick={clickedLogin}
-              data-cy={'submit'}
-            >
-              Login
-            </Button>
-            <div className="text-xs text-hint mt-2">
-              This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
-            </div>
+    <main className="flex flex-col h-full justify-center">
+      <div className="mx-auto flex flex-col gap-6 w-full max-w-screen-sm">
+        <h1>
+          Welcome!
+          { loading && (<i className="fa-solid fa-yin-yang fa-spin ml-3" />)}
+        </h1>
+  
+        <FormInput
+          type={Line}
+          label={"Email:"}
+          field={"email"}
+          // @ts-ignore
+          placeholder={"Enter email"}
+          className={"w-full"}
+          validator={() => [
+            [TextValidation.defined, 'Must enter an email'],
+            [TextValidation.greaterThan(3), 'Email must be greater than 3 characters']
+          ]}
+          data-cy={'email'}
+        />
+  
+        <div>
+          <Button
+            variant={"submit"}
+            loading={loading}
+            className="w-full"
+            onClick={clickedLogin}
+            data-cy={'submit'}
+          >
+            Login
+          </Button>
+          <div className="text-xs text-hint mt-2">
+            This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
           </div>
         </div>
       </div>
-
+    </main>
   )
 }
 

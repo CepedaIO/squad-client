@@ -8,6 +8,7 @@ import useForm from "../../hooks/useForm";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import Cat from "../../components/Cat";
 import {IEventSummary} from "event-matcher-shared";
+import {GET_SUMMARIES} from "../../services/api/event";
 
 const EventJoinContent = () => {
   const { validate } = useForm<IMembershipForm>();
@@ -38,7 +39,11 @@ const EventJoinContent = () => {
         result
       }
     }
-  `)
+  `, {
+    refetchQueries: [
+      {query: GET_SUMMARIES}
+    ]
+  })
   
   if(loading) {
     return <Cat />

@@ -1,41 +1,43 @@
 import {useNavigate} from "react-router-dom";
-import {apiGetEventSummaries} from "../services/api/event";
-import {Duration} from "luxon";
+import {GET_SUMMARIES, GetSummaries} from "../services/api/event";
 import React from "react";
+import EventCard from "../components/event/EventCard";
+import {useQuery} from "@apollo/client";
+import InviteSummary from "../components/event/InviteSummary";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { data } = apiGetEventSummaries();
+  const { data } = useQuery<GetSummaries>(GET_SUMMARIES);
 
-  const events = !data ? [] : data.map((event, index) => (
-    <section
-      className={'shadow-xl max-w-xs p-2 cursor-pointer event-card'}
-      key={event.id}
-      onClick={() => navigate(`/event/${event.id}`)}
+  const events = !data ? [] : data.getEventSummaries.map((event, index) =>
+    <EventCard
+      event={event}
       data-cy={`event:card:${index}`}
-    >
-      <header className={'text-center font-bold'}>
-        {event.name}
-      </header>
+    />
+  );
 
-      <div className={'mt-3'}>
-        Duration: {Duration.fromDurationLike(event.duration).toHuman()}
-      </div>
-
-      <div className={'mb-4'}>
-        Admin: {event.admin.displayName}
-      </div>
-
-      <img
-        src={event.img}
-        className={'mb-6'}
-      />
-    </section>
+  const invites = !data ? [] : data.getInviteSummaries.map((invite, index) => (
+    <InviteSummary
+      invite={invite}
+      data-cy={`invite:summary:${index}`}
+    />
   ));
 
   return (
-  <main>
+  <main className={'w-full'}>
     <section className={'mb-8'}>
+      { invites.length > 0 && (
+        <section className={'mb-5'}>
+          <h1 className={'mb-5 center'}>
+            Invites
+          </h1>
+  
+          <div>
+            {invites}
+          </div>
+        </section>
+      )}
+      
       <h1 className={'mb-5 center'}>
         Events
 
