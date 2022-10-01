@@ -13,7 +13,7 @@ const EventCard = (props: EventCardProps) => {
   const navigate = useNavigate();
   
   return <main
-    className={'shadow-xl max-w-xs p-2 cursor-pointer event-card'}
+    className={'shadow-xl max-w-[200px] p-2 cursor-pointer event-card'}
     key={event.id}
     onClick={() => navigate(`/event/${event.id}`)}
     data-cy={props['data-cy']}

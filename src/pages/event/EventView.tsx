@@ -36,11 +36,15 @@ const EventView = () => {
   if(event) {
     return (
       <main className={'w-full'}>
-        <header className={'mb-4'}>
+        <header
+          className={'mb-2 cursor-pointer'}
+          onClick={onClickBack}
+        >
           <i className="fa-solid fa-chevron-left mr-3"></i>
-          <span className={'cursor-pointer'} onClick={onClickBack}>Back</span>
+          <span>Back</span>
         </header>
-        <h1 className={'mb-8'}>{ event.name }</h1>
+
+        <h1 className={'mb-4'}>{ event.name }</h1>
 
         <img
           className={'w-[250px] h-[200px] mb-5'}
@@ -52,12 +56,14 @@ const EventView = () => {
         </div>
 
         <section className={"mb-5"}>
-          <div>
+          <div
+            className={'cursor-pointer'}
+            onClick={() => setShowInvite(true)}
+          >
             Users
     
             <i
               className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-              onClick={() => setShowInvite(true)}
               data-cy={'invite:create'}
             />
           </div>

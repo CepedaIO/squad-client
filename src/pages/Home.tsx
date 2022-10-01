@@ -38,12 +38,14 @@ const Home = () => {
           </section>
         )}
         
-        <h1 className={'mb-5 center'}>
+        <h1
+          className={'mb-5 center cursor-pointer'}
+          onClick={() => navigate('/event/new')}
+        >
           Events
   
           <i
-            className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-            onClick={() => navigate('/event/new')}
+            className="fa-solid fa-circle-plus ml-3 text-submit"
             data-cy={'create:group'}
           />
         </h1>

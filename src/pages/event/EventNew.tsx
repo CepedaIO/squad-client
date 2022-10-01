@@ -71,9 +71,19 @@ const EventNewContent = () => {
 
   const onChangeAvailability = (availability: IAvailability[]) =>
     setValue('availabilities', () => availability)
+  
+  const onClickBack = () => navigate('/home');
 
   return (
     <main className="flex flex-col h-full">
+      <header
+        className={'mb-4 cursor-pointer'}
+        onClick={onClickBack}
+      >
+        <i className="fa-solid fa-chevron-left mr-3"></i>
+        <span>Back</span>
+      </header>
+      
       <div className="mx-auto flex flex-col w-full max-w-screen-sm">
         <h2 className={"mb-3"}>Event Info:</h2>
         <FormInput

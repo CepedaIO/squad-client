@@ -9,7 +9,7 @@ import Fallback from "./pages/Fallback";
 import EventNew from "./pages/event/EventNew";
 import AppContext, {createAppContext} from "./providers/AppContext";
 import EventView from "./pages/event/EventView";
-import EventJoin from "./pages/event/EventJoin";
+import EventInvite from "./pages/event/EventInvite";
 
 function App() {
 	const {
@@ -41,7 +41,7 @@ function App() {
 			element: <EventView />
 		}, {
 			path: '/event/:id/invite/:uuid/:key',
-			element: <EventJoin />
+			element: <EventInvite />
 		}, {
 			path: '*',
 			element: <Fallback />

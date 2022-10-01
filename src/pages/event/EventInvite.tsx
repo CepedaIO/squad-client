@@ -71,26 +71,28 @@ const EventJoinContent = () => {
     }
   }
   
+  const onClickBack = () => navigate('/home');
+  
   return (
-    <main className="flex flex-col gap-5 items-center h-full max-w-xs">
-      <h1 className="text-center">Joining event ... </h1>
-      <h2>{ summary.name }</h2>
-      <img
-        alt={'Event Image'}
-        src={summary.img}
-      />
-      <MembershipEdit duration={duration} onChange={onChange} />
-      <footer className={"center"}>
-        <Button
-          className={"mr-5"}
-          variant={"reject"}
-          onClick={onClickSubmit}
-          data-cy={'reject'}
-          disabled={loading}
-        >
-          Cancel
-        </Button>
-        
+    <main className="h-full max-w-xs">
+      <header
+        className={'mb-4 cursor-pointer'}
+        onClick={onClickBack}
+      >
+        <i className="fa-solid fa-chevron-left mr-3"></i>
+        <span>Back</span>
+      </header>
+
+      <section className={'flex flex-col gap-5'}>
+        <h1 className="text-center">Joining event ... </h1>
+        <h2>{ summary.name }</h2>
+        <img
+          alt={'Event Image'}
+          src={summary.img}
+        />
+
+        <MembershipEdit duration={duration} onChange={onChange} />
+  
         <Button
           variant={"submit"}
           onClick={onClickSubmit}
@@ -99,12 +101,12 @@ const EventJoinContent = () => {
         >
           Submit
         </Button>
-      </footer>
+      </section>
     </main>
   )
 };
 
-const EventJoin = () => {
+const EventInvite = () => {
   const context = createFormContext<IMembershipForm>({
     displayName: '',
     availabilities: []
@@ -117,4 +119,4 @@ const EventJoin = () => {
   )
 }
 
-export default EventJoin;
+export default EventInvite;
