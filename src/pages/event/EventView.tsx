@@ -7,7 +7,7 @@ import React, {useState} from "react";
 import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
 
 const EventView = () => {
-  const [showInvite, setInvite] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
   const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
@@ -35,7 +35,7 @@ const EventView = () => {
 
   if(event) {
     return (
-      <main>
+      <main className={'w-full'}>
         <header className={'mb-4'}>
           <i className="fa-solid fa-chevron-left mr-3"></i>
           <span className={'cursor-pointer'} onClick={onClickBack}>Back</span>
@@ -51,33 +51,45 @@ const EventView = () => {
           { event.description }
         </div>
 
-        <div>
-          Users
-
-          <i
-            className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-            onClick={() => setInvite(true)}
-            data-cy={'invite:create'}
-          />
-        </div>
-
-        { showInvite &&
-          <InviteMember onSubmit={ onSubmitInvite } />
-        }
+        <section className={"mb-5"}>
+          <div>
+            Users
+    
+            <i
+              className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
+              onClick={() => setShowInvite(true)}
+              data-cy={'invite:create'}
+            />
+          </div>
   
-        { invites.length > 0 && (
-          <section>
-            Pending Invites { invites.length }
-          </section>
-        )}
+          { showInvite && (
+            <div className={'mt-3'}>
+              <InviteMember
+                onSubmit={ onSubmitInvite }
+                onCancel={ () => setShowInvite(false) }
+              />
+              <hr
+                className={'my-5 mx-5'}
+              />
+            </div>
+          )}
+  
+          { invites.length > 0 && (
+            <section>
+              Pending Invites { invites.length }
+            </section>
+          )}
+        </section>
         
-        { event.memberships.map((member) => (
-          <section key={member.email} className={'max-w-xs'}>
-            <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>
-
-            <Calendar availabilities={member.availabilities} />
-          </section>
-        ))}
+        <section className={'flex flex-wrap align-center justify-around'}>
+          { event.memberships.map((member) => (
+            <main key={member.email} className={'max-w-xs'}>
+              <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>
+      
+              <Calendar availabilities={member.availabilities} />
+            </main>
+          ))}
+        </section>
       </main>
     )
   }

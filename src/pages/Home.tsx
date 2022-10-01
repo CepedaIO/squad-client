@@ -24,37 +24,37 @@ const Home = () => {
   ));
 
   return (
-  <main className={'w-full'}>
-    <section className={'mb-8'}>
-      { invites.length > 0 && (
-        <section className={'mb-5'}>
-          <h1 className={'mb-5 center'}>
-            Invites
-          </h1>
+    <main className={'w-full'}>
+      <section className={'mb-8'}>
+        { invites.length > 0 && (
+          <section className={'mb-5'}>
+            <h1 className={'mb-5 center'}>
+              Invites
+            </h1>
+    
+            <div>
+              {invites}
+            </div>
+          </section>
+        )}
+        
+        <h1 className={'mb-5 center'}>
+          Events
   
-          <div>
-            {invites}
+          <i
+            className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
+            onClick={() => navigate('/event/new')}
+            data-cy={'create:group'}
+          />
+        </h1>
+  
+        { events.length > 0 && (
+          <div className={'flex gap-8 flex-row flex-wrap'}>
+            {events}
           </div>
-        </section>
-      )}
-      
-      <h1 className={'mb-5 center'}>
-        Events
-
-        <i
-          className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-          onClick={() => navigate('/event/new')}
-          data-cy={'create:group'}
-        />
-      </h1>
-
-      { events.length > 0 && (
-        <div className={'flex gap-8 flex-row flex-wrap'}>
-          {events}
-        </div>
-      )}
-    </section>
-  </main>
+        )}
+      </section>
+    </main>
   )
 }
 

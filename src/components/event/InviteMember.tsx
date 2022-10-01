@@ -16,16 +16,17 @@ export interface IInviteMemberForm {
 
 interface InviteMemberProps {
   onSubmit(form: IInviteMemberForm): void;
+  onCancel(): void;
 }
 const InviteMemberContent = ({
-  onSubmit
+  onSubmit, onCancel
 }: InviteMemberProps) => {
   const { id } = useParams();
   const { validate } = useForm<IInviteMemberForm>();
   const { FormInput } = useFormControls<IInviteMemberForm>();
-  const [mut, { data, loading, error }] = apiCreateInvite();
+  const [mut, { loading }] = apiCreateInvite();
   
-  const clickedInvite = () => {
+  const onClickInvite = () => {
     const [isValid, payload] = validate();
     if(isValid) {
       mut({ variables: {
@@ -38,7 +39,7 @@ const InviteMemberContent = ({
   }
 
   return (
-    <section>
+    <section className={'max-w-sm'}>
       <FormInput
         label={"Email:"}
         field={"email"}
@@ -55,6 +56,7 @@ const InviteMemberContent = ({
         <Button
           variant={"link"}
           disabled={loading}
+          onClick={onCancel}
         >
           Cancel
         </Button>
@@ -62,7 +64,7 @@ const InviteMemberContent = ({
         <Button
           variant={"link"}
           data-cy={"invite:submit"}
-          onClick={clickedInvite}
+          onClick={onClickInvite}
           disabled={loading}
         >
           Invite
