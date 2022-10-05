@@ -1,10 +1,12 @@
 import {useNavigate, useParams} from "react-router-dom";
 import Cat from "../../components/Cat";
-import {apiGetEvent} from "../../services/api/event";
+import {GET_EVENT, GetEvent} from "../../services/api/event";
 import {isNaN} from "lodash";
 import Calendar from "../../components/calendar";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
+import {useQuery} from "@apollo/client";
+import {promote} from "event-matcher-shared";
 
 const EventView = () => {
   const [showInvite, setShowInvite] = useState(false);
@@ -16,13 +18,13 @@ const EventView = () => {
     navigate('/home');
   }
 
-  const id = parseInt(_id!);
+  const { data, loading } = useQuery<GetEvent>(GET_EVENT, {
+    variables: {
+      id: parseInt(_id!)
+    }
+  });
+  const event = useMemo(() => data ? promote(data.event) : null, [data]);
 
-  const { data: event, loading } = apiGetEvent(id);
-  const onClickBack = () => navigate('/home');
-  
-  const onSubmitInvite = (invite: IInviteMemberForm) => setInvites((prev) => [...prev, invite]);
-  
   if(loading) {
     return (
       <main className={'flex flex-col items-center'}>
@@ -34,6 +36,15 @@ const EventView = () => {
   }
 
   if(event) {
+    const onClickBack = () => navigate('/home');
+    const onSubmitInvite = (invite: IInviteMemberForm) =>{
+      setInvites((prev) => [...prev, invite])
+      setShowInvite(false);
+    };
+    const onClickShareLink = () => {
+    
+    };
+    
     return (
       <main className={'w-full'}>
         <header
@@ -44,9 +55,19 @@ const EventView = () => {
           <span>Back</span>
         </header>
 
-        <h1 className={'mb-4'}>{ event.name }</h1>
+        <h1>
+          { event.name }
+        </h1>
+  
+        <div className={'mb-4 center'}>
+          <a onClick={onClickShareLink} className={'cursor-pointer'}>
+            Share Links
+            <i className="fa-solid fa-link ml-2" />
+          </a>
+        </div>
 
         <img
+          alt={'Event Image'}
           className={'w-[250px] h-[200px] mb-5'}
           src={event.img}
         />
@@ -69,7 +90,7 @@ const EventView = () => {
           </div>
   
           { showInvite && (
-            <div className={'mt-3'}>
+            <div className={'mt-3 max-w-xs'}>
               <InviteMember
                 onSubmit={ onSubmitInvite }
                 onCancel={ () => setShowInvite(false) }

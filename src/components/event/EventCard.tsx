@@ -1,15 +1,16 @@
 import {Duration} from "luxon";
 import React from "react";
-import {IEventSummary} from "event-matcher-shared";
+import {IEvent, IMembership} from "event-matcher-shared";
 import {useNavigate} from "react-router-dom";
 
 interface EventCardProps {
-  event: IEventSummary;
+  event: Pick<IEvent, 'id' | 'name' | 'duration' | 'img'>;
+  admin: Pick<IMembership, 'displayName'>;
   'data-cy': string;
 }
 
 const EventCard = (props: EventCardProps) => {
-  const { event } = props;
+  const {event, admin} = props;
   const navigate = useNavigate();
   
   return <main
@@ -27,7 +28,7 @@ const EventCard = (props: EventCardProps) => {
     </div>
     
     <div className={'mb-4'}>
-      Admin: {event.admin.displayName}
+      Admin: {admin.displayName}
     </div>
     
     <img

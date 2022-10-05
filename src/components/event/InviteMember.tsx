@@ -39,7 +39,7 @@ const InviteMemberContent = ({
   }
 
   return (
-    <section className={'max-w-sm'}>
+    <section>
       <FormInput
         label={"Email:"}
         field={"email"}

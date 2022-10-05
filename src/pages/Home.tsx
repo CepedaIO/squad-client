@@ -9,15 +9,17 @@ const Home = () => {
   const navigate = useNavigate();
   const { data } = useQuery<GetSummaries>(GET_SUMMARIES);
 
-  const events = !data ? [] : data.getEventSummaries.map((event, index) =>
+  const events = !data ? [] : data.user.events.map((event, index) =>
     <EventCard
       event={event}
+      admin={event.admins[0]}
       data-cy={`event:card:${index}`}
     />
   );
 
-  const invites = !data ? [] : data.getInviteSummaries.map((invite, index) => (
+  const invites = !data ? [] : data.user.invites.map((invite, index) => (
     <InviteSummary
+      event={invite.event}
       invite={invite}
       data-cy={`invite:summary:${index}`}
     />
@@ -46,7 +48,7 @@ const Home = () => {
   
           <i
             className="fa-solid fa-circle-plus ml-3 text-submit"
-            data-cy={'create:group'}
+            data-cy={'create:event'}
           />
         </h1>
   

@@ -1,90 +1,87 @@
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {IEvent, IEventSummary, IInviteSummary, ICreateEventInput, Availability, Demote, IInviteMemberInput, ISimpleResponse} from "event-matcher-shared";
+import {gql, useMutation} from "@apollo/client";
+import {IEvent, IInviteToken, ICreateEventInput, Demote, IInviteMemberInput, ISimpleResponse, IMembership} from "event-matcher-shared";
 
-export const apiGetEvent = (id: number) => {
-  const useQuery1 = useQuery<{ getEvent: Demote<IEvent> }>(gql`
-    query GetEvent($id: Float!) {
-      getEvent(id: $id) {
+export interface GetEvent {
+  event: Demote<IEvent>;
+}
+export const GET_EVENT = gql`
+  query GetEvent($id: Float!) {
+    event(id: $id) {
+      id
+      createdOn
+      modifiedOn
+      name
+      img
+      description
+      duration {
+        days
+        hours
+        minutes
+      }
+      memberships {
         id
         createdOn
         modifiedOn
-        name
-        img
-        description
-        duration {
-          days
-          hours
-          minutes
-        }
-        memberships {
+        email
+        displayName
+        permissions {
           id
           createdOn
           modifiedOn
-          email
-          displayName
-          permissions {
-            id
-            createdOn
-            modifiedOn
-            membershipId
-            isAdmin
-          }
-          availabilities {
-            id
-            createdOn
-            modifiedOn
-            start
-            end
-          }
+          isAdmin
+        }
+        availabilities {
+          id
+          createdOn
+          modifiedOn
+          start
+          end
         }
       }
     }
-  `, {
-    variables: { id }
-  });
-
-  const data = !useQuery1.data ? useQuery1.data : {
-    ...useQuery1.data.getEvent,
-    memberships: useQuery1.data.getEvent.memberships.map((membership) => ({
-      ...membership,
-      availabilities: Availability.promote(membership.availabilities)
-    }))
   }
-
-  return {
-    ...useQuery1,
-    data
-  };
-}
+`;
 
 export interface GetSummaries {
-  getInviteSummaries: Demote<IInviteSummary>[];
-  getEventSummaries: Demote<IEventSummary>[];
+  user: {
+    invites: Array<
+      Demote<Pick<IInviteToken, 'id' | 'uuid' | 'key' | 'expiresOn'>> & {
+        event: Pick<IEvent, 'id' | 'name'>
+      }
+    >,
+    events: Array<
+      Demote<Pick<IEvent, 'id' | 'name' | 'img' | 'duration'>> & {
+        admins: Pick<IMembership, 'displayName'>[]
+      }
+    >
+  }
 }
 export const GET_SUMMARIES = gql`
   query GetSummaries {
-    getInviteSummaries {
-      uuid
-      key
-      from
-      event {
+    user {
+      invites {
+        id
+        uuid
+        key
+        expiresOn
+        event {
+          id
+          name
+        }
+      }
+      
+      events {
         id
         name
-      }
-      expiresOn
-    }
-
-    getEventSummaries {
-      id
-      name
-      img
-      duration {
-        days
-        minutes
-        hours
-      }
-      admin {
-        displayName
+        img
+        duration {
+          days
+          minutes
+          hours
+        }
+        admins {
+          displayName
+        }
       }
     }
   }

@@ -11,7 +11,7 @@ describe('Create Event', () => {
   it('should create a event', () => {
     loginTestUser(User.email);
     visit('home');
-    click('create:group');
+    click('create:event');
     dataCY('name').type(Event.name);
     dataCY('img').type(Event.img);
     dataCY('description').type(Event.description);
