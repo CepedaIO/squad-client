@@ -42,6 +42,24 @@ export const GET_EVENT = gql`
   }
 `;
 
+export interface GetEventFromInvite {
+  eventFromInvite: Pick<IEvent, 'id' | 'img' | 'name' | 'duration'>
+}
+export const GET_EVENT_FROM_INVITE = gql`
+  query GetEventFromInvite($uuid: String!, $key: String!) {
+    eventFromInvite(uuid: $uuid, key: $key){
+      id
+      img
+      name
+      duration {
+        hours
+        days
+        minutes
+      }
+    }
+  }
+`;
+
 export interface GetSummaries {
   user: {
     invites: Array<

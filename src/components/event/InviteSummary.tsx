@@ -14,13 +14,13 @@ const InviteSummary = (props: InviteSummaryProps) => {
   const navigate = useNavigate();
   const {invite, event} = props;
   const durationUntilExpires = DateTime.fromISO(invite.expiresOn).diffNow().shiftTo('days')
-  const onClickSummary = () => navigate(`/event/${event.id}/invite/${invite.uuid}/${invite.key}`);
+  const onClickInvite = () => navigate(`/event/${event.id}/invite/${invite.uuid}/${invite.key}`);
   
   return (
     <main
       className={'center justify-between max-w-xs p-1 cursor-pointer'}
       data-cy={props['data-cy']}
-      onClick={onClickSummary}
+      onClick={onClickInvite}
       key={invite.uuid}
     >
       <div>
