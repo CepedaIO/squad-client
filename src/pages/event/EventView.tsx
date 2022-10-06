@@ -7,8 +7,12 @@ import React, {useMemo, useState} from "react";
 import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
 import {useQuery} from "@apollo/client";
 import {promote} from "event-matcher-shared";
+import {useApp} from "../../hooks/useApp";
 
 const EventView = () => {
+  const {
+    notif: { addNotice }
+  } = useApp();
   const [showInvite, setShowInvite] = useState(false);
   const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
@@ -41,8 +45,15 @@ const EventView = () => {
       setInvites((prev) => [...prev, invite])
       setShowInvite(false);
     };
-    const onClickShareLink = () => {
-    
+    const onClickShareLink = async () => {
+      await navigator.clipboard.writeText(`${window.origin}${event.joinLink}`);
+      addNotice({
+        id: 'event-copy-link',
+        dismissable: true,
+        message: 'Even join link copied to clipboard!',
+        level: 'success',
+        timeout: 10000
+      });
     };
     
     return (
@@ -79,7 +90,7 @@ const EventView = () => {
         <section className={"mb-5"}>
           <div
             className={'cursor-pointer'}
-            onClick={() => setShowInvite(true)}
+            onClick={() => setShowInvite(!showInvite)}
           >
             Users
     

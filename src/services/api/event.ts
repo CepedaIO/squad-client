@@ -1,8 +1,46 @@
 import {gql, useMutation} from "@apollo/client";
-import {IEvent, IInviteToken, ICreateEventInput, Demote, IInviteMemberInput, ISimpleResponse, IMembership} from "event-matcher-shared";
+import {
+  IEventEntity,
+  IInviteTokenEntity,
+  ICreateEventInput,
+  Demote,
+  IInviteMemberInput,
+  ISimpleResponse,
+  IMembershipEntity,
+  IMembershipPermissionsEntity,
+  IAvailabilityEntity
+} from "event-matcher-shared";
+
+export interface IInviteToken extends IInviteTokenEntity {
+  event: IEvent
+}
+
+export interface IMembershipPermissions extends IMembershipPermissionsEntity {
+
+}
+
+export interface IAvailability extends IAvailabilityEntity {
+
+}
+
+export interface IMembership extends IMembershipEntity {
+  permissions: IMembershipPermissions;
+  availabilities: IAvailability[];
+}
+
+export interface IEvent extends IEventEntity {
+  memberships: IMembership[];
+  admins: IMembership[];
+  user: IMembership;
+  joinLink: string;
+}
 
 export interface GetEvent {
-  event: Demote<IEvent>;
+  event: Demote<Omit<IEvent, 'user' | 'admins'>> & {
+    user: {
+      permissions: Pick<IMembershipPermissions, 'isAdmin'>
+    }
+  }
 }
 export const GET_EVENT = gql`
   query GetEvent($id: Float!) {
@@ -13,10 +51,16 @@ export const GET_EVENT = gql`
       name
       img
       description
+      joinLink
       duration {
         days
         hours
         minutes
+      }
+      user {
+        permissions {
+          isAdmin
+        }
       }
       memberships {
         id
@@ -64,12 +108,12 @@ export interface GetSummaries {
   user: {
     invites: Array<
       Demote<Pick<IInviteToken, 'id' | 'uuid' | 'key' | 'expiresOn'>> & {
-        event: Pick<IEvent, 'id' | 'name'>
+        event: Demote<Pick<IEvent, 'id' | 'name'>>
       }
     >,
     events: Array<
       Demote<Pick<IEvent, 'id' | 'name' | 'img' | 'duration'>> & {
-        admins: Pick<IMembership, 'displayName'>[]
+        admins: Demote<Pick<IMembership, 'displayName'>>[]
       }
     >
   }

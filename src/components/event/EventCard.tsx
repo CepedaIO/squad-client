@@ -1,7 +1,7 @@
 import {Duration} from "luxon";
 import React from "react";
-import {IEvent, IMembership} from "event-matcher-shared";
 import {useNavigate} from "react-router-dom";
+import {IEvent, IMembership} from "../../services/api/event";
 
 interface EventCardProps {
   event: Pick<IEvent, 'id' | 'name' | 'duration' | 'img'>;
