@@ -14,6 +14,7 @@ const EventView = () => {
     notif: { addNotice }
   } = useApp();
   const [showInvite, setShowInvite] = useState(false);
+  const [showPending, setShowPending] = useState(true);
   const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
@@ -110,16 +111,16 @@ const EventView = () => {
   
         { event.pendingMemberships.length > 0 && (
           <section className={'mb-3 max-w-xs'}>
-            <div className={'mb-2'}>
+            <div className={'mb-2 cursor-pointer'} onClick={() => setShowPending(!showPending)}>
               Pending Memberships
+              <span className={'font-bold'}> { event.pendingMemberships.length }</span>
   
               { consuming &&
                 <i className="fa-solid fa-yin-yang fa-spin ml-2" />
               }
             </div>
   
-            {
-              event.pendingMemberships.map((membership, index) =>
+            { showPending && event.pendingMemberships.map((membership, index) =>
                 <div className={'center mb-1.5'}>
                   <i
                     onClick={() => consumeMembership(membership, true)}
