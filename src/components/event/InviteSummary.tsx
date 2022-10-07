@@ -1,8 +1,9 @@
 import React from "react";
-import {IInviteToken, Demote, IEvent} from "event-matcher-shared";
+import {Demote} from "event-matcher-shared";
 import {DateTime} from "luxon";
 import {toHuman} from "../../services/utils";
 import {useNavigate} from "react-router-dom";
+import {IEvent, IInviteToken} from "../../services/api/event";
 
 interface InviteSummaryProps {
   event: Pick<IEvent, 'id' | 'name'>

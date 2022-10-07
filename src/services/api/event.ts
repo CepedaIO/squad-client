@@ -8,7 +8,9 @@ import {
   ISimpleResponse,
   IMembershipEntity,
   IMembershipPermissionsEntity,
-  IAvailabilityEntity
+  IAvailabilityEntity,
+  IJoinLinkEntity,
+  IPendingMembershipEntity
 } from "event-matcher-shared";
 
 export interface IInviteToken extends IInviteTokenEntity {
@@ -30,16 +32,26 @@ export interface IMembership extends IMembershipEntity {
 
 export interface IEvent extends IEventEntity {
   memberships: IMembership[];
+  pendingMemberships: IPendingMembership[];
   admins: IMembership[];
   user: IMembership;
   joinLink: string;
 }
 
+export interface IJoinLink extends IJoinLinkEntity {
+
+}
+
+export interface IPendingMembership extends IPendingMembershipEntity {
+  event: IEvent;
+}
+
 export interface GetEvent {
-  event: Demote<Omit<IEvent, 'user' | 'admins'>> & {
+  event: Demote<Omit<IEvent, 'user' | 'admins' | 'pendingMemberships'>> & {
     user: {
       permissions: Pick<IMembershipPermissions, 'isAdmin'>
-    }
+    },
+    pendingMemberships: Array<Pick<IPendingMembership, 'id' | 'displayName'>>
   }
 }
 export const GET_EVENT = gql`
@@ -82,23 +94,55 @@ export const GET_EVENT = gql`
           end
         }
       }
+      pendingMemberships {
+        id
+        displayName
+      }
     }
   }
 `;
 
 export interface GetEventFromInvite {
-  eventFromInvite: Pick<IEvent, 'id' | 'img' | 'name' | 'duration'>
+  invite: Pick<IInviteToken, 'id'> & {
+    event: Pick<IEvent, 'id' | 'img' | 'name' | 'duration'>
+  }
 }
 export const GET_EVENT_FROM_INVITE = gql`
   query GetEventFromInvite($uuid: String!, $key: String!) {
-    eventFromInvite(uuid: $uuid, key: $key){
+    invite(uuid: $uuid, key: $key){
       id
-      img
-      name
-      duration {
-        hours
-        days
-        minutes
+      event {
+        img
+        name
+        duration {
+          hours
+          days
+          minutes
+        }
+      }
+    }
+  }
+`;
+
+export interface GetEventFromJoinLink {
+  joinLink: Pick<IJoinLink, 'id'> & {
+    event: Pick<IEvent, 'id' | 'img' | 'name' | 'description' | 'duration'>
+  }
+}
+export const GET_EVENT_FROM_JOIN = gql`
+  query GetEventFromJoin($key: String!) {
+    joinLink(key: $key){
+      id
+      event {
+        id
+        img
+        name
+        description
+        duration {
+          hours
+          days
+          minutes
+        }
       }
     }
   }
@@ -106,16 +150,15 @@ export const GET_EVENT_FROM_INVITE = gql`
 
 export interface GetSummaries {
   user: {
-    invites: Array<
-      Demote<Pick<IInviteToken, 'id' | 'uuid' | 'key' | 'expiresOn'>> & {
-        event: Demote<Pick<IEvent, 'id' | 'name'>>
-      }
-    >,
-    events: Array<
-      Demote<Pick<IEvent, 'id' | 'name' | 'img' | 'duration'>> & {
-        admins: Demote<Pick<IMembership, 'displayName'>>[]
-      }
-    >
+    invites: Array<Demote<Pick<IInviteToken, 'id' | 'uuid' | 'key' | 'expiresOn'>> & {
+      event: Pick<IEvent, 'id' | 'name'>
+    }>,
+    events: Array<Pick<IEvent, 'id' | 'name' | 'img' | 'duration'> & {
+      admins: Pick<IMembership, 'displayName'>[]
+    }>,
+    pendingMemberships: Array<Pick<IPendingMembership, 'displayName'> & {
+      event: Pick<IEvent, 'id' | 'name'>
+    }>
   }
 }
 export const GET_SUMMARIES = gql`
@@ -143,6 +186,14 @@ export const GET_SUMMARIES = gql`
         }
         admins {
           displayName
+        }
+      }
+      
+      pendingMemberships {
+        displayName
+        event {
+          id
+          name
         }
       }
     }

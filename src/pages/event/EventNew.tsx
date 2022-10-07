@@ -10,8 +10,8 @@ import {useFormControls} from "../../hooks/useFormControls";
 import {DurationLike} from "../../services/input-types/duration/durationLike";
 import {DurationLikeObject} from "luxon";
 import $c from "classnames";
-import {IAvailability, AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
-import {apiCreateEvent} from "../../services/api/event";
+import {AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
+import {apiCreateEvent, GET_SUMMARIES, IAvailability} from "../../services/api/event";
 import {useApp} from "../../hooks/useApp";
 import useDebounce from "../../hooks/useDebounce";
 
@@ -64,7 +64,10 @@ const EventNewContent = () => {
     const [isValid, payload] = validate();
     if(isValid) {
       return mutCreateEvent({
-        variables: { payload }
+        variables: { payload },
+        refetchQueries: [
+          { query: GET_SUMMARIES }
+        ]
       });
     }
   };

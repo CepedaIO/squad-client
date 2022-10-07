@@ -29,6 +29,7 @@ const guards: NavigationGuard[] = [{
         /^\/login$/,
         /^\/awaiting-access$/,
         /^\/login-with/,
+        /^\/join/,
       ].some((route) => route.test(path));
     },
     action() { return true; }

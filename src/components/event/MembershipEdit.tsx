@@ -5,8 +5,9 @@ import Calendar from "../calendar";
 import React from "react";
 import {useFormControls} from "../../hooks/useFormControls";
 import {Duration, DurationLikeObject} from "luxon";
-import {IAvailability, AvailabilityValidation, TextValidation} from "event-matcher-shared";
+import {AvailabilityValidation, TextValidation} from "event-matcher-shared";
 import useForm from "../../hooks/useForm";
+import {IAvailability} from "../../services/api/event";
 
 export interface IMembershipEditProps {
   duration: Duration,

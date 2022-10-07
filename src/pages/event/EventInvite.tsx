@@ -35,7 +35,8 @@ const EventJoinContent = () => {
     return <Cat />
   }
   
-  const event = data?.eventFromInvite!;
+  const invite = data?.invite!;
+  const event = invite.event;
   const duration = Duration.fromDurationLike(event.duration || {
     hours: 1
   });

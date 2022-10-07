@@ -10,6 +10,7 @@ import EventNew from "./pages/event/EventNew";
 import AppContext, {createAppContext} from "./providers/AppContext";
 import EventView from "./pages/event/EventView";
 import EventInvite from "./pages/event/EventInvite";
+import Join from "./pages/Join";
 
 function App() {
 	const {
@@ -34,6 +35,9 @@ function App() {
 			path: '/home',
 			element: <Home />
 		}, {
+			path: '/join/:key',
+			element: <Join />
+		},{
 			path: '/event/new',
 			element: <EventNew />
 		}, {

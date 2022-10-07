@@ -104,3 +104,36 @@ describe('Invite User2', () => {
     dataCY('submit').click();
   });
 });
+
+describe('Join by link', () => {
+  let joinLink: string = '';
+  it('should copy event join link', () => {
+    loginTestUser(User.email);
+    visit('home');
+    dataCY('event:card:0').click();
+    cy.get('[data-cy="join-link"]').realClick()
+    cy.window().then(async (win: Window) => {
+      joinLink = await win.navigator.clipboard.readText()
+    });
+  });
+  
+  it('should create join request', () => {
+    loginTestUser('join-user@cepeda.io');
+    visit(joinLink);
+    dataCY('displayName').type('UserFromJoin');
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Member.availability.start)))
+    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
+    dataCY('submit:availability').click();
+    dataCY('submit').click();
+  })
+})
+
+describe('Accept Pending Memberships', () => {
+  it('should accept pending membership', () => {
+    loginTestUser(User.email);
+    visit('home');
+    dataCY('event:card:0').click();
+    dataCY('accept:pending:0').click();
+  });
+})

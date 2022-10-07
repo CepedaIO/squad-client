@@ -20,12 +20,16 @@ const whiteText = ['error', 'fatal'];
 
 const notificationContext = () => {
   const [notices, setNotices] = useState<AppNotice[]>([]);
-  const addNotice = useCallback((notice: AppNotice) =>
+  const addNotice = useCallback((notice: AppNotice) => {
     setNotices((prev) =>
       prev.filter((n) => n.id !== notice.id)
         .concat(notice)
-    )
-  , [setNotices]);
+    );
+    
+    if(notice.timeout) {
+      setTimeout(() => removeNotice(notice.id), notice.timeout);
+    }
+  }, [setNotices]);
 
   const removeNotice = useCallback((id: string) =>
     setNotices((prev) => prev.filter((n) => n.id !== id))

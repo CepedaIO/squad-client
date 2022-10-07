@@ -1,9 +1,8 @@
 // Utility to match GraphQL mutation based on the operation name
 import {CyHttpMessages} from "cypress/types/net-stubbing";
-import {App, User} from "./fixtures/data";
 import {ApolloClient, createHttpLink, InMemoryCache} from "@apollo/client";
-import {appConfig} from "../src/configs/app";
 import config from "./config";
+import "cypress-real-events/support";
 
 export const  login = (email: string) => {
   window.localStorage.setItem('auth', email);
@@ -30,7 +29,7 @@ export const aliasMutation = (req:CyHttpMessages.IncomingHttpRequest, operationN
 
 export const dataCY = (tag: string) => cy.get(`[data-cy="${tag}"]`);
 export const click = (tag: string) => dataCY(tag).click();
-export const visit = (relative: string) => cy.visit(`${config.client}/${relative}`);
+export const visit = (relative: string) => relative.includes(config.client) ? cy.visit(relative) : cy.visit(`${config.client}/${relative}`);
 export const wait = (queries: string[], mutations: string[] = [], between?: () => void) => {
   cy.intercept('POST', `${config.server}`, (req) => {
     queries.forEach((query) => aliasQuery(req, query))

@@ -21,6 +21,9 @@ export default defineConfig({
         getLastEmail(email) {
           // @ts-ignore
           return lastEmail[email] || null;
+        },
+        getClipboard() {
+          return cy.window().then((win) => win.navigator.clipboard.readText());
         }
       });
     }

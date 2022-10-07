@@ -5,7 +5,7 @@ import {isNaN} from "lodash";
 import Calendar from "../../components/calendar";
 import React, {useMemo, useState} from "react";
 import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
-import {useQuery} from "@apollo/client";
+import {gql, useMutation, useQuery} from "@apollo/client";
 import {promote} from "event-matcher-shared";
 import {useApp} from "../../hooks/useApp";
 
@@ -17,19 +17,26 @@ const EventView = () => {
   const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
+  const [consumePending, { loading:consuming}] = useMutation(gql`
+    mutation ConsumePendingMembership($id: Float!, $eventId: Float!, $accept: Boolean!) {
+      consumePendingMembership(id: $id, eventId: $eventId, accept: $accept) {
+        success
+        result
+      }
+    }
+  `)
 
   if(!_id || isNaN(_id)) {
     navigate('/home');
   }
-
-  const { data, loading } = useQuery<GetEvent>(GET_EVENT, {
-    variables: {
-      id: parseInt(_id!)
-    }
+  
+  const id = parseInt(_id!)
+  const { data: GetEvent, loading: fetchingEvent } = useQuery<GetEvent>(GET_EVENT, {
+    variables: { id }
   });
-  const event = useMemo(() => data ? promote(data.event) : null, [data]);
+  const event = useMemo(() => GetEvent ? promote(GetEvent.event) : null, [GetEvent]);
 
-  if(loading) {
+  if(fetchingEvent) {
     return (
       <main className={'flex flex-col items-center'}>
         <h1 className={'mb-8'}>Loading ...</h1>
@@ -55,6 +62,16 @@ const EventView = () => {
         timeout: 10000
       });
     };
+    const consumeMembership = async (pending: { id: number }, accept: boolean) => consumePending({
+      variables: {
+        accept,
+        id: pending.id,
+        eventId: event.id
+      },
+      refetchQueries: [
+        { query: GET_EVENT, variables: { id } }
+      ]
+    });
     
     return (
       <main className={'w-full'}>
@@ -71,7 +88,11 @@ const EventView = () => {
         </h1>
   
         <div className={'mb-4 center'}>
-          <a onClick={onClickShareLink} className={'cursor-pointer'}>
+          <a
+            onClick={onClickShareLink}
+            className={'cursor-pointer'}
+            data-cy={'join-link'}
+          >
             Share Links
             <i className="fa-solid fa-link ml-2" />
           </a>
@@ -86,7 +107,38 @@ const EventView = () => {
         <div className={'mb-5'}>
           { event.description }
         </div>
-
+  
+        { event.pendingMemberships.length > 0 && (
+          <section className={'mb-3 max-w-xs'}>
+            <div className={'mb-2'}>
+              Pending Memberships
+  
+              { consuming &&
+                <i className="fa-solid fa-yin-yang fa-spin ml-2" />
+              }
+            </div>
+  
+            {
+              event.pendingMemberships.map((membership, index) =>
+                <div className={'center mb-1.5'}>
+                  <i
+                    onClick={() => consumeMembership(membership, true)}
+                    className="fa-regular fa-circle-check cursor-pointer text-submit mr-2 text-xl"
+                    data-cy={`accept:pending:${index}`}
+                  />
+                  <i
+                    onClick={() => consumeMembership(membership, false)}
+                    className="fa-regular fa-circle-xmark cursor-pointer text-reject mr-4 text-xl"
+                    data-cy={`reject:pending:${index}`}
+                  />
+                
+                  {membership.displayName}
+                </div>
+              )
+            }
+          </section>
+        )}
+        
         <section className={"mb-5"}>
           <div
             className={'cursor-pointer'}
