@@ -47,12 +47,12 @@ export interface IPendingMembership extends IPendingMembershipEntity {
 }
 
 export interface GetEvent {
-  event: Demote<Omit<IEvent, 'user' | 'admins' | 'pendingMemberships'>> & {
+  event: Demote<Omit<IEvent, 'user' | 'admins' | 'pendingMemberships'> & {
     user: {
       permissions: Pick<IMembershipPermissions, 'isAdmin'>
     },
     pendingMemberships: Array<Pick<IPendingMembership, 'id' | 'displayName'>>
-  }
+  }>
 }
 export const GET_EVENT = gql`
   query GetEvent($id: Float!) {

@@ -2,22 +2,23 @@ import $c from "classnames";
 import {DateTime, Interval} from "luxon";
 import CalendarDay from "./CalendarDay";
 import CalendarBox from "./CalendarBox";
-import {useState} from "react";
-import {IAvailability, AvailabilityValidation} from "event-matcher-shared";
+import {AvailabilityValidation, IAvailabilityBase} from "event-matcher-shared";
 
 export interface CalendarProps {
-  availabilities: IAvailability[];
+  className?: string;
+  availabilities: IAvailabilityBase[];
+  month: number;
+  shouldChange?: (month: number) => void;
 }
 
-const Calendar = ({ availabilities }: CalendarProps) => {
-  const [month, setMonth] = useState(DateTime.now().month);
+const Calendar = ({ availabilities, month, shouldChange, className }: CalendarProps) => {
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
     start: interval.start,
     length: interval.length('days')
   };
-  const clickedPrevious = () => setMonth(DateTime.fromObject({ month }).minus({ months: 1 }).month);
-  const clickedNext = () => setMonth(DateTime.fromObject({ month }).plus({ months: 1 }).month);
+  const clickedPrevious = () => shouldChange && shouldChange(DateTime.fromObject({ month }).minus({ months: 1 }).month);
+  const clickedNext = () => shouldChange && shouldChange(DateTime.fromObject({ month }).plus({ months: 1 }).month);
   const chevronClasses = 'fa-solid cursor-pointer';
 
   let daysLeft = metadata.length;
@@ -56,7 +57,7 @@ const Calendar = ({ availabilities }: CalendarProps) => {
   )
 
   return (
-    <main>
+    <main className={className}>
       <header className={$c("text-center flex flex-row justify-between items-center")}>
         <i className={$c('fa-chevron-left ml-5', chevronClasses)} onClick={clickedPrevious}></i>
         <span>{ metadata.start.monthLong }</span>

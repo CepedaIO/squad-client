@@ -1,6 +1,6 @@
 import Button from "../../components/inline/Button";
 import Calendar from "../../components/calendar";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import AvailabilitySelector from "../../components/availability/AvailabilitySelector";
 import FormContext, {createFormContext} from "../../providers/FormContext";
 import line from "../../services/input-types/line";
@@ -8,7 +8,7 @@ import multiline from "../../services/input-types/multiline";
 import useForm from "../../hooks/useForm";
 import {useFormControls} from "../../hooks/useFormControls";
 import {DurationLike} from "../../services/input-types/duration/durationLike";
-import {DurationLikeObject} from "luxon";
+import {DateTime, DurationLikeObject} from "luxon";
 import $c from "classnames";
 import {AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
 import {apiCreateEvent, GET_SUMMARIES, IAvailability} from "../../services/api/event";
@@ -23,6 +23,7 @@ const EventNewContent = () => {
     notif: { addNotice },
     nav: { navigate }
   } = useApp();
+  const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
   const { validate, setValue, getError, values:{ availabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
   const { FormInput } = useFormControls<ICreateEventInput>();
   const availabilityError = getError('availabilities');
@@ -141,6 +142,8 @@ const EventNewContent = () => {
 
         <Calendar
           availabilities={availabilities}
+          month={currentMonth}
+          shouldChange={(month: number) => setCurrentMonth(month) }
         />
 
         <Button

@@ -1,5 +1,5 @@
 import {click, dataCY, manuallyLogin, stopOnFirstFail, visit, wait} from "../utils";
-import {User, Event, Member, Invite, Invite2} from "../fixtures/data";
+import {User, Event, Invite, Invite2} from "../fixtures/data";
 import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
@@ -9,7 +9,10 @@ describe('Create Event', () => {
   before(() => deleteTestData());
   
   it('should create a event', () => {
-    loginTestUser(User.email);
+    const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
+    const end = DateTime.now().startOf('month').plus({ days: 10 }).endOf('day');
+    
+    loginTestUser(User.member.email);
     visit('home');
     click('create:event');
     dataCY('name').type(Event.name);
@@ -17,10 +20,15 @@ describe('Create Event', () => {
     dataCY('description').type(Event.description);
     dataCY('duration:select').select(Object.keys(Event.duration)[0]);
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
-    dataCY('displayName').type(Member.displayName);
+    dataCY('displayName').type(User.member.displayName);
     dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Member.availability.start)))
-    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
+    dataCY('start').type(DateAndTime.out(start))
+    dataCY('end').type(DateAndTime.out(end))
+    dataCY('submit:availability').click();
+  
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('submit:availability').click();
     
     const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
@@ -37,7 +45,7 @@ describe('Create Event', () => {
 
 describe('Invite User1', () => {
   it('should invite user', () => {
-    loginTestUser(User.email);
+    loginTestUser(User.member.email);
     visit('home');
     dataCY('event:card:0').click();
     dataCY('invite:create').click();
@@ -53,6 +61,9 @@ describe('Invite User1', () => {
   });
   
   it('should accept invitation to event', () => {
+    const start = DateTime.now().startOf('month').plus({ days: 3 }).startOf('day');
+    const end = DateTime.now().startOf('month').plus({ days: 12 }).endOf('day');
+
     loginTestUser(Invite.member.email);
     cy.task('getLastEmail', Invite.member.email).its('html').then((email) => {
       cy.document().invoke('write', email);
@@ -62,8 +73,13 @@ describe('Invite User1', () => {
   
     dataCY('displayName').type(Invite.member.displayName);
     dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.start)))
-    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.end)))
+    dataCY('start').type(DateAndTime.out(start))
+    dataCY('end').type(DateAndTime.out(end))
+    dataCY('submit:availability').click();
+  
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('submit:availability').click();
     dataCY('submit').click();
   });
@@ -71,7 +87,7 @@ describe('Invite User1', () => {
 
 describe('Invite User2', () => {
   it('should invite user', () => {
-    loginTestUser(User.email);
+    loginTestUser(User.member.email);
     visit('home');
     dataCY('event:card:0').click();
     dataCY('invite:create').click();
@@ -87,6 +103,9 @@ describe('Invite User2', () => {
   });
   
   it('should accept invitation to event', () => {
+    const start = DateTime.now().startOf('month').plus({ days: 5 }).startOf('day');
+    const end = DateTime.now().startOf('month').plus({ days: 14 }).endOf('day');
+
     cy.task('getLastEmail', Invite2.member.email).its('html').then((email) => {
       cy.document().invoke('write', email);
       cy.contains('Accept').click();
@@ -98,8 +117,13 @@ describe('Invite User2', () => {
     
     dataCY('displayName').type(Invite2.member.displayName);
     dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.start)))
-    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Invite.member.availability.end)))
+    dataCY('start').type(DateAndTime.out(start))
+    dataCY('end').type(DateAndTime.out(end))
+    dataCY('submit:availability').click();
+  
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('submit:availability').click();
     dataCY('submit').click();
   });
@@ -108,7 +132,7 @@ describe('Invite User2', () => {
 describe('Join by link', () => {
   let joinLink: string = '';
   it('should copy event join link', () => {
-    loginTestUser(User.email);
+    loginTestUser(User.member.email);
     visit('home');
     dataCY('event:card:0').click();
     cy.get('[data-cy="join-link"]').realClick()
@@ -118,12 +142,20 @@ describe('Join by link', () => {
   });
   
   it('should create join request', () => {
+    const start = DateTime.now().startOf('month').plus({ days: 7 }).startOf('day');
+    const end = DateTime.now().startOf('month').plus({ days: 16 }).endOf('day');
+    
     loginTestUser('join-user@cepeda.io');
     visit(joinLink);
     dataCY('displayName').type('UserFromJoin');
     dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(DateTime.fromISO(Member.availability.start)))
-    dataCY('end').type(DateAndTime.out(DateTime.fromISO(Member.availability.end)))
+    dataCY('start').type(DateAndTime.out(start))
+    dataCY('end').type(DateAndTime.out(end))
+    dataCY('submit:availability').click();
+  
+    dataCY('availability').click();
+    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('submit:availability').click();
     dataCY('submit').click();
   })
@@ -131,9 +163,10 @@ describe('Join by link', () => {
 
 describe('Accept Pending Memberships', () => {
   it('should accept pending membership', () => {
-    loginTestUser(User.email);
+    loginTestUser(User.member.email);
     visit('home');
     dataCY('event:card:0').click();
     dataCY('accept:pending:0').click();
   });
 })
+

@@ -8,6 +8,8 @@ import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMemb
 import {gql, useMutation, useQuery} from "@apollo/client";
 import {promote} from "event-matcher-shared";
 import {useApp} from "../../hooks/useApp";
+import {AVAILABILITIES_FOR_EVENT, AvailabilitiesForEvent} from "../../services/api/availability";
+import {DateTime} from "luxon";
 
 const EventView = () => {
   const {
@@ -15,6 +17,7 @@ const EventView = () => {
   } = useApp();
   const [showInvite, setShowInvite] = useState(false);
   const [showPending, setShowPending] = useState(true);
+  const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
   const [invites, setInvites] = useState<IInviteMemberForm[]>([]);
   const navigate = useNavigate();
   const { id: _id } = useParams();
@@ -35,7 +38,16 @@ const EventView = () => {
   const { data: GetEvent, loading: fetchingEvent } = useQuery<GetEvent>(GET_EVENT, {
     variables: { id }
   });
-  const event = useMemo(() => GetEvent ? promote(GetEvent.event) : null, [GetEvent]);
+  
+  const { data: GetEventAvailabilities, loading: fetchingEventAvailabilities } = useQuery<AvailabilitiesForEvent>(AVAILABILITIES_FOR_EVENT, {
+    variables: {
+      eventId: id,
+      start: DateTime.fromObject({ month: currentMonth }).startOf('month'),
+      end: DateTime.fromObject({ month: currentMonth }).endOf('month')
+    }
+  });
+  const event = useMemo(() => promote(GetEvent?.event!), [GetEvent])
+  const eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
 
   if(fetchingEvent) {
     return (
@@ -58,7 +70,7 @@ const EventView = () => {
       addNotice({
         id: 'event-copy-link',
         dismissable: true,
-        message: 'Even join link copied to clipboard!',
+        message: 'Join link copied to clipboard!',
         level: 'success',
         timeout: 10000
       });
@@ -70,7 +82,15 @@ const EventView = () => {
         eventId: event.id
       },
       refetchQueries: [
-        { query: GET_EVENT, variables: { id } }
+        { query: GET_EVENT, variables: { id } },
+        {
+          query: AVAILABILITIES_FOR_EVENT,
+          variables: {
+            eventId: id,
+            start: DateTime.fromObject({ month: currentMonth }).startOf('month'),
+            end: DateTime.fromObject({ month: currentMonth }).endOf('month')
+          }
+        }
       ]
     });
     
@@ -94,7 +114,7 @@ const EventView = () => {
             className={'cursor-pointer'}
             data-cy={'join-link'}
           >
-            Share Links
+            Join Link
             <i className="fa-solid fa-link ml-2" />
           </a>
         </div>
@@ -109,6 +129,15 @@ const EventView = () => {
           { event.description }
         </div>
   
+        <section className={'center justify-center'}>
+          <Calendar
+            className={'max-w-xs'}
+            availabilities={eventAvailabilities}
+            month={currentMonth}
+            shouldChange={setCurrentMonth}
+          />
+        </section>
+
         { event.pendingMemberships.length > 0 && (
           <section className={'mb-3 max-w-xs'}>
             <div className={'mb-2 cursor-pointer'} onClick={() => setShowPending(!showPending)}>
@@ -177,7 +206,10 @@ const EventView = () => {
             <main key={member.email} className={'max-w-xs'}>
               <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>
       
-              <Calendar availabilities={member.availabilities} />
+              <Calendar
+                availabilities={member.availabilities}
+                month={currentMonth}
+              />
             </main>
           ))}
         </section>
