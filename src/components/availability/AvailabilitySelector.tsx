@@ -3,30 +3,30 @@ import React, {Fragment, useState} from "react";
 import {AvailabilityEdit, AvailabilityView} from "./Availability";
 import {DurationLikeObject} from "luxon";
 import {remove, upsert} from "../../services/utils";
-import { IAvailability } from "event-matcher-shared";
+import { IAvailabilityBase } from "event-matcher-shared";
 
 export interface AvailabilitySelectorProps {
   offset: DurationLikeObject;
-  availabilities: IAvailability[];
-  onChange: (form: IAvailability[]) => void;
+  availabilities: IAvailabilityBase[];
+  onChange: (form: IAvailabilityBase[]) => void;
   erroredIndexes?: number[];
+  'data-cy': string;
 }
 
-const NULL_FORM: Partial<IAvailability> = {};
+const NULL_FORM: Partial<IAvailabilityBase> = {};
 
-const AvailabilitySelector = ({
- offset, availabilities, onChange, erroredIndexes
-}: AvailabilitySelectorProps) => {
-  const [editing, setEditing] = useState<Partial<IAvailability> | null>(null);
+const AvailabilitySelector = (props: AvailabilitySelectorProps) => {
+  const { offset, availabilities, onChange, erroredIndexes } = props;
+  const [editing, setEditing] = useState<Partial<IAvailabilityBase> | null>(null);
   const clickedAvailability = () => setEditing(NULL_FORM);
-  const onSubmitForm = (form: IAvailability) => {
+  const onSubmitForm = (form: IAvailabilityBase) => {
     onChange(upsert(availabilities, editing, form));
     onCancel();
   };
   const onCancel = () => setEditing(null);
-  const onEdit = (availability: IAvailability) => setEditing(availability);
-  const onDeleteForm = (form: IAvailability) => onChange(remove(availabilities, form));
-
+  const onEdit = (availability: IAvailabilityBase) => setEditing(availability);
+  const onDeleteForm = (form: IAvailabilityBase) => onChange(remove(availabilities, form));
+  const dataCy = `${props["data-cy"]}:availability`;
   return (
     <main>
       { editing !== NULL_FORM &&
@@ -34,7 +34,7 @@ const AvailabilitySelector = ({
           variant={"optional"}
           onClick={clickedAvailability}
           className={'w-full mb-3'}
-          data-cy={'availability'}
+          data-cy={dataCy}
         >
           <i className="fa-solid fa-circle-plus mr-3" />
           Availability
@@ -47,6 +47,7 @@ const AvailabilitySelector = ({
           form={editing}
           onSubmit={onSubmitForm}
           onCancel={onCancel}
+          data-cy={dataCy}
         />
       }
 
@@ -58,6 +59,7 @@ const AvailabilitySelector = ({
               form={entry}
               onSubmit={onSubmitForm}
               onCancel={onCancel}
+              data-cy={`${dataCy}:${index}`}
             />
           }
 
@@ -67,6 +69,7 @@ const AvailabilitySelector = ({
               form={entry}
               onDelete={onDeleteForm}
               onEdit={onEdit}
+              data-cy={`${dataCy}:${index}`}
             />
           }
         </Fragment>

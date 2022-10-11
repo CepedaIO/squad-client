@@ -7,11 +7,12 @@ import {AvailabilityValidation, IAvailabilityBase} from "event-matcher-shared";
 export interface CalendarProps {
   className?: string;
   availabilities: IAvailabilityBase[];
+  highlight?: IAvailabilityBase[];
   month: number;
   shouldChange?: (month: number) => void;
 }
 
-const Calendar = ({ availabilities, month, shouldChange, className }: CalendarProps) => {
+const Calendar = ({ availabilities, month, shouldChange, className, highlight }: CalendarProps) => {
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
     start: interval.start,
@@ -27,14 +28,17 @@ const Calendar = ({ availabilities, month, shouldChange, className }: CalendarPr
   let nextDay = metadata.start;
   while(daysLeft > 0  || (i % 7) !== 0) {
     const weekday = (i % 7) + 1;
-
+    const isAvailable = AvailabilityValidation.availableOnDate(availabilities, nextDay);
+    const shouldHighlight = AvailabilityValidation.availableOnDate(highlight || [], nextDay);
+    
     if(daysLeft > 0 && weekday === nextDay.weekday) {
       dates.push(
         <CalendarDay
           key={i}
           date={nextDay}
           className={$c({
-            'bg-violet-100': AvailabilityValidation.availableOnDate(availabilities, nextDay)
+            'bg-violet-100': isAvailable && !shouldHighlight,
+            'bg-yellow-100': isAvailable && shouldHighlight
           })}
         />
       );

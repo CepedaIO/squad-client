@@ -5,22 +5,23 @@ import Button from "../inline/Button";
 import {DurationLikeObject} from "luxon";
 import useForm from "../../hooks/useForm";
 import FormContext, {createFormContext} from "../../providers/FormContext";
-import {IAvailability} from "event-matcher-shared";
+import {IAvailabilityBase} from "event-matcher-shared";
 
 export const modes = [Range];
 
 export interface IAvailabilityMode {
-  applies: (form: IAvailability) => boolean;
+  applies: (form: IAvailabilityBase) => boolean;
   label: string;
   View: (props: AvailabilityViewProps) => JSX.Element;
   Edit: (props: AvailabilityEditProps) => JSX.Element;
 }
 
 export interface AvailabilityViewProps {
+  'data-cy': string;
   errored: boolean;
-  form: IAvailability;
-  onDelete: (form: IAvailability) => void;
-  onEdit: (form:IAvailability) => void;
+  form: IAvailabilityBase;
+  onDelete: (form: IAvailabilityBase) => void;
+  onEdit: (form:IAvailabilityBase) => void;
 }
 
 export const AvailabilityView = (props: AvailabilityViewProps) => {
@@ -67,14 +68,15 @@ export const AvailabilityView = (props: AvailabilityViewProps) => {
 
 export interface AvailabilityEditProps {
   offset: DurationLikeObject;
-  form?: Partial<IAvailability>;
-  onSubmit: (form: IAvailability) => void;
-  onCancel: (form?: Partial<IAvailability>) => void;
+  form?: Partial<IAvailabilityBase>;
+  onSubmit: (form: IAvailabilityBase) => void;
+  onCancel: (form?: Partial<IAvailabilityBase>) => void;
+  'data-cy': string;
 }
 
 const AvailabilityEditContent = (props: AvailabilityEditProps) => {
   const {onSubmit, onCancel} = props;
-  const {validate, values} = useForm<IAvailability>();
+  const {validate, values} = useForm<IAvailabilityBase>();
   const [activeMode, setActiveTab] = useState(modes[0]);
 
   const onClickAdd = () => {
@@ -92,7 +94,7 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
             active={mode === activeMode}
             key={mode.label}
             onClick={() => setActiveTab(mode)}
-            data-cy={mode.label}
+            data-cy={`${props["data-cy"]}:${mode.label.toLowerCase()}`}
           >
             { mode.label }
           </Button>
@@ -117,7 +119,7 @@ const AvailabilityEditContent = (props: AvailabilityEditProps) => {
         <Button
           variant={"link"}
           onClick={onClickAdd}
-          data-cy={"submit:availability"}
+          data-cy={`${props['data-cy']}:submit`}
         >
           Save
         </Button>

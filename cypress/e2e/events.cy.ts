@@ -8,7 +8,9 @@ describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
-  it('should create a event', () => {
+  it.only('should create a event', () => {
+    const eventStart = DateTime.now().startOf('month').startOf('day');
+    const eventEnd = DateTime.now().endOf('month').endOf('day');
     const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
     const end = DateTime.now().startOf('month').plus({ days: 10 }).endOf('day');
     
@@ -21,15 +23,21 @@ describe('Create Event', () => {
     dataCY('duration:select').select(Object.keys(Event.duration)[0]);
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
     dataCY('displayName').type(User.member.displayName);
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start))
-    dataCY('end').type(DateAndTime.out(end))
-    dataCY('submit:availability').click();
   
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
-    dataCY('submit:availability').click();
+    dataCY('event:availability').click();
+    dataCY('event:availability:start').type(DateAndTime.out(eventStart))
+    dataCY('event:availability:end').type(DateAndTime.out(eventEnd))
+    dataCY('event:availability:submit').click();
+    
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start))
+    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:submit').click();
+  
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:submit').click();
     
     const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
     CreateEvent.then(({response}) => {
@@ -39,7 +47,7 @@ describe('Create Event', () => {
     });
     
     cy.location('pathname').should('contain', 'home');
-    cy.get('.event-card').its('length').should('eq', 1)
+    cy.get('.event-card').its('length').should('eq', 1);
   });
 });
 
@@ -72,15 +80,16 @@ describe('Invite User1', () => {
     });
   
     dataCY('displayName').type(Invite.member.displayName);
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start))
-    dataCY('end').type(DateAndTime.out(end))
-    dataCY('submit:availability').click();
+    
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start))
+    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:submit').click();
   
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
-    dataCY('submit:availability').click();
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:submit').click();
     dataCY('submit').click();
   });
 });
@@ -116,15 +125,15 @@ describe('Invite User2', () => {
     dataCY('invite:summary:0').click();
     
     dataCY('displayName').type(Invite2.member.displayName);
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start))
-    dataCY('end').type(DateAndTime.out(end))
-    dataCY('submit:availability').click();
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start))
+    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:submit').click();
   
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
-    dataCY('submit:availability').click();
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:submit').click();
     dataCY('submit').click();
   });
 });
@@ -148,15 +157,15 @@ describe('Join by link', () => {
     loginTestUser('join-user@cepeda.io');
     visit(joinLink);
     dataCY('displayName').type('UserFromJoin');
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start))
-    dataCY('end').type(DateAndTime.out(end))
-    dataCY('submit:availability').click();
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start))
+    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:submit').click();
   
-    dataCY('availability').click();
-    dataCY('start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('end').type(DateAndTime.out(end.plus({ weeks: 2 })))
-    dataCY('submit:availability').click();
+    dataCY('member:availability').click();
+    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:submit').click();
     dataCY('submit').click();
   })
 })

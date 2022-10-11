@@ -10,10 +10,11 @@ import {useFormControls} from "../../hooks/useFormControls";
 import {DurationLike} from "../../services/input-types/duration/durationLike";
 import {DateTime, DurationLikeObject} from "luxon";
 import $c from "classnames";
-import {AvailabilityValidation, ICreateEventInput} from "event-matcher-shared";
-import {apiCreateEvent, GET_SUMMARIES, IAvailability} from "../../services/api/event";
+import {AvailabilityValidation, ICreateEventInput, IAvailabilityBase} from "event-matcher-shared";
+import {apiCreateEvent, GET_SUMMARIES} from "../../services/api/event";
 import {useApp} from "../../hooks/useApp";
 import useDebounce from "../../hooks/useDebounce";
+import Split from "../../components/Split";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
@@ -24,12 +25,16 @@ const EventNewContent = () => {
     nav: { navigate }
   } = useApp();
   const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
-  const { validate, setValue, getError, values:{ availabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
+  const [availableAnytime, setAvailableAnytime] = useState(false);
+  const { validate, setValue, getError, values:{ availabilities, eventAvailabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
   const { FormInput } = useFormControls<ICreateEventInput>();
-  const availabilityError = getError('availabilities');
-  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
   const [mutCreateEvent, { data, error, loading } ] = apiCreateEvent();
   const debounceRead = useDebounce((val) => val, 500);
+  
+  const availabilityError = getError('availabilities');
+  const eventAvailabilityError = getError('eventAvailabilities');
+  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
+  const invalidEventAvailability = AvailabilityValidation.durationInvalidIndexes(eventAvailabilities, duration);
 
   useEffect(() => {
     if(error) {
@@ -45,6 +50,7 @@ const EventNewContent = () => {
         message: 'You have created an event!',
         level: 'success',
         dismissable: true,
+        timeout: 10000
       });
 
       navigate('/home');
@@ -60,6 +66,16 @@ const EventNewContent = () => {
       ])
     ],
   }, [JSON.stringify(invalidAvailability), duration]);
+  
+  setValidation('eventAvailabilities', {
+    ist: AvailabilityValidation.ist,
+    validator: (_, {required}) => [
+      [(value) => value.length > 0, 'Must select availability'],
+      required('duration', [
+        [() => invalidEventAvailability.length === 0, `Invalid availabilities: ${labelFrom(duration)}`]
+      ])
+    ],
+  }, [JSON.stringify(invalidEventAvailability), duration]);
 
   const onClickSubmit = () => {
     const [isValid, payload] = validate();
@@ -73,8 +89,10 @@ const EventNewContent = () => {
     }
   };
 
-  const onChangeAvailability = (availability: IAvailability[]) =>
-    setValue('availabilities', () => availability)
+  const onChangeAvailability = (availability: IAvailabilityBase[]) =>
+    setValue('availabilities', () => availability);
+  const onChangeEventAvailability = (availability: IAvailabilityBase[]) =>
+    setValue('eventAvailabilities', () => availability)
   
   const onClickBack = () => navigate('/home');
 
@@ -119,6 +137,39 @@ const EventNewContent = () => {
           field={"duration"}
           type={DurationLike}
         />
+        
+        <Split
+          nowrap={true}
+          className={'mb-5'}
+          left={<label>Anytime?</label>}
+          right={<Button
+            variant={"toggle"}
+            active={availableAnytime}
+            onChange={setAvailableAnytime}
+          />}
+        />
+  
+        { !availableAnytime && <>
+          <AvailabilitySelector
+            erroredIndexes={invalidEventAvailability}
+            offset={duration}
+            availabilities={eventAvailabilities}
+            onChange={onChangeEventAvailability}
+            data-cy={'event'}
+          />
+  
+          { eventAvailabilityError  && (
+            <section className={$c('text-error text-center mb-4')}>
+              { eventAvailabilityError.message }
+            </section>
+          )}
+  
+          <Calendar
+            availabilities={eventAvailabilities}
+            month={currentMonth}
+            shouldChange={(month: number) => setCurrentMonth(month) }
+          />
+        </>}
 
         <h2 className={"mb-3"}>Member Info:</h2>
         <FormInput
@@ -132,6 +183,7 @@ const EventNewContent = () => {
           offset={duration}
           availabilities={availabilities}
           onChange={onChangeAvailability}
+          data-cy={'member'}
         />
 
         { availabilityError  && (
@@ -144,6 +196,7 @@ const EventNewContent = () => {
           availabilities={availabilities}
           month={currentMonth}
           shouldChange={(month: number) => setCurrentMonth(month) }
+          highlight={eventAvailabilities}
         />
 
         <Button
@@ -161,13 +214,14 @@ const EventNewContent = () => {
 }
 
 const EventNew = () => {
-  const context = createFormContext({
+  const context = createFormContext<ICreateEventInput>({
     name: '',
     img: '',
     description: '',
     duration: { hours: 1 },
     displayName: '',
-    availabilities: []
+    availabilities: [],
+    eventAvailabilities: []
   });
 
   return (

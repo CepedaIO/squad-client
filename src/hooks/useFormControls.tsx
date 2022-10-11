@@ -10,18 +10,21 @@ interface FormToggleProps<Values extends Keyed, Field extends StringKey<Values, 
   field: Field;
   validator?: ValidatorAsProp<Values, Field>;
   omit?: (values: Partial<Values>) => boolean;
+  'data-cy': string;
 }
 
 export interface AdapterFormControlProps<Values extends Keyed, Field extends StringKey<Values>> extends AdapterInputProps<Values[Field]> {
   field: Field;
   validator?: ValidatorAsProp<Values, Field>
   omit?: (values: Partial<Values>) => boolean;
+  'data-cy': string;
 }
 
 export interface InjectedFormControlProps<Values extends Keyed, Field extends StringKey<Values>> extends InjectedInputProps<Values[Field]> {
   field: Field;
   validator?: ValidatorAsProp<Values, Field>
   omit?: (values: Partial<Values>) => boolean;
+  'data-cy'?: string;
 }
 
 export type FormControlProps<Values extends Keyed, Field extends StringKey<Values>> = Values[Field] extends SimpleInputTypes ? AdapterFormControlProps<Values, Field> : InjectedFormControlProps<Values, Field>;
@@ -50,7 +53,7 @@ export const useFormControls = <Values extends Keyed>() => {
       };
 
       // @ts-ignore
-      return <ControlInput {..._props} data-cy={props.field} />
+      return <ControlInput {..._props} data-cy={props["data-cy"] || props.field} />
     }, [values[field], error, props])
   }, []);
 

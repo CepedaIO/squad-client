@@ -15,22 +15,23 @@ export const Range: IAvailabilityMode = {
 
 export interface RangeViewProps {
   form: IRangeForm;
+  'data-cy': string;
 }
 
-export const RangeView = ({form}: RangeViewProps) => (
+export const RangeView = (props: RangeViewProps) => (
   <main
     className={$c('py-3 md:px-3 flex flex-row justify-between items-center cursor-pointer') }
   >
-    <div className={'flex flex-col items-center'}>
-      <span>{ form.start.toFormat('LLLL dd') }</span>
-      <span>{ form.start.toFormat('T') }</span>
+    <div className={'flex flex-col items-center'} data-cy={`${props["data-cy"]}:start`}>
+      <span>{ props.form.start.toFormat('LLLL dd') }</span>
+      <span>{ props.form.start.toFormat('T') }</span>
     </div>
 
     <span>{'->'}</span>
 
-    <div className={'flex flex-col items-center'}>
-      <span>{ form.end.toFormat('LLLL dd') }</span>
-      <span>{ form.end.toFormat('T') }</span>
+    <div className={'flex flex-col items-center'} data-cy={`${props["data-cy"]}:end`}>
+      <span>{ props.form.end.toFormat('LLLL dd') }</span>
+      <span>{ props.form.end.toFormat('T') }</span>
     </div>
   </main>
 );
@@ -38,11 +39,12 @@ export const RangeView = ({form}: RangeViewProps) => (
 interface RangeEditProps {
   offset: DurationLikeObject;
   form?: Partial<IRangeForm>;
+  'data-cy': string;
 }
 
-export const RangeEdit = ({offset}: RangeEditProps) => {
+export const RangeEdit = (props: RangeEditProps) => {
   const {FormInput} = useFormControls<IRangeForm>();
-  const duration = Duration.fromDurationLike(offset);
+  const duration = Duration.fromDurationLike(props.offset);
   const rangeForm = RangeFormFactory({ duration })
 
   return (
@@ -52,7 +54,8 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"start"}
         type={DateAndTime}
         nowrap={true}
-        validator={[rangeForm.validation.start!, [offset]]}
+        validator={[rangeForm.validation.start!, [props.offset]]}
+        data-cy={`${props["data-cy"]}:start`}
       />
 
       <FormInput
@@ -60,7 +63,8 @@ export const RangeEdit = ({offset}: RangeEditProps) => {
         field={"end"}
         type={DateAndTime}
         nowrap={true}
-        validator={[rangeForm.validation.end!, [offset]]}
+        validator={[rangeForm.validation.end!, [props.offset]]}
+        data-cy={`${props["data-cy"]}:end`}
       />
     </main>
   );

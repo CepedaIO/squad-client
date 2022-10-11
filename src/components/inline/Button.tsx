@@ -13,7 +13,6 @@ type BaseProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTML
 
 export type ToggleButtonProps = Omit<BaseProps, 'onChange'> & {
   variant: 'toggle';
-  initialValue?: boolean;
   onChange?: (val: boolean) => void;
 }
 
@@ -55,11 +54,11 @@ const ToggleDecorator = ({ variant, active }: ButtonProps) => {
   }
 
   if(active) {
-    return <i className="fa-solid fa-thumbs-up text-success ml-6"></i>;
+    return <i className="fa-solid fa-thumbs-up text-success ml-6" />;
   }
 
   if(!active) {
-    return <i className="fa-solid fa-thumbs-down text-reject ml-6"></i>;
+    return <i className="fa-solid fa-thumbs-down text-reject ml-6" />;
   }
 }
 
