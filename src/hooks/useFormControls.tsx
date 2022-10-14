@@ -47,9 +47,7 @@ export const useFormControls = <Values extends Keyed>() => {
         ...omit(props, ['field', 'validator', 'omit']),
         error,
         value: values[props.field] ?? props.value,
-        onChange: (value: Values[Field]) => {
-          setValue(field, () => value)
-        }
+        onChange: (value: Values[Field]) => setValue(field, () => value)
       };
 
       // @ts-ignore

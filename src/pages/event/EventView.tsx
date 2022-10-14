@@ -109,35 +109,40 @@ const EventView = () => {
           <span>Back</span>
         </header>
 
-        <h1 className={$c({
-          'mb-3': resolved
-        })}>
-          { event.name }
-        </h1>
+        <section className={'center flex-wrap justify-around mb-5'}>
+          <div>
+            <h1 className={$c({
+              'mb-3': resolved
+            })}>
+              { event.name }
+            </h1>
   
-        { !resolved &&
-          <div className={'mb-4 center'}>
-            <a
-              onClick={onClickShareLink}
-              className={'cursor-pointer'}
-              data-cy={'join-link'}
-            >
-              Join Link
-              <i className="fa-solid fa-link ml-2" />
-            </a>
+            { !resolved &&
+              <div className={'mb-4 mt-1.5 center'}>
+                <a
+                  onClick={onClickShareLink}
+                  className={'cursor-pointer'}
+                  data-cy={'join-link'}
+                >
+                  Join Link
+                  <i className="fa-solid fa-link ml-2" />
+                </a>
+              </div>
+            }
+  
+            <img
+              alt={'Event Image'}
+              className={'w-[250px] h-[200px] mb-5'}
+              src={event.img}
+            />
           </div>
-        }
-
-        <img
-          alt={'Event Image'}
-          className={'w-[250px] h-[200px] mb-5'}
-          src={event.img}
-        />
-
-        <div className={'mb-5'}>
-          { event.description }
-        </div>
+          
   
+          <div className={'mb-5 max-w-md'}>
+            { event.description }{ event.description }{ event.description }{ event.description }
+          </div>
+        </section>
+        
         <section className={'center justify-around'}>
           <Calendar
             className={'max-w-xs'}
@@ -212,15 +217,17 @@ const EventView = () => {
         )}
   
         { !resolved && <>
-          <section className={"mb-5"}>
+          <section className={"mb-5 mt-8 ml-10"}>
             <div
               className={'cursor-pointer'}
               onClick={() => setShowInvite(!showInvite)}
             >
-              Users
+              <span className={'text-2xl'}>
+                Users
+              </span>
   
               <i
-                className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
+                className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer text-xl"
                 data-cy={'invite:create'}
               />
             </div>

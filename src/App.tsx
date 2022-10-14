@@ -61,7 +61,7 @@ function App() {
 			{ notif }
 			{ modal }
 
-			<main className="h-screen w-screen flex flex-col items-center p-8">
+			<main className="h-screen w-screen flex flex-col items-center m-8 overflow-y-auto">
 				{ routes }
 			</main>
 		</AppContext.Provider>

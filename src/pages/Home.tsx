@@ -4,6 +4,7 @@ import React from "react";
 import EventCard from "../components/event/EventCard";
 import {useQuery} from "@apollo/client";
 import InviteSummary from "../components/event/InviteSummary";
+import {promote} from "event-matcher-shared";
 
 interface PendingMembershipProps {
   pending: Pick<IPendingMembership, 'displayName'>;
@@ -38,8 +39,7 @@ const Home = () => {
   const events = !data ? [] : data.user.events.map((event, index) =>
     <EventCard
       key={event.id}
-      event={event}
-      admin={event.admins[0]}
+      event={promote(event)}
       data-cy={`event:card:${index}`}
     />
   );

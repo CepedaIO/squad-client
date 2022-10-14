@@ -163,9 +163,7 @@ export interface GetSummaries {
     invites: Array<Demote<Pick<IInviteToken, 'id' | 'uuid' | 'key' | 'expiresOn'>> & {
       event: Pick<IEvent, 'id' | 'name'>
     }>,
-    events: Array<Pick<IEvent, 'id' | 'name' | 'img' | 'duration'> & {
-      admins: Pick<IMembership, 'displayName'>[]
-    }>,
+    events: Array<Pick<IEvent, 'id' | 'name' | 'img' | 'duration' | 'resolution' | 'description'>>,
     pendingMemberships: Array<Pick<IPendingMembership, 'displayName'> & {
       event: Pick<IEvent, 'id' | 'name'>
     }>
@@ -189,13 +187,15 @@ export const GET_SUMMARIES = gql`
         id
         name
         img
+        description
         duration {
           days
           minutes
           hours
         }
-        admins {
-          displayName
+        resolution {
+          start
+          end
         }
       }
       

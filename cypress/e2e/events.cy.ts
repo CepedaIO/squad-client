@@ -4,7 +4,7 @@ import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
 
-describe('Create Event', () => {
+describe.only('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
@@ -179,7 +179,7 @@ describe('Accept Pending Memberships', () => {
   });
 });
 
-describe.only('Publish event times', () => {
+describe('Publish event times', () => {
   it('should choose and publish event time', () => {
     loginTestUser(User.member.email);
     visit('home')

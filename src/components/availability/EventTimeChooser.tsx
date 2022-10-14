@@ -5,6 +5,7 @@ import $c from "classnames";
 import {IAvailabilityBase} from "event-matcher-shared";
 import {gql, useMutation} from "@apollo/client";
 import {useApp} from "../../hooks/useApp";
+import {GET_SUMMARIES} from "../../services/api/event";
 
 interface EventAvailabilityChooserProps {
   eventId: number;
@@ -31,7 +32,10 @@ const EventAvailabilityChooser = ({
       eventId,
       start: chosenAvailability?.start.toISO(),
       end: chosenAvailability?.end.toISO()
-    }
+    },
+    refetchQueries: [
+      { query: GET_SUMMARIES }
+    ]
   });
 
   useEffect(() => {
