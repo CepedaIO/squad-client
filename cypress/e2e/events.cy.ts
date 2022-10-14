@@ -4,13 +4,13 @@ import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
 
-describe.only('Create Event', () => {
+describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
   it('should create a event', () => {
-    const eventStart = DateTime.now().startOf('month').startOf('day');
-    const eventEnd = DateTime.now().endOf('month').endOf('day');
+    //const eventStart = DateTime.now().startOf('month').startOf('day');
+    //const eventEnd = DateTime.now().endOf('month').endOf('day');
     const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
     const end = DateTime.now().startOf('month').plus({ days: 10 }).endOf('day');
     
@@ -24,10 +24,14 @@ describe.only('Create Event', () => {
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
     dataCY('displayName').type(User.member.displayName);
   
+    dataCY('anytime').click();
+    
+    /*
     dataCY('event:availability').click();
     dataCY('event:availability:start').type(DateAndTime.out(eventStart))
     dataCY('event:availability:end').type(DateAndTime.out(eventEnd))
     dataCY('event:availability:submit').click();
+    */
     
     dataCY('member:availability').click();
     dataCY('member:availability:start').type(DateAndTime.out(start))
@@ -38,7 +42,7 @@ describe.only('Create Event', () => {
     dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
     dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
-    return;
+
     const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
     CreateEvent.then(({response}) => {
       expect(response!.statusCode).to.equal(200);

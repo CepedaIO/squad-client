@@ -25,8 +25,7 @@ const EventCreateContent = () => {
     nav: { navigate }
   } = useApp();
   const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
-  const [availableAnytime, setAvailableAnytime] = useState(false);
-  const { validate, setValue, getError, values:{ availabilities, eventAvailabilities, duration, img }, setValidation } = useForm<ICreateEventInput>();
+  const { validate, setValue, getError, values:{ availabilities, eventAvailabilities, duration, img, anytime }, setValidation } = useForm<ICreateEventInput>();
   const { FormInput } = useFormControls<ICreateEventInput>();
   const [mutCreateEvent, { data, error, loading } ] = apiCreateEvent();
   const debounceRead = useDebounce((val) => val, 500);
@@ -69,8 +68,8 @@ const EventCreateContent = () => {
   
   setValidation('eventAvailabilities', {
     ist: AvailabilityValidation.ist,
-    validator: (_, {required}) => [
-      [(value) => value.length > 0, 'Must select availability'],
+    validator: ({anytime}, {required}) => [
+      [(value) => anytime === true || value.length > 0, 'Must select availability'],
       required('duration', [
         [() => invalidEventAvailability.length === 0, `Invalid availabilities: ${labelFrom(duration)}`]
       ])
@@ -79,6 +78,7 @@ const EventCreateContent = () => {
 
   const onClickSubmit = () => {
     const [isValid, payload] = validate();
+    
     if(isValid) {
       return mutCreateEvent({
         variables: { payload },
@@ -142,14 +142,17 @@ const EventCreateContent = () => {
           nowrap={true}
           className={'mb-5'}
           left={<label>Anytime?</label>}
-          right={<Button
-            variant={"toggle"}
-            active={availableAnytime}
-            onChange={setAvailableAnytime}
-          />}
+          right={
+            <Button
+              variant={"toggle"}
+              active={anytime}
+              onChange={(val: boolean) => setValue('anytime', () => val)}
+              data-cy={'anytime'}
+            />
+          }
         />
   
-        { !availableAnytime && <>
+        { !anytime && <>
           <AvailabilitySelector
             erroredIndexes={invalidEventAvailability}
             offset={duration}
@@ -221,7 +224,8 @@ const EventCreate = () => {
     duration: { hours: 1 },
     displayName: '',
     availabilities: [],
-    eventAvailabilities: []
+    eventAvailabilities: [],
+    anytime: false
   });
 
   return (
