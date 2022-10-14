@@ -2,12 +2,11 @@ import line from "../../services/input-types/line";
 import AvailabilitySelector from "../availability/AvailabilitySelector";
 import $c from "classnames";
 import Calendar from "../calendar";
-import React from "react";
+import React, {useState} from "react";
 import {useFormControls} from "../../hooks/useFormControls";
-import {Duration, DurationLikeObject} from "luxon";
-import {AvailabilityValidation, TextValidation} from "event-matcher-shared";
+import {DateTime, Duration, DurationLikeObject} from "luxon";
+import {AvailabilityValidation, TextValidation, IAvailabilityBase} from "event-matcher-shared";
 import useForm from "../../hooks/useForm";
-import {IAvailability} from "../../services/api/event";
 
 export interface IMembershipEditProps {
   duration: Duration,
@@ -16,12 +15,13 @@ export interface IMembershipEditProps {
 
 export interface IMembershipForm {
   displayName: string;
-  availabilities: IAvailability[]
+  availabilities: IAvailabilityBase[]
 }
 
 const MembershipEdit = ({
   duration,
 }: IMembershipEditProps) => {
+  const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
   const { setValue, getError, values:{ availabilities }, setValidation } = useForm<IMembershipForm>();
   const { FormInput } = useFormControls<IMembershipForm>();
   const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
@@ -37,7 +37,7 @@ const MembershipEdit = ({
     ],
   }, [JSON.stringify(invalidAvailability)]);
   
-  const onChangeAvailability = (availability: IAvailability[]) =>
+  const onChangeAvailability = (availability: IAvailabilityBase[]) =>
     setValue('availabilities', () => availability)
   
   return (
@@ -57,6 +57,7 @@ const MembershipEdit = ({
         offset={duration}
         availabilities={availabilities}
         onChange={onChangeAvailability}
+        data-cy={'member'}
       />
       
       { availabilityError  && (
@@ -67,6 +68,8 @@ const MembershipEdit = ({
       
       <Calendar
         availabilities={availabilities}
+        month={currentMonth}
+        shouldChange={setCurrentMonth}
       />
     </section>
   )

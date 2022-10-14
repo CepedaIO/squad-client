@@ -8,7 +8,7 @@ describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
-  it.only('should create a event', () => {
+  it('should create a event', () => {
     const eventStart = DateTime.now().startOf('month').startOf('day');
     const eventEnd = DateTime.now().endOf('month').endOf('day');
     const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
@@ -177,5 +177,14 @@ describe('Accept Pending Memberships', () => {
     dataCY('event:card:0').click();
     dataCY('accept:pending:0').click();
   });
-})
+});
 
+describe.only('Publish event times', () => {
+  it('should choose and publish event time', () => {
+    loginTestUser(User.member.email);
+    visit('home')
+    dataCY('event:card:0').click();
+    dataCY('event:time:0').click();
+    dataCY('submit:event:time').click();
+  });
+});

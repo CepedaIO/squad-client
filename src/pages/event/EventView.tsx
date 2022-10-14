@@ -10,6 +10,8 @@ import {promote} from "event-matcher-shared";
 import {useApp} from "../../hooks/useApp";
 import {AVAILABILITIES_FOR_EVENT, AvailabilitiesForEvent} from "../../services/api/availability";
 import {DateTime} from "luxon";
+import EventAvailabilityChooser from "../../components/availability/EventTimeChooser";
+import $c from "classnames";
 
 const EventView = () => {
   const {
@@ -34,9 +36,9 @@ const EventView = () => {
     navigate('/home');
   }
   
-  const id = parseInt(_id!)
-  const { data: GetEvent, loading: fetchingEvent } = useQuery<GetEvent>(GET_EVENT, {
-    variables: { id }
+  const id = parseInt(_id!);
+  const { data: GetEvent, loading: fetchingEvent, refetch } = useQuery<GetEvent>(GET_EVENT, {
+    variables: { id },
   });
   
   const { data: GetEventAvailabilities, loading: fetchingEventAvailabilities } = useQuery<AvailabilitiesForEvent>(AVAILABILITIES_FOR_EVENT, {
@@ -47,7 +49,7 @@ const EventView = () => {
     }
   });
   const event = useMemo(() => promote(GetEvent?.event!), [GetEvent])
-  const eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
+  let eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
 
   if(fetchingEvent) {
     return (
@@ -94,6 +96,9 @@ const EventView = () => {
       ]
     });
     
+    const resolved = !!event.resolution;
+    const eventTimes = resolved ? [event.resolution!] : eventAvailabilities;
+    
     return (
       <main className={'w-full'}>
         <header
@@ -104,20 +109,24 @@ const EventView = () => {
           <span>Back</span>
         </header>
 
-        <h1>
+        <h1 className={$c({
+          'mb-3': resolved
+        })}>
           { event.name }
         </h1>
   
-        <div className={'mb-4 center'}>
-          <a
-            onClick={onClickShareLink}
-            className={'cursor-pointer'}
-            data-cy={'join-link'}
-          >
-            Join Link
-            <i className="fa-solid fa-link ml-2" />
-          </a>
-        </div>
+        { !resolved &&
+          <div className={'mb-4 center'}>
+            <a
+              onClick={onClickShareLink}
+              className={'cursor-pointer'}
+              data-cy={'join-link'}
+            >
+              Join Link
+              <i className="fa-solid fa-link ml-2" />
+            </a>
+          </div>
+        }
 
         <img
           alt={'Event Image'}
@@ -129,13 +138,46 @@ const EventView = () => {
           { event.description }
         </div>
   
-        <section className={'center justify-center'}>
+        <section className={'center justify-around'}>
           <Calendar
             className={'max-w-xs'}
-            availabilities={eventAvailabilities}
+            availabilities={eventTimes}
             month={currentMonth}
             shouldChange={setCurrentMonth}
+            variant={event.resolution ? 'resolved' : undefined}
           />
+  
+          { !resolved &&
+            <EventAvailabilityChooser
+              eventId={event.id}
+              availabilities={eventAvailabilities}
+              onSubmit={refetch}
+            />
+          }
+  
+          { resolved &&
+            <section className={'p-3 min-w-[320px] min-h-[300px] flex flex-col'}>
+              <h2 className={'mb-5 text-error'}>Event Time!</h2>
+              
+              <div>
+                <div className={'mb-5'}>
+                  <span className={'font-bold'}>Start</span>
+                  <br/>
+                  <span className={'text-submit'}>{ event.resolution!.start.toLocaleString(DateTime.DATETIME_FULL) }</span>
+                </div>
+                <div>
+                  <span className={'font-bold'}>End</span>
+                  <br/>
+                  <span className={'text-submit'}>{ event.resolution!.end.toLocaleString(DateTime.DATETIME_FULL) }</span>
+                </div>
+              </div>
+              
+              <footer className={'mt-14 font-bold'}>
+                Thank you for using squad!
+              </footer>
+            </section>
+          }
+          
         </section>
 
         { event.pendingMemberships.length > 0 && (
@@ -150,7 +192,7 @@ const EventView = () => {
             </div>
   
             { showPending && event.pendingMemberships.map((membership, index) =>
-                <div className={'center mb-1.5'}>
+                <div className={'center mb-1.5'} key={membership.id}>
                   <i
                     onClick={() => consumeMembership(membership, true)}
                     className="fa-regular fa-circle-check cursor-pointer text-submit mr-2 text-xl"
@@ -168,51 +210,53 @@ const EventView = () => {
             }
           </section>
         )}
-        
-        <section className={"mb-5"}>
-          <div
-            className={'cursor-pointer'}
-            onClick={() => setShowInvite(!showInvite)}
-          >
-            Users
-    
-            <i
-              className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
-              data-cy={'invite:create'}
-            />
-          </div>
   
-          { showInvite && (
-            <div className={'mt-3 max-w-xs'}>
-              <InviteMember
-                onSubmit={ onSubmitInvite }
-                onCancel={ () => setShowInvite(false) }
-              />
-              <hr
-                className={'my-5 mx-5'}
+        { !resolved && <>
+          <section className={"mb-5"}>
+            <div
+              className={'cursor-pointer'}
+              onClick={() => setShowInvite(!showInvite)}
+            >
+              Users
+  
+              <i
+                className="fa-solid fa-circle-plus ml-3 text-submit cursor-pointer"
+                data-cy={'invite:create'}
               />
             </div>
-          )}
-  
-          { invites.length > 0 && (
-            <section>
-              Pending Invites { invites.length }
-            </section>
-          )}
-        </section>
+    
+            { showInvite && (
+              <div className={'mt-3 max-w-xs'}>
+                <InviteMember
+                  onSubmit={ onSubmitInvite }
+                  onCancel={ () => setShowInvite(false) }
+                />
+                <hr
+                  className={'my-5 mx-5'}
+                />
+              </div>
+            )}
+    
+            { invites.length > 0 && (
+              <section>
+                Pending Invites { invites.length }
+              </section>
+            )}
+          </section>
+          
+          <section className={'flex flex-wrap align-center justify-around'}>
+            { event.memberships.map((member) => (
+              <main key={member.email} className={'max-w-xs'}>
+                <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>
         
-        <section className={'flex flex-wrap align-center justify-around'}>
-          { event.memberships.map((member) => (
-            <main key={member.email} className={'max-w-xs'}>
-              <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>
-      
-              <Calendar
-                availabilities={member.availabilities}
-                month={currentMonth}
-              />
-            </main>
-          ))}
-        </section>
+                <Calendar
+                  availabilities={member.availabilities}
+                  month={currentMonth}
+                />
+              </main>
+            ))}
+          </section>
+        </>}
       </main>
     )
   }

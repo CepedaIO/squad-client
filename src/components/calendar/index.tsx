@@ -5,6 +5,7 @@ import CalendarBox from "./CalendarBox";
 import {AvailabilityValidation, IAvailabilityBase} from "event-matcher-shared";
 
 export interface CalendarProps {
+  variant?: 'resolved';
   className?: string;
   availabilities: IAvailabilityBase[];
   highlight?: IAvailabilityBase[];
@@ -12,15 +13,16 @@ export interface CalendarProps {
   shouldChange?: (month: number) => void;
 }
 
-const Calendar = ({ availabilities, month, shouldChange, className, highlight }: CalendarProps) => {
+const Calendar = ({ availabilities, month, shouldChange, className, highlight, variant }: CalendarProps) => {
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
     start: interval.start,
     length: interval.length('days')
   };
+  const editable = !!shouldChange;
   const clickedPrevious = () => shouldChange && shouldChange(DateTime.fromObject({ month }).minus({ months: 1 }).month);
   const clickedNext = () => shouldChange && shouldChange(DateTime.fromObject({ month }).plus({ months: 1 }).month);
-  const chevronClasses = 'fa-solid cursor-pointer';
+  const chevronClasses = editable ? 'fa-solid cursor-pointer' : 'fa-solid';
 
   let daysLeft = metadata.length;
   const dates = [];
@@ -37,8 +39,9 @@ const Calendar = ({ availabilities, month, shouldChange, className, highlight }:
           key={i}
           date={nextDay}
           className={$c({
-            'bg-violet-100': isAvailable && !shouldHighlight,
-            'bg-yellow-100': isAvailable && shouldHighlight
+            'bg-violet-100': isAvailable && !shouldHighlight && !variant,
+            'bg-yellow-100': isAvailable && shouldHighlight && !variant,
+            'bg-submit text-white': isAvailable && variant === 'resolved'
           })}
         />
       );

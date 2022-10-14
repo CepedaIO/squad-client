@@ -10,7 +10,8 @@ import {
   IMembershipPermissionsEntity,
   IAvailabilityEntity,
   IJoinLinkEntity,
-  IPendingMembershipEntity
+  IPendingMembershipEntity,
+  IEventResolutionEntity
 } from "event-matcher-shared";
 
 export interface IInviteToken extends IInviteTokenEntity {
@@ -25,6 +26,10 @@ export interface IAvailability extends IAvailabilityEntity {
 
 }
 
+export interface IEventResolution extends IEventResolutionEntity {
+
+}
+
 export interface IMembership extends IMembershipEntity {
   permissions: IMembershipPermissions;
   availabilities: IAvailability[];
@@ -36,6 +41,7 @@ export interface IEvent extends IEventEntity {
   admins: IMembership[];
   user: IMembership;
   joinLink: string;
+  resolution?: IEventResolution;
 }
 
 export interface IJoinLink extends IJoinLinkEntity {
@@ -97,6 +103,10 @@ export const GET_EVENT = gql`
       pendingMemberships {
         id
         displayName
+      }
+      resolution {
+        start
+        end
       }
     }
   }
