@@ -18,7 +18,7 @@ import Split from "../../components/Split";
 
 const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
 
-const EventNewContent = () => {
+const EventCreateContent = () => {
   const {
     err: { addErrors },
     notif: { addNotice },
@@ -97,7 +97,7 @@ const EventNewContent = () => {
   const onClickBack = () => navigate('/home');
 
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-col">
       <header
         className={'mb-4 cursor-pointer'}
         onClick={onClickBack}
@@ -213,7 +213,7 @@ const EventNewContent = () => {
   )
 }
 
-const EventNew = () => {
+const EventCreate = () => {
   const context = createFormContext<ICreateEventInput>({
     name: '',
     img: '',
@@ -226,9 +226,9 @@ const EventNew = () => {
 
   return (
     <FormContext.Provider value={ context }>
-      <EventNewContent />
+      <EventCreateContent />
     </FormContext.Provider>
   )
 }
 
-export default EventNew;
+export default EventCreate;

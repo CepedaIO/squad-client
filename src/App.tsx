@@ -6,7 +6,7 @@ import AwaitingAccess from "./pages/auth/AwaitingAccess";
 import LoginWith from "./pages/auth/LoginWith";
 import Home from "./pages/Home";
 import Fallback from "./pages/Fallback";
-import EventNew from "./pages/event/EventNew";
+import EventCreate from "./pages/event/EventCreate";
 import AppContext, {createAppContext} from "./providers/AppContext";
 import EventView from "./pages/event/EventView";
 import EventInvite from "./pages/event/EventInvite";
@@ -39,7 +39,7 @@ function App() {
 			element: <Join />
 		},{
 			path: '/event/new',
-			element: <EventNew />
+			element: <EventCreate />
 		}, {
 			path: '/event/:id',
 			element: <EventView />

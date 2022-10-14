@@ -4,7 +4,7 @@ import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
 
-describe('Create Event', () => {
+describe.only('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
@@ -38,7 +38,7 @@ describe('Create Event', () => {
     dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
     dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
-    
+    return;
     const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
     CreateEvent.then(({response}) => {
       expect(response!.statusCode).to.equal(200);
