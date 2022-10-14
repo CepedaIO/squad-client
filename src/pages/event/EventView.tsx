@@ -251,7 +251,7 @@ const EventView = () => {
             )}
           </section>
           
-          <section className={'flex flex-wrap align-center justify-around'}>
+          <section className={'flex flex-wrap align-center justify-around gap-5'}>
             { event.memberships.map((member) => (
               <main key={member.email} className={'max-w-xs'}>
                 <h2 className={'font-bold text-center text-md mb-5'}>{ member.displayName }</h2>

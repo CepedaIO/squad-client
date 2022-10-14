@@ -4,7 +4,7 @@ import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
 
-describe.only('Create Event', () => {
+describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
