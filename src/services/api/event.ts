@@ -122,12 +122,13 @@ export const GET_EVENT_FROM_INVITE = gql`
     invite(uuid: $uuid, key: $key){
       id
       event {
+        id
         img
         name
         duration {
-          hours
-          days
-          minutes
+            hours
+            days
+            minutes
         }
       }
     }

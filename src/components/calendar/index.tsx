@@ -8,12 +8,12 @@ export interface CalendarProps {
   variant?: 'resolved';
   className?: string;
   availabilities: IAvailabilityBase[];
-  highlight?: IAvailabilityBase[];
+  secondary?: IAvailabilityBase[]
   month: number;
   shouldChange?: (month: number) => void;
 }
 
-const Calendar = ({ availabilities, month, shouldChange, className, highlight, variant }: CalendarProps) => {
+const Calendar = ({ availabilities, month, shouldChange, className, secondary, variant }: CalendarProps) => {
   const interval = Interval.after(DateTime.fromObject({ month }), { month: 1 });
   const metadata = {
     start: interval.start,
@@ -31,7 +31,7 @@ const Calendar = ({ availabilities, month, shouldChange, className, highlight, v
   while(daysLeft > 0  || (i % 7) !== 0) {
     const weekday = (i % 7) + 1;
     const isAvailable = AvailabilityValidation.availableOnDate(availabilities, nextDay);
-    const shouldHighlight = AvailabilityValidation.availableOnDate(highlight || [], nextDay);
+    const secondaryAvailable = AvailabilityValidation.availableOnDate(secondary || [], nextDay);
     
     if(daysLeft > 0 && weekday === nextDay.weekday) {
       dates.push(
@@ -39,8 +39,9 @@ const Calendar = ({ availabilities, month, shouldChange, className, highlight, v
           key={i}
           date={nextDay}
           className={$c({
-            'bg-violet-100': isAvailable && !shouldHighlight && !variant,
-            'bg-yellow-100': isAvailable && shouldHighlight && !variant,
+            'bg-violet-100': isAvailable && !secondaryAvailable && !variant,
+            'bg-yellow-100': isAvailable && secondaryAvailable && !variant,
+            'bg-green-100': !isAvailable && secondaryAvailable,
             'bg-submit text-white': isAvailable && variant === 'resolved'
           })}
         />
@@ -79,6 +80,24 @@ const Calendar = ({ availabilities, month, shouldChange, className, highlight, v
           dates
         }
       </section>
+      
+      
+      <footer className={'center justify-between'}>
+        <div className={'center'}>
+          <div className={'bg-violet-100 h-[15px] w-[15px] mr-3'} />
+          You
+        </div>
+  
+        <div className={'center'}>
+          <div className={'bg-green-100 h-[15px] w-[15px] mr-3'} />
+          Others
+        </div>
+  
+        <div className={'center'}>
+          <div className={'bg-yellow-100 h-[15px] w-[15px] mr-3'} />
+          Shared
+        </div>
+      </footer>
     </main>
   )
 }

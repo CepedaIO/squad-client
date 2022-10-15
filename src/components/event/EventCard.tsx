@@ -22,7 +22,7 @@ const EventCard = (props: EventCardProps) => {
       {event.name}
     </header>
     
-    <section className={'p-2'}>
+    <section className={'px-4 pt-2'}>
       <div className={'mb-1 center'}>
         <div className={'font-bold'}>Duration</div>
         <div className={'text-submit ml-auto'}>{ Duration.fromDurationLike(event.duration).toHuman() }</div>

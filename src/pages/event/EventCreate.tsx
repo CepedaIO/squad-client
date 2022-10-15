@@ -140,7 +140,7 @@ const EventCreateContent = () => {
         
         <Split
           nowrap={true}
-          className={'mb-5'}
+          className={'mb-5 hidden'}
           left={<label>Anytime?</label>}
           right={
             <Button
@@ -199,7 +199,7 @@ const EventCreateContent = () => {
           availabilities={availabilities}
           month={currentMonth}
           shouldChange={(month: number) => setCurrentMonth(month) }
-          highlight={eventAvailabilities}
+          secondary={eventAvailabilities}
         />
 
         <Button
@@ -225,7 +225,7 @@ const EventCreate = () => {
     displayName: '',
     availabilities: [],
     eventAvailabilities: [],
-    anytime: false
+    anytime: true
   });
 
   return (

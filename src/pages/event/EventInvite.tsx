@@ -29,7 +29,7 @@ const EventJoinContent = () => {
     refetchQueries: [
       {query: GET_SUMMARIES}
     ]
-  })
+  });
   
   if(loading) {
     return <Cat />
@@ -61,7 +61,7 @@ const EventJoinContent = () => {
   const onClickBack = () => navigate('/home');
   
   return (
-    <main className="h-full max-w-xs">
+    <main className="max-w-xs">
       <header
         className={'mb-4 cursor-pointer'}
         onClick={onClickBack}
@@ -78,7 +78,11 @@ const EventJoinContent = () => {
           src={event.img}
         />
 
-        <MembershipEdit duration={duration} onChange={onChange} />
+        <MembershipEdit
+          eventId={event.id}
+          duration={duration}
+          onChange={onChange}
+        />
   
         <Button
           variant={"submit"}

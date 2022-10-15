@@ -2,14 +2,17 @@ import line from "../../services/input-types/line";
 import AvailabilitySelector from "../availability/AvailabilitySelector";
 import $c from "classnames";
 import Calendar from "../calendar";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useFormControls} from "../../hooks/useFormControls";
 import {DateTime, Duration, DurationLikeObject} from "luxon";
-import {AvailabilityValidation, TextValidation, IAvailabilityBase} from "event-matcher-shared";
+import {AvailabilityValidation, TextValidation, IAvailabilityBase, promote} from "event-matcher-shared";
 import useForm from "../../hooks/useForm";
+import {useQuery} from "@apollo/client";
+import {AVAILABILITIES_FOR_EVENT, AvailabilitiesForEvent} from "../../services/api/availability";
 
 export interface IMembershipEditProps {
   duration: Duration,
+  eventId: number;
   onChange: (form: IMembershipForm) => void
 }
 
@@ -19,7 +22,7 @@ export interface IMembershipForm {
 }
 
 const MembershipEdit = ({
-  duration,
+  duration, eventId
 }: IMembershipEditProps) => {
   const [currentMonth, setCurrentMonth] = useState<number>(DateTime.now().month);
   const { setValue, getError, values:{ availabilities }, setValidation } = useForm<IMembershipForm>();
@@ -28,6 +31,16 @@ const MembershipEdit = ({
   const availabilityError = getError('availabilities');
   
   const labelFrom = (duration: DurationLikeObject) => `${Object.keys(duration)[0]} ${Object.values(duration)[0]}`;
+  
+  const { data: GetEventAvailabilities } = useQuery<AvailabilitiesForEvent>(AVAILABILITIES_FOR_EVENT, {
+    variables: {
+      eventId,
+      start: DateTime.fromObject({ month: currentMonth }).startOf('month'),
+      end: DateTime.fromObject({ month: currentMonth }).endOf('month')
+    }
+  });
+  
+  const eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
   
   setValidation('availabilities', {
     ist: AvailabilityValidation.ist,
@@ -68,6 +81,7 @@ const MembershipEdit = ({
       
       <Calendar
         availabilities={availabilities}
+        secondary={eventAvailabilities}
         month={currentMonth}
         shouldChange={setCurrentMonth}
       />

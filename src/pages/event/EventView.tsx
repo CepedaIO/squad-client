@@ -41,7 +41,7 @@ const EventView = () => {
     variables: { id },
   });
   
-  const { data: GetEventAvailabilities, loading: fetchingEventAvailabilities } = useQuery<AvailabilitiesForEvent>(AVAILABILITIES_FOR_EVENT, {
+  const { data: GetEventAvailabilities } = useQuery<AvailabilitiesForEvent>(AVAILABILITIES_FOR_EVENT, {
     variables: {
       eventId: id,
       start: DateTime.fromObject({ month: currentMonth }).startOf('month'),
@@ -49,7 +49,7 @@ const EventView = () => {
     }
   });
   const event = useMemo(() => promote(GetEvent?.event!), [GetEvent])
-  let eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
+  const eventAvailabilities = useMemo(() => promote(GetEventAvailabilities?.availabilityForEvent || []), [GetEventAvailabilities]);
 
   if(fetchingEvent) {
     return (
@@ -186,7 +186,7 @@ const EventView = () => {
         </section>
 
         { event.pendingMemberships.length > 0 && (
-          <section className={'mb-3 max-w-xs'}>
+          <section className={'mb-3 max-w-xs mt-8 ml-10'}>
             <div className={'mb-2 cursor-pointer'} onClick={() => setShowPending(!showPending)}>
               Pending Memberships
               <span className={'font-bold'}> { event.pendingMemberships.length }</span>
