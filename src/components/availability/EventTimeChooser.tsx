@@ -11,10 +11,11 @@ interface EventAvailabilityChooserProps {
   eventId: number;
   availabilities: IAvailabilityBase[];
   onSubmit: () => void;
+  isAdmin?: boolean;
 }
 
 const EventAvailabilityChooser = ({
-  eventId, availabilities, onSubmit
+  eventId, availabilities, onSubmit, isAdmin
 }: EventAvailabilityChooserProps) => {
   const {
     notif: { addNotice }
@@ -57,6 +58,22 @@ const EventAvailabilityChooser = ({
   }, [data])
   
   const onClickSubmit = () => publishEventTime();
+  
+  if(!isAdmin) {
+    return (
+      <main className={'p-3 min-w-[390px] min-h-[300px] flex flex-col'}>
+        <h2 className={'mb-16'}>Event Times</h2>
+        
+        <div className={'max-w-xs text-center mb-16'}>
+          Event times will display here once they are published. Please check back again later!
+        </div>
+        
+        <footer className={'text-center'}>
+          Thank you for choosing Squad!
+        </footer>
+      </main>
+    )
+  }
 
   return (
     <main className={'p-3 min-w-[390px] min-h-[300px] flex flex-col justify-between'}>

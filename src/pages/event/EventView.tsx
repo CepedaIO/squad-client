@@ -98,7 +98,7 @@ const EventView = () => {
     
     const resolved = !!event.resolution;
     const eventTimes = resolved ? [event.resolution!] : eventAvailabilities;
-    
+
     return (
       <main className={'w-full'}>
         <header
@@ -157,6 +157,7 @@ const EventView = () => {
               eventId={event.id}
               availabilities={eventAvailabilities}
               onSubmit={refetch}
+              isAdmin={event.user.permissions.isAdmin}
             />
           }
   

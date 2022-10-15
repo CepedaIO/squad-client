@@ -94,7 +94,7 @@ describe.only('Invite User1', () => {
     dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
     dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
-    //dataCY('submit').click();
+    dataCY('submit').click();
   });
 });
 
