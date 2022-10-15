@@ -28,11 +28,12 @@ const Calendar = ({ availabilities, month, shouldChange, className, secondary, v
   const dates = [];
   let i = 0;
   let nextDay = metadata.start;
-  while(daysLeft > 0  || (i % 7) !== 0) {
-    const weekday = (i % 7) + 1;
+  while(daysLeft > 0) {
+    const offset = i % 7;
+    const weekday = offset === 0 ? 7 : offset;
     const isAvailable = AvailabilityValidation.availableOnDate(availabilities, nextDay);
     const secondaryAvailable = AvailabilityValidation.availableOnDate(secondary || [], nextDay);
-    
+
     if(daysLeft > 0 && weekday === nextDay.weekday) {
       dates.push(
         <CalendarDay
