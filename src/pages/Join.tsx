@@ -21,7 +21,7 @@ const JoinContent = () => {
   const { validate } = useForm<IMembershipForm>();
   const { key } = useParams();
   const navigate = useNavigate();
-  const [createRequest, { loading, data }] = useMutation(gql`
+  const [createRequest, { loading }] = useMutation(gql`
     mutation CreateJoinRequest($payload: RequestJoinInput!) {
       createJoinRequest(payload: $payload) {
         result
@@ -110,7 +110,11 @@ const JoinContent = () => {
           src={event.img}
         />
         
-        <MembershipEdit duration={duration} onChange={onChange} />
+        <MembershipEdit
+          eventId={event.id}
+          duration={duration}
+          onChange={onChange}
+        />
         
         <Button
           variant={"submit"}
