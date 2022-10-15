@@ -28,7 +28,7 @@ const Calendar = ({ availabilities, month, shouldChange, className, secondary, v
   const dates = [];
   let i = 0;
   let nextDay = metadata.start;
-  while(daysLeft > 0) {
+  while(daysLeft > 0 || (i % 7) !== 0) {
     const offset = i % 7;
     const weekday = offset === 0 ? 7 : offset;
     const isAvailable = AvailabilityValidation.availableOnDate(availabilities, nextDay);
