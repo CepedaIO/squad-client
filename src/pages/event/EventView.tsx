@@ -139,7 +139,7 @@ const EventView = () => {
           
   
           <div className={'mb-5 max-w-md'}>
-            { event.description }{ event.description }{ event.description }{ event.description }
+            { event.description }
           </div>
         </section>
         
