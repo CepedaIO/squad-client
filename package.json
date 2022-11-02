@@ -36,7 +36,7 @@
     "cypress": "^10.4.0",
     "jest": "^28.1.1",
     "postcss": "^8.4.14",
-    "smtp-tester": "^2.0.0",
+    "smtp-tester": "^2.0.1",
     "tailwind-styled-components": "^2.1.8",
     "tailwindcss": "^3.1.4",
     "ts-jest": "^28.0.5",

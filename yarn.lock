@@ -3784,10 +3784,10 @@ smtp-server@^3.11.0:
     ipv6-normalize "1.0.1"
     nodemailer "6.7.3"
 
-smtp-tester@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/smtp-tester/-/smtp-tester-2.0.0.tgz#606a23155e5ab1224f2350eb0230da0750cf5d26"
-  integrity sha512-OfgdqdX6j2jUycv4zntUkXLohJcy4yVDO/zAMRO5na1nAM27A4Yd5422tGHsSexkTjkZ7zRu7xTaXscGAkJeOQ==
+smtp-tester@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/smtp-tester/-/smtp-tester-2.0.1.tgz#f971a1aaca964a9c9a955dc796e77dd851e1e315"
+  integrity sha512-mJicx4trPmlS2PY/ELG4LIKi8JdOGxnvm0/4oQxXErjwBT/crBUlyiMVzeliu69HHWeWRSOdTcNtlc34+1LodA==
   dependencies:
     mailparser "^3.5.0"
     smtp-server "^3.11.0"

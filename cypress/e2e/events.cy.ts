@@ -4,7 +4,7 @@ import {DateTime} from "luxon";
 import DateAndTime from "../../src/services/input-types/datetime";
 import {deleteTestData, loginTestUser} from "../api";
 
-describe.only('Create Event', () => {
+describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
@@ -55,7 +55,7 @@ describe.only('Create Event', () => {
   });
 });
 
-describe.only('Invite User1', () => {
+describe('Invite User1', () => {
   it('should invite user', () => {
     loginTestUser(User.member.email);
     visit('home');
