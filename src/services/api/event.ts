@@ -12,7 +12,7 @@ import {
   IJoinLinkEntity,
   IPendingMembershipEntity,
   IEventResolutionEntity
-} from "event-matcher-shared";
+} from "squad-shared";
 
 export interface IInviteToken extends IInviteTokenEntity {
   event: IEvent

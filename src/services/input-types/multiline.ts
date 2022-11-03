@@ -1,5 +1,5 @@
 import {InputDescriptor} from "./index";
-import {TextValidation} from "event-matcher-shared";
+import {TextValidation} from "squad-shared";
 
 const Multiline: InputDescriptor<string> = {
   id: 'multiline',

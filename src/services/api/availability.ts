@@ -1,5 +1,5 @@
 import {gql} from "@apollo/client";
-import {IRangeForm, Demote} from "event-matcher-shared";
+import {IRangeForm, Demote} from "squad-shared";
 
 export type AvailabilitiesForEvent = {
   availabilityForEvent: Array<Demote<IRangeForm>>

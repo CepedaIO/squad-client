@@ -1,5 +1,5 @@
 import {createContext, useEffect, useState} from "react";
-import {useValidation, ValidateResult, ValidateOptions, FieldValidation} from "event-matcher-shared";
+import {useValidation, ValidateResult, ValidateOptions, FieldValidation} from "squad-shared";
 import errorContext, {IErrorContext} from "./AppContext/errorContext";
 
 const NULL_PENDING_VALIDATIONS = { fields: [], options: {} };

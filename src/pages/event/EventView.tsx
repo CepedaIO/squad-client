@@ -6,7 +6,7 @@ import Calendar from "../../components/calendar";
 import React, {useMemo, useState} from "react";
 import InviteMember, {IInviteMemberForm} from "../../components/event/InviteMember";
 import {gql, useMutation, useQuery} from "@apollo/client";
-import {promote} from "event-matcher-shared";
+import {promote} from "squad-shared";
 import {useApp} from "../../hooks/useApp";
 import {AVAILABILITIES_FOR_EVENT, AvailabilitiesForEvent} from "../../services/api/availability";
 import {DateTime} from "luxon";

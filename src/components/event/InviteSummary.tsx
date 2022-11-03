@@ -1,5 +1,5 @@
 import React from "react";
-import {Demote} from "event-matcher-shared";
+import {Demote} from "squad-shared";
 import {DateTime} from "luxon";
 import {toHuman} from "../../services/utils";
 import {useNavigate} from "react-router-dom";

@@ -2,7 +2,7 @@ import {DateTime} from "luxon";
 import Button from "../inline/Button";
 import React, {useEffect, useState} from "react";
 import $c from "classnames";
-import {IAvailabilityBase} from "event-matcher-shared";
+import {IAvailabilityBase} from "squad-shared";
 import {gql, useMutation} from "@apollo/client";
 import {useApp} from "../../hooks/useApp";
 import {GET_SUMMARIES} from "../../services/api/event";

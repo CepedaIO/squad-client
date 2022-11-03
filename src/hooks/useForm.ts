@@ -1,7 +1,7 @@
 import {useContext, useEffect} from "react";
 import FormContext from "../providers/FormContext";
 import {FieldError} from "../providers/AppContext/errorContext";
-import {ValidateOptions, FieldValidation} from "event-matcher-shared";
+import {ValidateOptions, FieldValidation} from "squad-shared";
 
 type setValidationReturn<Values extends Keyed, Field extends StringKey<Values>> = [string | undefined, () => [boolean, Values[Field]]];
 

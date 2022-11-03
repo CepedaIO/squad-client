@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 import {AdapterDescriptor} from "./index";
-import {DateTimeValidation} from "event-matcher-shared";
+import {DateTimeValidation} from "squad-shared";
 
 export const DateAndTime: AdapterDescriptor<DateTime> = {
   id: 'datetime',

@@ -4,7 +4,7 @@ import {Duration, DurationLikeObject} from "luxon";
 import {DateAndTime} from "../../../services/input-types/datetime";
 import {useFormControls} from "../../../hooks/useFormControls";
 import {IAvailabilityMode} from "../Availability";
-import {RangeUtils, IRangeForm, RangeFormFactory} from "event-matcher-shared";
+import {RangeUtils, IRangeForm, RangeFormFactory} from "squad-shared";
 
 export const Range: IAvailabilityMode = {
   label: 'Range',

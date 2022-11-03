@@ -6,7 +6,7 @@ import FormContext, {createFormContext} from "../../providers/FormContext";
 import useForm from "../../hooks/useForm";
 import {useFormControls} from "../../hooks/useFormControls";
 import {useLogin} from "../../services/api/auth";
-import {TextValidation} from "event-matcher-shared";
+import {TextValidation} from "squad-shared";
 
 interface ILoginForm {
   email: string;

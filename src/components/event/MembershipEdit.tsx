@@ -5,7 +5,7 @@ import Calendar from "../calendar";
 import React, {useMemo, useState} from "react";
 import {useFormControls} from "../../hooks/useFormControls";
 import {DateTime, Duration, DurationLikeObject} from "luxon";
-import {AvailabilityValidation, TextValidation, IAvailabilityBase, promote} from "event-matcher-shared";
+import {AvailabilityValidation, TextValidation, IAvailabilityBase, promote} from "squad-shared";
 import useForm from "../../hooks/useForm";
 import {useQuery} from "@apollo/client";
 import {AVAILABILITIES_FOR_EVENT, AvailabilitiesForEvent} from "../../services/api/availability";

@@ -3,7 +3,7 @@ import React, {Fragment, useState} from "react";
 import {AvailabilityEdit, AvailabilityView} from "./Availability";
 import {DurationLikeObject} from "luxon";
 import {remove, upsert} from "../../services/utils";
-import { IAvailabilityBase } from "event-matcher-shared";
+import { IAvailabilityBase } from "squad-shared";
 
 export interface AvailabilitySelectorProps {
   offset: DurationLikeObject;

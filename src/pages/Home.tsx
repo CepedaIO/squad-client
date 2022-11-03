@@ -4,7 +4,7 @@ import React from "react";
 import EventCard from "../components/event/EventCard";
 import {useQuery} from "@apollo/client";
 import InviteSummary from "../components/event/InviteSummary";
-import {promote} from "event-matcher-shared";
+import {promote} from "squad-shared";
 
 interface PendingMembershipProps {
   pending: Pick<IPendingMembership, 'displayName'>;

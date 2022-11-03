@@ -5,7 +5,7 @@ import Button from "../inline/Button";
 import {DurationLikeObject} from "luxon";
 import useForm from "../../hooks/useForm";
 import FormContext, {createFormContext} from "../../providers/FormContext";
-import {IAvailabilityBase} from "event-matcher-shared";
+import {IAvailabilityBase} from "squad-shared";
 
 export const modes = [Range];
 

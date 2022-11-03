@@ -2,7 +2,7 @@ import $c from "classnames";
 import {DateTime, Interval} from "luxon";
 import CalendarDay from "./CalendarDay";
 import CalendarBox from "./CalendarBox";
-import {AvailabilityValidation, IAvailabilityBase} from "event-matcher-shared";
+import {AvailabilityValidation, IAvailabilityBase} from "squad-shared";
 
 export interface CalendarProps {
   variant?: 'resolved';

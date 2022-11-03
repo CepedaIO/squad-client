@@ -10,7 +10,7 @@ import {useFormControls} from "../../hooks/useFormControls";
 import {DurationLike} from "../../services/input-types/duration/durationLike";
 import {DateTime, DurationLikeObject} from "luxon";
 import $c from "classnames";
-import {AvailabilityValidation, ICreateEventInput, IAvailabilityBase} from "event-matcher-shared";
+import {AvailabilityValidation, ICreateEventInput, IAvailabilityBase} from "squad-shared";
 import {apiCreateEvent, GET_SUMMARIES} from "../../services/api/event";
 import {useApp} from "../../hooks/useApp";
 import useDebounce from "../../hooks/useDebounce";
