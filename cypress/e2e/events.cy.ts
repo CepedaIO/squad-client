@@ -8,7 +8,7 @@ describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
-  it('should create a event', () => {
+  it.only('should create a event', () => {
     //const eventStart = DateTime.now().startOf('month').startOf('day');
     //const eventEnd = DateTime.now().endOf('month').endOf('day');
     const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
@@ -23,7 +23,7 @@ describe('Create Event', () => {
     dataCY('duration:select').select(Object.keys(Event.duration)[0]);
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
     dataCY('displayName').type(User.member.displayName);
-  
+  return;
     //dataCY('anytime').click();
     
     /*

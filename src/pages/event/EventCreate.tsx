@@ -32,7 +32,7 @@ const EventCreateContent = () => {
   
   const availabilityError = getError('availabilities');
   const eventAvailabilityError = getError('eventAvailabilities');
-  const invalidAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
+  const invalidMemberAvailability = AvailabilityValidation.durationInvalidIndexes(availabilities, duration);
   const invalidEventAvailability = AvailabilityValidation.durationInvalidIndexes(eventAvailabilities, duration);
 
   useEffect(() => {
@@ -61,10 +61,10 @@ const EventCreateContent = () => {
     validator: (_, {required}) => [
       [(value) => value.length > 0, 'Must select availability'],
       required('duration', [
-        [() => invalidAvailability.length === 0, `Invalid availabilities: ${labelFrom(duration)}`]
+        [() => invalidMemberAvailability.length === 0, `Invalid availabilities: ${labelFrom(duration)}`]
       ])
     ],
-  }, [JSON.stringify(invalidAvailability), duration]);
+  }, [JSON.stringify(invalidMemberAvailability), duration]);
   
   setValidation('eventAvailabilities', {
     ist: AvailabilityValidation.ist,
@@ -89,7 +89,7 @@ const EventCreateContent = () => {
     }
   };
 
-  const onChangeAvailability = (availability: IAvailabilityBase[]) =>
+  const onChangeMemberAvailability = (availability: IAvailabilityBase[]) =>
     setValue('availabilities', () => availability);
   const onChangeEventAvailability = (availability: IAvailabilityBase[]) =>
     setValue('eventAvailabilities', () => availability)
@@ -140,7 +140,7 @@ const EventCreateContent = () => {
         
         <Split
           nowrap={true}
-          className={'mb-5 hidden'}
+          className={'mb-5'}
           left={<label>Anytime?</label>}
           right={
             <Button
@@ -182,10 +182,10 @@ const EventCreateContent = () => {
         />
 
         <AvailabilitySelector
-          erroredIndexes={invalidAvailability}
+          erroredIndexes={invalidMemberAvailability}
           offset={duration}
           availabilities={availabilities}
-          onChange={onChangeAvailability}
+          onChange={onChangeMemberAvailability}
           data-cy={'member'}
         />
 

@@ -10,7 +10,7 @@ export interface InputTypeMap {
   number: number;
 }
 
-type InputElements = HTMLInputElement | HTMLTextAreaElement;
+export type InputElements = HTMLInputElement | HTMLTextAreaElement;
 export type SimpleInputTypes = keyof InputTypeMap;
 
 export type InputProps<Type extends SimpleInputTypes> = Omit<InputHTMLAttributes<InputElements>, 'type' | 'value' | 'onChange'> & {
