@@ -2,11 +2,11 @@ import {InputDescriptor} from "./index";
 import {TextValidation} from "squad-shared";
 import $c from "classnames";
 import React from "react";
-import Input, {InputProps} from "../../components/inline/Input";
+import Input from "../../components/inline/Input";
 
 const Line: InputDescriptor<string> = {
   id: 'line',
-  input: (props: InputProps<'text'>) =>  {
+  input: (props) =>  {
     return (
       <Input
         {...props }

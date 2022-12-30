@@ -1,11 +1,11 @@
 import {InputDescriptor} from "./index";
 import {TextValidation} from "squad-shared";
-import Input, {InputProps} from "../../components/inline/Input";
+import Input from "../../components/inline/Input";
 import $c from "classnames";
 
 const Multiline: InputDescriptor<string> = {
   id: 'multiline',
-  input: (props: InputProps<'textarea'>) => (
+  input: (props) => (
     <Input
       {...props}
       type={'textarea'}

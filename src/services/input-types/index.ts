@@ -1,5 +1,3 @@
-import {InputProps} from "../../components/inline/Input";
-
 export type CustomInputProps<Value> = {
   value?: Value;
   onChange?: (value:Value | null) => void;
@@ -11,7 +9,8 @@ export type InputDescriptor<Value> = CustomInputDescriptor<Value>;
 
 export interface CustomInputDescriptor<Value> {
   id: string;
-  input: <InputType extends InputProps<any>>(props: InputType) => JSX.Element;
+  input: <InputProps extends CustomInputProps<Value>>(props: InputProps) => JSX.Element;
   ist: (val: any) => val is Value;
-  out?: (val: any) => Value;
+  out?: (val: Value) => any;
+  in?: (val: any) => Value;
 }

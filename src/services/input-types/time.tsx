@@ -5,13 +5,21 @@ import Input, {InputProps} from "../../components/inline/Input";
 
 const Time: InputDescriptor<DateTime> = {
   id: 'time',
-  input: (props: InputProps<'datetime-local'>) => (
-    <Input
+  input: (props) => {
+    const value = DateTimeValidation.ist(props.value) ? Time.out!(props.value) : props.value;
+    const onChange = (value: string | null) =>
+      props.onChange && props.onChange(Time.in!(value));
+    
+    return <Input
       {...props}
+      value={value}
+      onChange={onChange}
       type={'datetime-local'}
     />
-  ),
-  ist: DateTimeValidation.ist
+  },
+  ist: DateTimeValidation.ist,
+  out: (value: DateTime) => value.toFormat('HH:mm'),
+  in: (value: any) => DateTime.fromISO(value),
 }
 
 export default Time;
