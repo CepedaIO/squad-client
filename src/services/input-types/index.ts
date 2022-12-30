@@ -13,4 +13,5 @@ export interface CustomInputDescriptor<Value> {
   id: string;
   input: <InputType extends InputProps<any>>(props: InputType) => JSX.Element;
   ist: (val: any) => val is Value;
+  out?: (val: any) => Value;
 }

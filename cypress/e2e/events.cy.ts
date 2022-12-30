@@ -8,7 +8,7 @@ describe('Create Event', () => {
   stopOnFirstFail();
   before(() => deleteTestData());
   
-  it.only('should create a event', () => {
+  it('should create a event', () => {
     //const eventStart = DateTime.now().startOf('month').startOf('day');
     //const eventEnd = DateTime.now().endOf('month').endOf('day');
     const start = DateTime.now().startOf('month').plus({ days: 1 }).startOf('day');
@@ -23,7 +23,7 @@ describe('Create Event', () => {
     dataCY('duration:select').select(Object.keys(Event.duration)[0]);
     dataCY('duration:input').clear().type(Object.values(Event.duration)[0].toString());
     dataCY('displayName').type(User.member.displayName);
-  return;
+
     //dataCY('anytime').click();
     
     /*
@@ -34,13 +34,13 @@ describe('Create Event', () => {
     */
     
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start))
-    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:start').type(DateAndTime.out!(start))
+    dataCY('member:availability:end').type(DateAndTime.out!(end))
     dataCY('member:availability:submit').click();
   
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:start').type(DateAndTime.out!(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out!(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
 
     const [CreateEvent] = wait([], ['CreateEvent'], () => dataCY('submit:event').click());
@@ -86,13 +86,13 @@ describe('Invite User1', () => {
     dataCY('displayName').type(Invite.member.displayName);
     
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start))
-    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:start').type(DateAndTime.out!(start))
+    dataCY('member:availability:end').type(DateAndTime.out!(end))
     dataCY('member:availability:submit').click();
   
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:start').type(DateAndTime.out!(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out!(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
     dataCY('submit').click();
   });
@@ -130,13 +130,13 @@ describe('Invite User2', () => {
     
     dataCY('displayName').type(Invite2.member.displayName);
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start))
-    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:start').type(DateAndTime.out!(start))
+    dataCY('member:availability:end').type(DateAndTime.out!(end))
     dataCY('member:availability:submit').click();
   
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:start').type(DateAndTime.out!(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out!(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
     dataCY('submit').click();
   });
@@ -162,13 +162,13 @@ describe('Join by link', () => {
     visit(joinLink);
     dataCY('displayName').type('UserFromJoin');
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start))
-    dataCY('member:availability:end').type(DateAndTime.out(end))
+    dataCY('member:availability:start').type(DateAndTime.out!(start))
+    dataCY('member:availability:end').type(DateAndTime.out!(end))
     dataCY('member:availability:submit').click();
   
     dataCY('member:availability').click();
-    dataCY('member:availability:start').type(DateAndTime.out(start.plus({ weeks: 2 })))
-    dataCY('member:availability:end').type(DateAndTime.out(end.plus({ weeks: 2 })))
+    dataCY('member:availability:start').type(DateAndTime.out!(start.plus({ weeks: 2 })))
+    dataCY('member:availability:end').type(DateAndTime.out!(end.plus({ weeks: 2 })))
     dataCY('member:availability:submit').click();
     dataCY('submit').click();
   })
