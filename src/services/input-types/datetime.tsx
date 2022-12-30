@@ -21,6 +21,7 @@ export const DateAndTime: InputDescriptor<DateTime> = {
       />
     )
   },
+  out: (value:DateTime) => value.toFormat('yyyy-LL-dd\'T\'HH:mm'),
   ist: DateTimeValidation.ist
 };
 
